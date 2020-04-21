@@ -25,38 +25,22 @@ char    *read_file(char *path) {
     return buffer;
 }
 
-void        print(char *fmt, ...) {
-    char        *str = NULL;
-    char        c = 0;
-    va_list     ap;
-
-    va_start(ap, fmt);
-    while (*fmt) {
-        switch (*fmt) {
-            case 't':
-                str = va_arg(ap, char *);
-                write(0, str, strlen(str));
-                break;
-            default:
-                c = (char)(*fmt);
-                write(0, &c, 1);
-                break;
-        }
-        fmt++;
-    }
-    va_end(ap);
-}
-
 int     main() {
     struct timespec     tp;
     char                *battery;
+    char                *brightness;
+    char                *cpu_temp;
 
     tp.tv_sec = 1;
     tp.tv_nsec = 0;
     while (1) {
         battery = get_battery();
-        print("t", battery);
+        brightness = get_brightness();
+        cpu_temp = get_cpu_temp();
+        print("t  t  t\n", cpu_temp, brightness, battery);
         free(battery);
+        free(brightness);
+        free(cpu_temp);
         clock_nanosleep(CLOCK_REALTIME, 0, &tp, NULL);
     }
     return 0;

@@ -2,7 +2,10 @@
 
 # include "qlstatus.h"
 
-#define TEN 10
+typedef struct      s_info {
+    int     length;
+    int     tens;
+} t_info;
 
 char    *nbr_eq_zero() {
     char    *str = NULL;
@@ -12,51 +15,36 @@ char    *nbr_eq_zero() {
     return str;
 }
 
-int     get_length(long nb) {
-    int     length = 0;
-
+void        compute_tens(long nb, t_info *info) {
+    info->length = 0;
+    info->tens = 1;
     while (nb > 0) {
         nb = nb / TEN;
-        length++;
+        info->length++;
+        if (info->length > 1) {
+            info->tens = info->tens * TEN;
+        }
     }
-    return length;
 }
 
-long    get_tens(int length) {
-    long    tens = 1;
-
-    while (length > 1) {
-        tens = tens * TEN;
-        length--;
-    }
-    return tens;
-}
-
-char    *to_str(long nb, int length, long tens) {
+char    *int_to_str(long nb) {
     char    *str = NULL;
+    t_info  info;
     long    tmp;
     int     i;
 
     i = 0;
-    str = alloc_buffer(length + 1);
-    while (tens > 0) {
-        tmp = nb / tens;
+    if (nb <= 0) {
+       return nbr_eq_zero(); 
+    }
+    compute_tens(nb, &info);
+    str = alloc_buffer(info.length + 1);
+    while (info.tens > 0) {
+        tmp = nb / info.tens;
         tmp = tmp % TEN;
-        tens = tens / TEN;
+        info.tens = info.tens / TEN;
         str[i] = (char)(tmp + '0');
         i++;
     }
     return str;
-}
-
-char    *int_to_str(long nb) {
-    int     length;
-    long    tens;
-
-    if (nb == 0) {
-       return nbr_eq_zero(); 
-    }
-    length = get_length(nb);
-    tens = get_tens(length);
-    return to_str(nb, length, tens);
 }

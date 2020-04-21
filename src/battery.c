@@ -8,20 +8,19 @@ char    *get_battery_status() {
 
     buffer = read_file(BAT_STATUS);
     if (strcmp(buffer, BAT_STATUS_CHARGING) == 0) {
-        f_status = BAT_F_STATUS_CHARGING;
+        f_status = BAT_LABEL_CHARGING;
     } else if (strcmp(buffer, BAT_STATUS_DISCHARGING) == 0) {
-        f_status = BAT_F_STATUS_DISCHARGING;
+        f_status = BAT_LABEL_DISCHARGING;
     } else if (strcmp(buffer, BAT_STATUS_FULL) == 0) {
-        f_status = BAT_F_STATUS_FULL;
+        f_status = BAT_LABEL_FULL;
     } else {
-        f_status = BAT_F_STATUS_UNKNOW;
+        f_status = BAT_LABEL_UNKNOW;
     }
     free(buffer);
     return f_status;
 }
 
 char    *get_battery() {
-    const int   base = 10;
     char        *status = NULL;
     char        *buffer = NULL;
     char        *token = NULL;
@@ -31,10 +30,10 @@ char    *get_battery() {
 
     status = get_battery_status();
     buffer = read_file(BAT_CURRENT);
-    current = strtol(buffer, NULL, base);
+    current = strtol(buffer, NULL, BASE);
     free(buffer);
     buffer = read_file(BAT_MAX);
-    max = strtol(buffer, NULL, base);
+    max = strtol(buffer, NULL, BASE);
     free(buffer);
     value = current * CENT / max;
     buffer = int_to_str(value);
