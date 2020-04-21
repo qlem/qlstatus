@@ -2,8 +2,11 @@
 
 #include "qlstatus.h"
 
-void    free_files(char **files, int size) {
-    free(files[size - 1]);
+void    free_files(char **files) {
+    int     i = -1;
+
+    while (files[++i][0]) {}
+    free(files[i]);
     free(files);
 }
 
@@ -37,8 +40,7 @@ char    **read_dir(DIR *dir, const char *regex) {
     regex_t         preg;
     int             size = 1;
 
-    if (regex && regcomp(&preg, CPU_TEMP_INPUT_PATTERN,
-                REG_EXTENDED | REG_NOSUB) != 0) {
+    if (regex && regcomp(&preg, regex, REG_EXTENDED) != 0) {
         exit(1);
     }
     if ((files = malloc(sizeof(char *))) == NULL) {
@@ -54,6 +56,8 @@ char    **read_dir(DIR *dir, const char *regex) {
             files = add_file(files, s_dir->d_name, &size);
         }
     }
-    regfree(&preg);
+    if (regex) {
+        regfree(&preg);
+    }
     return files;
 }

@@ -14,6 +14,7 @@
 #include <stdarg.h>
 #include <dirent.h>
 #include <regex.h>
+#include <stdbool.h>
 
 #define BASE 10
 #define TEN 10
@@ -44,29 +45,27 @@
 // TODO
 
 /* CPU TEMP */
-#define CPU_TEMP_DIR "/sys/devices/platform/coretemp.0/hwmon/hwmon6"
-#define CPU_TEMP_INPUT_PATTERN "^temp[0-9]*_input$"
+#define CPU_TEMP_DIR "/sys/devices/platform/coretemp.0/hwmon/*"
+#define CPU_TEMP_INPUT_PATTERN "^temp[2-5]_input$"
 #define CPU_TEMP_LABEL "cpu"
-#define MAGIC 500
+#define CPU_TEMP_ROUND 500
 
 /* FUNCTIONS */
-void    print(char *fmt, ...);
 char	*int_to_str(long nb);
+void    print(char *fmt, ...);
 
 // alloc a buffer
 void    v_memset(char *buffer, size_t size, char c);
 char    *alloc_buffer(size_t size);
 
-// open / read a dir
-void    free_files(char **files, int size);
+// read files / dirs
+void    free_files(char **files);
 void    close_dir(DIR *dir);
 DIR     *open_dir(const char *path);
-char    **read_dir(DIR *dir, const char *regex); 
-
-// open / read a file
+char    **read_dir(DIR *dir, const char *regex);
 char    *read_file(char *path);
 
-// generate token
+// modules
 char    *get_battery();
 char    *get_volume();
 char    *get_brightness();
