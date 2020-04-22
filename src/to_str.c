@@ -34,7 +34,7 @@ char    *to_str(long nb) {
     int     i = 0;
 
     if (nb <= 0) {
-       return nbr_eq_zero(); 
+        return nbr_eq_zero();
     }
     compute_tens(nb, &info);
     str = alloc_buffer(info.length + 1);

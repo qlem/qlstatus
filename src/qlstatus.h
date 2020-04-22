@@ -66,9 +66,7 @@ char    *alloc_buffer(size_t size);
 
 // read files / dirs
 void    free_files(char **files);
-void    close_dir(DIR *dir, const char *path);
-DIR     *open_dir(const char *path);
-char    **read_dir(DIR *dir, const char *regex);
+char    **read_dir(const char *path, const char *regex);
 char    *read_file(const char *path);
 
 // modules

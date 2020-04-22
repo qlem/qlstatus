@@ -8,7 +8,7 @@ void    v_sleep() {
     tp.tv_sec = 1;
     tp.tv_nsec = 0;
     if (clock_nanosleep(CLOCK_REALTIME, 0, &tp, NULL)) {
-        perror("Call to 'clock_nanosleep()' failed");
+        printf("Call to 'clock_nanosleep()' failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 }

@@ -44,7 +44,7 @@ char    *alloc_buffer(size_t size) {
     char    *buffer;
 
     if ((buffer = malloc(sizeof(char) * size)) == NULL) {
-        perror("Call to 'malloc()' failed");
+        printf("Call to 'malloc()' failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
     v_memset(buffer, size, 0);
@@ -56,7 +56,7 @@ long    to_int(const char *str) {
 
     nb = strtol(str, NULL, TEN);
     if ((nb == LONG_MIN || nb == LONG_MAX)) {
-        perror("Call to 'strtol()' failed");
+        printf("Call to 'strtol()' failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
     return nb;
