@@ -52,7 +52,6 @@ long    compute_temp(char **files, char *parent) {
         free(buffer);
     }
     if (!sum) {
-        free_files(files);
         return 0;
     }
     temp = sum / i;
@@ -78,6 +77,12 @@ char    *get_cpu_temp() {
         v_strncpy(path, CPU_TEMP_DIR, v_strlen(CPU_TEMP_DIR));
     }
     files = read_dir(path, CPU_TEMP_INPUT_PATTERN);
+    if (!files[0][0]) {
+        printf("No input files found in '%s'\n", path);
+        free_files(files);
+        free(path);
+        exit(EXIT_FAILURE);
+    }
     temp = compute_temp(files, path);
     buffer = to_str(temp);
     token = alloc_buffer(v_strlen(buffer) + v_strlen(CPU_TEMP_LABEL) + 4);

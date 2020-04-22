@@ -14,19 +14,27 @@ void    v_sleep() {
 }
 
 int     main() {
+    t_cpu   *cpu;
     char    *battery;
     char    *brightness;
     char    *cpu_temp;
+    char    *cpu_usage;
 
+    cpu = alloc_ptr(sizeof(t_cpu));
+    cpu->prev_idle = 0;
+    cpu->prev_total = 0;
     while (1) {
         battery = get_battery();
         brightness = get_brightness();
         cpu_temp = get_cpu_temp();
-        print("t  t  t\n", cpu_temp, brightness, battery);
+        cpu_usage = get_cpu_usage(cpu);
+        print("t  t  t  t\n", cpu_usage, cpu_temp, brightness, battery);
         free(battery);
         free(brightness);
         free(cpu_temp);
+        free(cpu_usage);
         v_sleep();
     }
+    free(cpu);
     return 0;
 }

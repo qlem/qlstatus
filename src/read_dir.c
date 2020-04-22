@@ -41,17 +41,6 @@ char    **add_file(char **files, const char *file, size_t *size) {
     return files;
 }
 
-char    **alloc_filenames_array() {
-    char    **files;
-
-    if ((files = malloc(sizeof(char *))) == NULL) {
-        printf("Call to 'malloc()' failed: %s\n", strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-    files[0] = alloc_buffer(1);
-    return files;
-}
-
 void    compile_regex(regex_t *preg, const char *regex, int flags) {
     char            *buffer = NULL;
     size_t          size = 0;
@@ -77,7 +66,8 @@ char    **read_dir(const char *path, const char *regex) {
     if (regex) {
         compile_regex(&preg, regex, REG_EXTENDED);
     }
-    files = alloc_filenames_array();
+    files = alloc_ptr(sizeof(char *));
+    files[0] = alloc_buffer(1);
     size = 1;
     dir = open_dir(path);
     while ((s_dir = readdir(dir)) != NULL) {

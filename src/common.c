@@ -51,6 +51,16 @@ char    *alloc_buffer(size_t size) {
     return buffer;
 }
 
+void    *alloc_ptr(size_t size) {
+    void    *ptr;
+
+    if ((ptr = malloc(size)) == NULL) {
+        printf("Call to 'malloc()' failed: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    return ptr;
+}
+
 long    to_int(const char *str) {
     long    nb = 0;
 

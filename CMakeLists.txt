@@ -10,6 +10,7 @@ add_executable(qlstatus
     src/battery.c
     src/brightness.c
     src/cpu_temp.c
+    src/cpu_usage.c
     src/print.c
     src/to_str.c
     src/read_file.c

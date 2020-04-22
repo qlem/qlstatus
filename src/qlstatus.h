@@ -18,7 +18,6 @@
 #include <limits.h>
 #include <errno.h>
 
-#define BASE 10
 #define TEN 10
 #define CENT 100
 #define THOUSAND 1000
@@ -44,7 +43,13 @@
 #define BRIGHTNESS_LABEL "brg"
 
 /* CPU USAGE */
-// TODO
+#define PROC_STAT "/proc/stat"
+#define CPU_USAGE_LABEL "cpu"
+
+typedef struct      s_cpu {
+    long        prev_idle;
+    long        prev_total;
+} t_cpu;
 
 /* CPU TEMP */
 #define CPU_TEMP_DIR "/sys/devices/platform/coretemp.0/hwmon/*"
@@ -55,14 +60,15 @@
 /* FUNCTIONS */
 size_t  v_strlen(const char *str);
 char    *v_strncpy(char *dest, const char *src, size_t n);
+void    v_memset(char *buffer, size_t size, char c);
 long    to_int(const char *str);
 char	*to_str(long nb);
 int     putstr(const char *str);
 void    print(char *fmt, ...);
 
-// alloc a buffer
-void    v_memset(char *buffer, size_t size, char c);
+// memory allocation
 char    *alloc_buffer(size_t size);
+void    *alloc_ptr(size_t size);
 
 // read files / dirs
 void    free_files(char **files);
@@ -73,7 +79,7 @@ char    *read_file(const char *path);
 char    *get_battery();
 char    *get_volume();
 char    *get_brightness();
-char    *get_cpu_usage();
+char    *get_cpu_usage(t_cpu *cpu);
 char    *get_cpu_temp();
 
 #endif /* !QLSTATUS_H_ */
