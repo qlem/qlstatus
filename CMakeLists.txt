@@ -10,8 +10,9 @@ add_executable(qlstatus
     src/battery.c
     src/brightness.c
     src/cpu_temp.c
-    src/int_to_str.c
-    src/alloc_buffer.c
-    src/read_dir.c
     src/print.c
+    src/to_str.c
+    src/read_file.c
+    src/read_dir.c
+    src/common.c
     src/qlstatus.h)

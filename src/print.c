@@ -12,7 +12,7 @@ void        print(char *fmt, ...) {
         switch (*fmt) {
             case 't':
                 str = va_arg(ap, char *);
-                write(1, str, strlen(str));
+                putstr(str);
                 break;
             default:
                 c = (char)(*fmt);

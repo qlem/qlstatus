@@ -15,6 +15,8 @@
 #include <dirent.h>
 #include <regex.h>
 #include <stdbool.h>
+#include <limits.h>
+#include <errno.h>
 
 #define BASE 10
 #define TEN 10
@@ -51,7 +53,11 @@
 #define CPU_TEMP_ROUND 500
 
 /* FUNCTIONS */
-char	*int_to_str(long nb);
+size_t  v_strlen(const char *str);
+char    *v_strncpy(char *dest, const char *src, size_t n);
+long    to_int(const char *str);
+char	*to_str(long nb);
+int     putstr(const char *str);
 void    print(char *fmt, ...);
 
 // alloc a buffer
@@ -60,10 +66,10 @@ char    *alloc_buffer(size_t size);
 
 // read files / dirs
 void    free_files(char **files);
-void    close_dir(DIR *dir);
+void    close_dir(DIR *dir, const char *path);
 DIR     *open_dir(const char *path);
 char    **read_dir(DIR *dir, const char *regex);
-char    *read_file(char *path);
+char    *read_file(const char *path);
 
 // modules
 char    *get_battery();

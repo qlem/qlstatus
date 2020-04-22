@@ -4,20 +4,20 @@
 
 char    *get_battery_status() {
     char    *buffer;
-    char    *f_status = NULL;
+    char    *status = NULL;
 
     buffer = read_file(BAT_STATUS);
     if (strcmp(buffer, BAT_STATUS_CHARGING) == 0) {
-        f_status = BAT_LABEL_CHARGING;
+        status = BAT_LABEL_CHARGING;
     } else if (strcmp(buffer, BAT_STATUS_DISCHARGING) == 0) {
-        f_status = BAT_LABEL_DISCHARGING;
+        status = BAT_LABEL_DISCHARGING;
     } else if (strcmp(buffer, BAT_STATUS_FULL) == 0) {
-        f_status = BAT_LABEL_FULL;
+        status = BAT_LABEL_FULL;
     } else {
-        f_status = BAT_LABEL_UNKNOW;
+        status = BAT_LABEL_UNKNOW;
     }
     free(buffer);
-    return f_status;
+    return status;
 }
 
 char    *get_battery() {
@@ -30,14 +30,14 @@ char    *get_battery() {
 
     status = get_battery_status();
     buffer = read_file(BAT_CURRENT);
-    current = strtol(buffer, NULL, BASE);
+    current = to_int(buffer);
     free(buffer);
     buffer = read_file(BAT_MAX);
-    max = strtol(buffer, NULL, BASE);
+    max = to_int(buffer);
     free(buffer);
     value = current * CENT / max;
-    buffer = int_to_str(value);
-    token = alloc_buffer(sizeof(char) * strlen(status) + strlen(buffer) + 3);
+    buffer = to_str(value);
+    token = alloc_buffer(v_strlen(status) + v_strlen(buffer) + 3);
     sprintf(token, "%s %s%%", status, buffer);
     free(buffer);
     return token;
