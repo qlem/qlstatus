@@ -29,7 +29,7 @@ DIR     *open_dir(const char *path) {
     int     errsv = 0;
 
     if ((dir = opendir(path)) == NULL) {
-        if (errsv) {
+        if (errno) {
             errsv = errno;
             printf("Cannot open dir %s: %s\n", path, strerror(errsv));
         } else {

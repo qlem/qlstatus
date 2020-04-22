@@ -22,10 +22,7 @@ char    *resolve_asterisk(char *path) {
 
     length = v_strlen(path);
     parent = alloc_buffer(length - 1);
-    if (v_strncpy(parent, path, length - 2) == NULL) {
-        perror("Call to 'v_strncpy()' failed");
-        exit(EXIT_FAILURE);
-    }
+    v_strncpy(parent, path, length - 2);
     dir = open_dir(parent);
     files = read_dir(dir, NULL);
     while (files[++i][0]) {
@@ -83,10 +80,7 @@ char    *get_cpu_temp() {
         path = resolve_asterisk(CPU_TEMP_DIR);
     } else {
         path = alloc_buffer(v_strlen(CPU_TEMP_DIR) + 1);
-        if (v_strncpy(path, CPU_TEMP_DIR, v_strlen(CPU_TEMP_DIR)) == NULL) {
-            perror("Call to 'v_strncpy()' failed");
-            exit(EXIT_FAILURE);
-        }
+        v_strncpy(path, CPU_TEMP_DIR, v_strlen(CPU_TEMP_DIR));
     }
     dir = open_dir(path);
     files = read_dir(dir, CPU_TEMP_INPUT_PATTERN);
