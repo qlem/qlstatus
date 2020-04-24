@@ -17,8 +17,6 @@
 #include <stdbool.h>
 #include <limits.h>
 #include <errno.h>
-
-#include <sys/socket.h>
 #include <net/if.h>
 #include <netlink/netlink.h>
 #include <netlink/genl/genl.h>
