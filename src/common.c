@@ -9,11 +9,11 @@ size_t  v_strlen(const char *str) {
     return i;
 }
 
-void    v_memset(char *buffer, size_t size, char c) {
+void v_memset(void *ptr, int c, size_t size) {
     size_t  i = -1;
 
     while (++i < size) {
-        buffer[i] = c;
+        ((char *)ptr)[i] = c;
     }
 }
 
@@ -47,7 +47,7 @@ char    *alloc_buffer(size_t size) {
         printf("Call to 'malloc()' failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
-    v_memset(buffer, size, 0);
+    v_memset(buffer, 0, size);
     return buffer;
 }
 

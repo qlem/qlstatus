@@ -14,6 +14,7 @@ long        *parse_line(char *line) {
         tmp = to_int(token);
         stats[i++] = tmp;
     }
+    // TODO error handling here
     return stats;
 }
 

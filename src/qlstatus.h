@@ -18,6 +18,14 @@
 #include <limits.h>
 #include <errno.h>
 
+#include <sys/socket.h>
+#include <net/if.h>
+#include <netlink/netlink.h>
+#include <netlink/genl/genl.h>
+#include <netlink/genl/ctrl.h>
+#include <linux/nl80211.h>
+#include <linux/if_ether.h>
+
 #define TEN 10
 #define CENT 100
 #define THOUSAND 1000
@@ -34,9 +42,6 @@
 #define BAT_LABEL_DISCHARGING "bat"
 #define BAT_LABEL_UNKNOW "unk"
 
-/* VOLUME */
-// TODO
-
 /* BRIGHTNESS */
 #define BRIGHTNESS_CURRENT "/sys/class/backlight/intel_backlight/actual_brightness"
 #define BRIGHTNESS_MAX "/sys/class/backlight/intel_backlight/max_brightness"
@@ -47,9 +52,9 @@
 #define CPU_USAGE_LABEL "cpu"
 
 typedef struct      s_cpu {
-    long        prev_idle;
-    long        prev_total;
-} t_cpu;
+    long            prev_idle;
+    long            prev_total;
+}                   t_cpu;
 
 /* CPU TEMP */
 #define CPU_TEMP_DIR "/sys/devices/platform/coretemp.0/hwmon/*"
@@ -57,10 +62,37 @@ typedef struct      s_cpu {
 #define CPU_TEMP_LABEL "cpu"
 #define CPU_TEMP_ROUND 500
 
+/* WIRELESS */
+#define WIRELESS_INTERFACE "wlp2s0"
+#define NL80211 "nl80211"
+#define WLAN_EID_SSID 0
+#define WIRELESS_INFO_FLAG_HAS_ESSID (1 << 0)
+#define WIRELESS_INFO_FLAG_HAS_QUALITY (1 << 1)
+#define WIRELESS_ESSID_MAX_SIZE 16
+#define WIRELESS_UNK_ESSID_LABEL "ESSID unk"
+#define WIRELESS_UNK_QUALITY_LABEL "-"
+#define NOISE_FLOOR_DBM (-90)
+#define SIGNAL_MAX_DBM (-20)
+#define PERCENT_VALUE(value, total) ((int)((value) * 100 / (float)(total) + 0.5f))
+#define WIRELESS_PREFIX_ERROR "Wireless module error"
+
+typedef struct      s_wireless {
+    unsigned int    flags;
+    int             nl80211_id;
+    unsigned int    if_index;
+    uint8_t         bssid[ETH_ALEN];
+    char            *essid;
+    int             quality;
+    int             quality_max;
+}                   t_wireless;
+
+/* VOLUME */
+// TODO
+
 /* FUNCTIONS */
 size_t  v_strlen(const char *str);
 char    *v_strncpy(char *dest, const char *src, size_t n);
-void    v_memset(char *buffer, size_t size, char c);
+void    v_memset(void *ptr, int c, size_t size);
 long    to_int(const char *str);
 char	*to_str(long nb);
 int     putstr(const char *str);
@@ -81,5 +113,6 @@ char    *get_volume();
 char    *get_brightness();
 char    *get_cpu_usage(t_cpu *cpu);
 char    *get_cpu_temp();
+char    *get_wireless();
 
 #endif /* !QLSTATUS_H_ */
