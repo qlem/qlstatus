@@ -19,10 +19,10 @@ void        compute_tens(long nb, t_info *info) {
     info->length = 0;
     info->tens = 1;
     while (nb > 0) {
-        nb = nb / TEN;
+        nb = nb / BASE;
         info->length++;
         if (info->length > 1) {
-            info->tens = info->tens * TEN;
+            info->tens = info->tens * BASE;
         }
     }
 }
@@ -40,8 +40,8 @@ char    *to_str(long nb) {
     str = alloc_buffer(info.length + 1);
     while (info.tens > 0) {
         tmp = nb / info.tens;
-        tmp = tmp % TEN;
-        info.tens = info.tens / TEN;
+        tmp = tmp % BASE;
+        info.tens = info.tens / BASE;
         str[i] = (char)(tmp + '0');
         i++;
     }

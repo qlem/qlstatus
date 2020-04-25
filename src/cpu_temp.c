@@ -55,8 +55,8 @@ long    compute_temp(char **files, char *parent) {
         return 0;
     }
     temp = sum / i;
-    rem = temp % THOUSAND;
-    temp = temp / THOUSAND;
+    rem = temp % 1000;
+    temp = temp / 1000;
     if (rem >= CPU_TEMP_ROUND) {
        temp += 1;
     }

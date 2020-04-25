@@ -7,8 +7,9 @@ long        *parse_line(char *line) {
     char    *token;
     long    tmp;
     int     i = 0;
-
-    stats = alloc_ptr(sizeof(long) * TEN);
+    
+    // TODO realloc dynamically
+    stats = alloc_ptr(sizeof(long) * 10);
     strtok(line, " ");
     while ((token = strtok(NULL, " "))) {
         tmp = to_int(token);
@@ -55,7 +56,7 @@ long    compute_usage(t_cpu *cpu, const long *stats) {
     long    diff_total = 0;
     int     i = -1;
 
-    while (++i < TEN) {
+    while (++i < 10) {
         total += stats[i];
         if (i == 3 || i == 4) {
             idle += stats[i];
@@ -63,7 +64,7 @@ long    compute_usage(t_cpu *cpu, const long *stats) {
     }
     diff_idle = idle - cpu->prev_idle;
     diff_total = total - cpu->prev_total;
-    usage = (THOUSAND * (diff_total - diff_idle) / diff_total) / TEN;
+    usage = (1000 * (diff_total - diff_idle) / diff_total) / 10;
     cpu->prev_idle = idle;
     cpu->prev_total = total;
     return usage;

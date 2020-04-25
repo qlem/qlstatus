@@ -9,11 +9,11 @@ size_t  v_strlen(const char *str) {
     return i;
 }
 
-void v_memset(void *ptr, int c, size_t size) {
+void    v_memset(void *ptr, uint8_t c, size_t size) {
     size_t  i = -1;
 
     while (++i < size) {
-        ((char *)ptr)[i] = c;
+        ((uint8_t *)ptr)[i] = c;
     }
 }
 
@@ -64,7 +64,7 @@ void    *alloc_ptr(size_t size) {
 long    to_int(const char *str) {
     long    nb = 0;
 
-    nb = strtol(str, NULL, TEN);
+    nb = strtol(str, NULL, BASE);
     if ((nb == LONG_MIN || nb == LONG_MAX)) {
         printf("Call to 'strtol()' failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);

@@ -24,9 +24,9 @@
 #include <linux/nl80211.h>
 #include <linux/if_ether.h>
 
-#define TEN 10
-#define CENT 100
-#define THOUSAND 1000
+/* GLOBAL */
+#define BASE 10
+#define PERCENT(value, total) value * 100 / total
 
 /* BATTERY */
 #define BAT_CURRENT "/sys/class/power_supply/BAT0/energy_now"
@@ -71,7 +71,7 @@ typedef struct      s_cpu {
 #define WIRELESS_UNK_QUALITY_LABEL "-"
 #define NOISE_FLOOR_DBM (-90)
 #define SIGNAL_MAX_DBM (-20)
-#define PERCENT_VALUE(value, total) ((int)((value) * 100 / (float)(total) + 0.5f))
+#define SIGNAL_PERCENT_VALUE(value, total) ((int)((value) * 100 / (float)(total) + 0.5f))
 #define WIRELESS_PREFIX_ERROR "Wireless module error"
 
 typedef struct      s_wireless {
@@ -90,7 +90,7 @@ typedef struct      s_wireless {
 /* FUNCTIONS */
 size_t  v_strlen(const char *str);
 char    *v_strncpy(char *dest, const char *src, size_t n);
-void    v_memset(void *ptr, int c, size_t size);
+void    v_memset(void *ptr, uint8_t c, size_t size);
 long    to_int(const char *str);
 char	*to_str(long nb);
 int     putstr(const char *str);

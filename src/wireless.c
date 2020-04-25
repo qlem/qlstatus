@@ -20,10 +20,7 @@ static void     find_ssid(uint8_t *ies, uint32_t ies_len, uint8_t **ssid, uint32
         ies_len -= ies[1] + 2;
         ies += ies[1] + 2;
     }
-    if (ies_len < 2) {
-        return;
-    }
-    if (ies_len < (uint32_t)(2 + ies[1])) {
+    if (ies_len < 2 || ies_len < (uint32_t)(2 + ies[1])) {
         return;
     }
     *ssid_len = ies[1];
@@ -38,9 +35,7 @@ static int      station_callback(struct nl_msg *msg, void *data) {
     int                 attrs_length;
     struct nlattr       *attrs_head;
     struct nlattr       *s_info[NL80211_STA_INFO_MAX + 1];
-    static struct       nla_policy stats_policy[NL80211_STA_INFO_MAX + 1] = {
-            [NL80211_STA_INFO_RX_BITRATE] = {.type = NLA_NESTED},
-    };
+    static struct       nla_policy stats_policy[NL80211_STA_INFO_MAX + 1];
 
     attrs_head = genlmsg_attrdata(gnlh, 0);
     attrs_length = genlmsg_attrlen(gnlh, 0);
@@ -131,7 +126,7 @@ static int      send_for_station(t_wireless *wireless, struct nl_sock *socket) {
         return -NLE_RANGE;
     }
     if ((msg = nlmsg_alloc()) == NULL) {
-        printf("%s: unable to allocate memory for Netlink message\n", WIRELESS_PREFIX_ERROR);
+        printf("%s: unable to alloc memory for Netlink message\n", WIRELESS_PREFIX_ERROR);
         return -1;
     }
     if (!genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, wireless->nl80211_id, 0, NLM_F_DUMP, NL80211_CMD_GET_STATION, 0)) {
@@ -175,7 +170,7 @@ static int      send_for_scan(t_wireless *wireless, struct nl_sock *socket) {
         return -1;
     }
     if ((msg = nlmsg_alloc()) == NULL) {
-        printf("%s: unable to allocate memory for Netlink message\n", WIRELESS_PREFIX_ERROR);
+        printf("%s: unable to alloc memory for Netlink message\n", WIRELESS_PREFIX_ERROR);
         return -1;
     }
     if (!genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, wireless->nl80211_id, 0, NLM_F_DUMP, NL80211_CMD_GET_SCAN, 0)) {
@@ -203,14 +198,14 @@ char        *get_quality_buffer(t_wireless *wireless) {
 
     if (wireless->flags & WIRELESS_INFO_FLAG_HAS_QUALITY) {
         if (wireless->quality_max) {
-            quality = PERCENT_VALUE(wireless->quality, wireless->quality_max);
+            quality = SIGNAL_PERCENT_VALUE(wireless->quality, wireless->quality_max);
         } else {
             quality = wireless->quality;
         }
         buffer = to_str(quality);
     } else {
         buffer = alloc_buffer(v_strlen(WIRELESS_UNK_QUALITY_LABEL) + 1);
-        buffer = v_strncpy(buffer, WIRELESS_UNK_ESSID_LABEL, v_strlen(WIRELESS_UNK_ESSID_LABEL));
+        buffer = v_strncpy(buffer, WIRELESS_UNK_QUALITY_LABEL, v_strlen(WIRELESS_UNK_QUALITY_LABEL));
     }
     return buffer;
 }
@@ -236,7 +231,7 @@ char        *get_wireless() {
 
     socket = nl_socket_alloc();
     if (genl_connect(socket) != 0) {
-        printf("%s: unable to allocate memory for Netlink socket\n", WIRELESS_PREFIX_ERROR);
+        printf("%s: unable to alloc memory for Netlink socket\n", WIRELESS_PREFIX_ERROR);
         exit(EXIT_FAILURE);
     }
     v_memset(&wireless, 0, sizeof(t_wireless));
