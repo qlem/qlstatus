@@ -61,18 +61,17 @@ typedef struct      s_cpu {
 #define CPU_TEMP_ROUND 500
 
 /* WIRELESS */
-#define WIRELESS_INTERFACE "wlp2s0"
 #define NL80211 "nl80211"
 #define WLAN_EID_SSID 0
-#define WIRELESS_INFO_FLAG_HAS_ESSID (1 << 0)
-#define WIRELESS_INFO_FLAG_HAS_QUALITY (1 << 1)
+#define WIRELESS_INTERFACE "wlp2s0"
+#define WIRELESS_FLAG_HAS_ESSID (1 << 0)
+#define WIRELESS_FLAG_HAS_SIGNAL (1 << 1)
 #define WIRELESS_ESSID_MAX_SIZE 16
 #define WIRELESS_UNK_ESSID_LABEL "ESSID unk"
 #define WIRELESS_UNK_QUALITY_LABEL "-"
+#define WIRELESS_PREFIX_ERROR "Wireless module error"
 #define NOISE_FLOOR_DBM (-90)
 #define SIGNAL_MAX_DBM (-20)
-#define SIGNAL_PERCENT_VALUE(value, total) ((int)((value) * 100 / (float)(total) + 0.5f))
-#define WIRELESS_PREFIX_ERROR "Wireless module error"
 
 typedef struct      s_wireless {
     unsigned int    flags;
@@ -80,8 +79,7 @@ typedef struct      s_wireless {
     unsigned int    if_index;
     uint8_t         bssid[ETH_ALEN];
     char            *essid;
-    int             quality;
-    int             quality_max;
+    int             signal;
 }                   t_wireless;
 
 /* VOLUME */

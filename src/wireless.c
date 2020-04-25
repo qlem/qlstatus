@@ -2,6 +2,7 @@
 
 #include "qlstatus.h"
 
+// Based on NetworkManager/src/platform/wifi/wifi-utils-nl80211.c
 static uint32_t     nl80211_xbm_to_percent(int32_t xbm, int32_t divisor) {
     xbm /= divisor;
     if (xbm < NOISE_FLOOR_DBM) {
@@ -13,6 +14,7 @@ static uint32_t     nl80211_xbm_to_percent(int32_t xbm, int32_t divisor) {
     return 100 - 70 * (((float)SIGNAL_MAX_DBM - (float)xbm) / ((float)SIGNAL_MAX_DBM - (float)NOISE_FLOOR_DBM));
 }
 
+// Based on NetworkManager/src/platform/wifi/wifi-utils-nl80211.c
 static void     find_ssid(uint8_t *ies, uint32_t ies_len, uint8_t **ssid, uint32_t *ssid_len) {
     *ssid = NULL;
     *ssid_len = 0;
@@ -28,7 +30,7 @@ static void     find_ssid(uint8_t *ies, uint32_t ies_len, uint8_t **ssid, uint32
 }
 
 static int      station_callback(struct nl_msg *msg, void *data) {
-    int                 sig_qlty = 0;
+    int                 signal = 0;
     t_wireless          *wireless = data;
     struct nlattr       *tb[NL80211_ATTR_MAX + 1];
     struct genlmsghdr   *gnlh = nlmsg_data(nlmsg_hdr(msg));
@@ -49,10 +51,9 @@ static int      station_callback(struct nl_msg *msg, void *data) {
         return NL_SKIP;
     }
     if (s_info[NL80211_STA_INFO_SIGNAL] != NULL) {
-        wireless->flags |= WIRELESS_INFO_FLAG_HAS_QUALITY;
-        sig_qlty = (int8_t)nla_get_u8(s_info[NL80211_STA_INFO_SIGNAL]);
-        wireless->quality = nl80211_xbm_to_percent(sig_qlty, 1);
-        wireless->quality_max = 100;
+        wireless->flags |= WIRELESS_FLAG_HAS_SIGNAL;
+        signal = (int8_t)nla_get_u8(s_info[NL80211_STA_INFO_SIGNAL]);
+        wireless->signal = nl80211_xbm_to_percent(signal, 1);
     }
     return NL_SKIP;
 }
@@ -104,7 +105,7 @@ static int      scan_callback(struct nl_msg *msg, void *data) {
         bss_ies_length = nla_len(bss[NL80211_BSS_INFORMATION_ELEMENTS]);
         find_ssid(bss_ies, bss_ies_length, &ssid, &ssid_len);
         if (ssid && ssid_len) {
-            wireless->flags |= WIRELESS_INFO_FLAG_HAS_ESSID;
+            wireless->flags |= WIRELESS_FLAG_HAS_ESSID;
             if (ssid_len > WIRELESS_ESSID_MAX_SIZE) {
                 wireless->essid = alloc_buffer(WIRELESS_ESSID_MAX_SIZE + 1);
                 v_strncpy(wireless->essid, (char *)ssid, WIRELESS_ESSID_MAX_SIZE);
@@ -194,15 +195,9 @@ error:
 
 char        *get_quality_buffer(t_wireless *wireless) {
     char    *buffer;
-    int     quality;
 
-    if (wireless->flags & WIRELESS_INFO_FLAG_HAS_QUALITY) {
-        if (wireless->quality_max) {
-            quality = SIGNAL_PERCENT_VALUE(wireless->quality, wireless->quality_max);
-        } else {
-            quality = wireless->quality;
-        }
-        buffer = to_str(quality);
+    if (wireless->flags & WIRELESS_FLAG_HAS_SIGNAL) {
+        buffer = to_str(wireless->signal);
     } else {
         buffer = alloc_buffer(v_strlen(WIRELESS_UNK_QUALITY_LABEL) + 1);
         buffer = v_strncpy(buffer, WIRELESS_UNK_QUALITY_LABEL, v_strlen(WIRELESS_UNK_QUALITY_LABEL));
@@ -213,7 +208,7 @@ char        *get_quality_buffer(t_wireless *wireless) {
 char        *get_essid_buffer(t_wireless *wireless) {
     char    *buffer;
 
-    if (wireless->flags & WIRELESS_INFO_FLAG_HAS_ESSID) {
+    if (wireless->flags & WIRELESS_FLAG_HAS_ESSID) {
         buffer = wireless->essid;
     } else {
         buffer = alloc_buffer(v_strlen(WIRELESS_UNK_ESSID_LABEL) + 1);
