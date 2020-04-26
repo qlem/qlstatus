@@ -34,14 +34,12 @@ static int      station_callback(struct nl_msg *msg, void *data) {
     t_wireless          *wireless = data;
     struct nlattr       *tb[NL80211_ATTR_MAX + 1];
     struct genlmsghdr   *gnlh = nlmsg_data(nlmsg_hdr(msg));
-    int                 attrs_length;
-    struct nlattr       *attrs_head;
+    struct nlattr       *attr = genlmsg_attrdata(gnlh, 0);
+    int                 attrlen = genlmsg_attrlen(gnlh, 0);
     struct nlattr       *s_info[NL80211_STA_INFO_MAX + 1];
     static struct       nla_policy stats_policy[NL80211_STA_INFO_MAX + 1];
 
-    attrs_head = genlmsg_attrdata(gnlh, 0);
-    attrs_length = genlmsg_attrlen(gnlh, 0);
-    if (nla_parse(tb, NL80211_ATTR_MAX, attrs_head, attrs_length, NULL) < 0) {
+    if (nla_parse(tb, NL80211_ATTR_MAX, attr, attrlen, NULL) < 0) {
         return NL_SKIP;
     }
     if (tb[NL80211_ATTR_STA_INFO] == NULL) {
@@ -64,10 +62,10 @@ static int      scan_callback(struct nl_msg *msg, void *data) {
     uint32_t            ssid_len;
     uint32_t            status;
     uint8_t             *bss_ies;
-    uint32_t            bss_ies_length;
-    int                 attrs_length;
-    struct genlmsghdr   *gnlh;
-    struct nlattr       *attrs_head;
+    uint32_t            bss_ies_len;
+    struct genlmsghdr   *gnlh = nlmsg_data(nlmsg_hdr(msg));
+    struct nlattr       *attr = genlmsg_attrdata(gnlh, 0);
+    int                 attrlen = genlmsg_attrlen(gnlh, 0);
     struct nlattr       *tb[NL80211_ATTR_MAX + 1];
     struct nlattr       *bss[NL80211_BSS_MAX + 1];
     struct nla_policy   bss_policy[NL80211_BSS_MAX + 1] = {
@@ -76,10 +74,7 @@ static int      scan_callback(struct nl_msg *msg, void *data) {
         [NL80211_BSS_STATUS] = {.type = NLA_U32},
     };
 
-    gnlh = nlmsg_data(nlmsg_hdr(msg));
-    attrs_head = genlmsg_attrdata(gnlh, 0);
-    attrs_length = genlmsg_attrlen(gnlh, 0);
-    if (nla_parse(tb, NL80211_ATTR_MAX, attrs_head, attrs_length, NULL) < 0) {
+    if (nla_parse(tb, NL80211_ATTR_MAX, attr, attrlen, NULL) < 0) {
         return NL_SKIP;
     }
     if (tb[NL80211_ATTR_BSS] == NULL) {
@@ -102,8 +97,8 @@ static int      scan_callback(struct nl_msg *msg, void *data) {
     memcpy(wireless->bssid, nla_data(bss[NL80211_BSS_BSSID]), ETH_ALEN);
     if (bss[NL80211_BSS_INFORMATION_ELEMENTS]) {
         bss_ies = nla_data(bss[NL80211_BSS_INFORMATION_ELEMENTS]);
-        bss_ies_length = nla_len(bss[NL80211_BSS_INFORMATION_ELEMENTS]);
-        find_ssid(bss_ies, bss_ies_length, &ssid, &ssid_len);
+        bss_ies_len = nla_len(bss[NL80211_BSS_INFORMATION_ELEMENTS]);
+        find_ssid(bss_ies, bss_ies_len, &ssid, &ssid_len);
         if (ssid && ssid_len) {
             wireless->flags |= WIRELESS_FLAG_HAS_ESSID;
             if (ssid_len > WIRELESS_ESSID_MAX_SIZE) {
