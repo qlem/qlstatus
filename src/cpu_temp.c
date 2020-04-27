@@ -61,7 +61,7 @@ long    compute_temp(char **files, char *parent) {
     temp = sum / i;
     rem = temp % 1000;
     temp = temp / 1000;
-    if (rem >= CPU_TEMP_ROUND) {
+    if (rem >= CPU_TEMP_ROUND_THRESHOLD) {
        temp += 1;
     }
     return temp;

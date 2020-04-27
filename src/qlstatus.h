@@ -52,6 +52,7 @@
 /* CPU USAGE */
 #define PROC_STAT "/proc/stat"
 #define CPU_USAGE_LABEL "cpu"
+#define CPU_STATS_SIZE 8
 
 typedef struct      s_cpu {
     long            prev_idle;
@@ -62,7 +63,7 @@ typedef struct      s_cpu {
 #define CPU_TEMP_DIR "/sys/devices/platform/coretemp.0/hwmon/*"
 #define CPU_TEMP_INPUT_PATTERN "^temp[2-5]_input$"
 #define CPU_TEMP_LABEL "cpu"
-#define CPU_TEMP_ROUND 500
+#define CPU_TEMP_ROUND_THRESHOLD 500
 
 /* WIRELESS */
 #define NL80211 "nl80211"

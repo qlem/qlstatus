@@ -9,17 +9,22 @@
 long        *parse_line(char *line) {
     long    *stats;
     char    *token;
-    long    tmp;
+    long    stat;
     int     i = 0;
 
-    // TODO realloc dynamically
-    stats = alloc_ptr(sizeof(long) * 10);
+    stats = alloc_ptr(sizeof(long) * CPU_STATS_SIZE);
     strtok(line, " ");
     while ((token = strtok(NULL, " "))) {
-        tmp = to_int(token);
-        stats[i++] = tmp;
+        if (i > CPU_STATS_SIZE - 1) {
+            return stats;
+        }
+        stat = to_int(token);
+        stats[i++] = stat;
     }
-    // TODO error handling here
+    if (i < CPU_STATS_SIZE) {
+        free(stats);
+        return NULL;
+    }
     return stats;
 }
 
@@ -60,7 +65,7 @@ long    compute_usage(t_cpu *cpu, const long *stats) {
     long    diff_total = 0;
     int     i = -1;
 
-    while (++i < 10) {
+    while (++i < CPU_STATS_SIZE) {
         total += stats[i];
         if (i == 3 || i == 4) {
             idle += stats[i];
@@ -68,7 +73,7 @@ long    compute_usage(t_cpu *cpu, const long *stats) {
     }
     diff_idle = idle - cpu->prev_idle;
     diff_total = total - cpu->prev_total;
-    usage = (1000 * (diff_total - diff_idle) / diff_total) / 10;
+    usage = (100 * (diff_total - diff_idle) / diff_total);
     cpu->prev_idle = idle;
     cpu->prev_total = total;
     return usage;
@@ -82,7 +87,11 @@ char    *get_cpu_usage(t_cpu *cpu) {
     long    usage;
 
     line = get_line();
-    stats = parse_line(line);
+    if ((stats = parse_line(line)) == NULL) {
+        free(line);
+        printf("No enough stats to compute cpu usage\n");
+        exit(EXIT_FAILURE);
+    }
     usage = compute_usage(cpu, stats);
     buffer = to_str(usage);
     token = alloc_buffer(sizeof(char) * (v_strlen(buffer) +
