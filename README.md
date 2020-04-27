@@ -1,5 +1,5 @@
 # qlstatus
-Small program for generating output stream for status bar of window managers like [spectrwm](https://github.com/conformal/spectrwm). Written in C. Only for Linux based distributions.
+A small program for generating an output stream for status bar of window managers like [spectrwm](https://github.com/conformal/spectrwm). Written in C. Only for Linux based distributions.
 
 ---
 ![alt text](https://raw.githubusercontent.com/qlem/qlstatus/master/screenshot.png)
