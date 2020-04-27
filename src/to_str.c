@@ -1,4 +1,8 @@
-// By Clément Dommerc
+/*
+ * Copyright (c) 2020 Clément Dommerc <clement.dommerc@gmail.com>
+ * MIT License
+ *
+ */
 
 # include "qlstatus.h"
 

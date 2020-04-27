@@ -1,4 +1,8 @@
-// By Clément Dommerc
+/*
+ * Copyright (c) 2020 Clément Dommerc <clement.dommerc@gmail.com>
+ * MIT License
+ *
+ */
 
 #include "qlstatus.h"
 
@@ -7,7 +11,7 @@ long        *parse_line(char *line) {
     char    *token;
     long    tmp;
     int     i = 0;
-    
+
     // TODO realloc dynamically
     stats = alloc_ptr(sizeof(long) * 10);
     strtok(line, " ");
