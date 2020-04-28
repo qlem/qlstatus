@@ -55,9 +55,6 @@ long    compute_temp(char **files, char *parent) {
         free(path);
         free(buffer);
     }
-    if (!sum) {
-        return 0;
-    }
     temp = sum / i;
     rem = temp % 1000;
     temp = temp / 1000;

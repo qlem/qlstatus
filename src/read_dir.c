@@ -16,24 +16,32 @@ void    free_files(char **files) {
     free(files);
 }
 
-void    close_dir(DIR *dir, const char *path) {
-    if (closedir(dir) == -1) {
-        printf("Cannot close dir '%s': %s\n", path, strerror(errno));
+bool        match_pattern(const char *regex, const char *file) {
+    regex_t         preg;
+    char            *buffer = NULL;
+    size_t          size = 0;
+    int             errcode;
+
+    if (regex && (errcode = regcomp(&preg, regex, REG_EXTENDED)) != 0) {
+        size = regerror(errcode, &preg, buffer, size);
+        buffer = alloc_buffer(size + 1);
+        regerror(errcode, &preg, buffer, size);
+        printf("Cannot compile regex: %s\n", buffer);
+        free(buffer);
         exit(EXIT_FAILURE);
     }
-}
-
-DIR     *open_dir(const char *path) {
-    DIR     *dir;
-
-    if ((dir = opendir(path)) == NULL) {
-        printf("Cannot open dir '%s': %s\n", path, strerror(errno));
-        exit(EXIT_FAILURE);
+    if (regexec(&preg, file, 0, NULL, 0) == 0) {
+        regfree(&preg);
+        return true;
     }
-    return dir;
+    regfree(&preg);
+    return false;
 }
 
-char    **add_file(char **files, const char *file, size_t *size) {
+char    **add_file(char **files, size_t *size, const char *file, const char *regex) {
+    if (regex && !match_pattern(regex, file)) {
+        return files;
+    }
     free(files[*size - 1]);
     if ((files = realloc(files, sizeof(char *) * ++(*size))) == NULL) {
         printf("Call to 'realloc()' failed: %s\n", strerror(errno));
@@ -45,51 +53,28 @@ char    **add_file(char **files, const char *file, size_t *size) {
     return files;
 }
 
-void    compile_regex(regex_t *preg, const char *regex, int flags) {
-    char            *buffer = NULL;
-    size_t          size = 0;
-    int             errcode;
-
-    if (regex && (errcode = regcomp(preg, regex, flags)) != 0) {
-        size = regerror(errcode, preg, buffer, size);
-        buffer = alloc_buffer(size + 1);
-        regerror(errcode, preg, buffer, size);
-        printf("Could not compile regex: %s\n", buffer);
-        free(buffer);
-        exit(EXIT_FAILURE);
-    }
-}
-
-char    **read_dir(const char *path, const char *regex) {
+char                **read_dir(const char *path, const char *regex) {
+    char            **files = NULL;
+    size_t          size = 1;
     struct dirent   *s_dir;
     DIR             *dir;
-    char            **files;
-    regex_t         preg;
-    size_t          size;
 
-    if (regex) {
-        compile_regex(&preg, regex, REG_EXTENDED);
+    if ((dir = opendir(path)) == NULL) {
+        printf("Cannot open dir '%s': %s\n", path, strerror(errno));
+        exit(EXIT_FAILURE);
     }
     files = alloc_ptr(sizeof(char *));
     files[0] = alloc_buffer(1);
-    size = 1;
-    dir = open_dir(path);
     while ((s_dir = readdir(dir)) != NULL) {
-        if (regex) {
-            if (regexec(&preg, s_dir->d_name, 0, NULL, 0) == 0) {
-                files = add_file(files, s_dir->d_name, &size);
-            }
-        } else {
-            files = add_file(files, s_dir->d_name, &size);
-        }
+        files = add_file(files, &size, s_dir->d_name, regex);
     }
     if (errno) {
         printf("Cannot read dir '%s': %s\n", path, strerror(errno));
         exit(EXIT_FAILURE);
     }
-    close_dir(dir, path);
-    if (regex) {
-        regfree(&preg);
+    if (closedir(dir) == -1) {
+        printf("Cannot close dir '%s': %s\n", path, strerror(errno));
+        exit(EXIT_FAILURE);
     }
     return files;
 }
