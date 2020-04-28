@@ -28,6 +28,13 @@ long        *parse_line(char *line) {
     return stats;
 }
 
+void        close_stream(FILE *stream) {
+    if (fclose(stream) != 0) {
+        printf("Cannot close file '%s': %s\n", PROC_STAT, strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+}
+
 char        *get_line() {
     FILE    *stream;
     char    **lines;
@@ -42,18 +49,22 @@ char        *get_line() {
     sizes = alloc_ptr(sizeof(size_t));
     lines[0] = NULL;
     sizes[0] = 0;
-    if ((getline(lines, sizes, stream)) == -1 && errno) {
-        printf("Cannot read file '%s': %s\n", PROC_STAT, strerror(errno));
+    if (getline(lines, sizes, stream) == -1) {
+        if (errno) {
+            printf("Cannot read file '%s': %s\n", PROC_STAT, strerror(errno));
+        } else {
+            printf("Unable to compute cpu usage: '%s' is empty\n", PROC_STAT);
+        }
+        free(lines);
+        free(sizes);
+        close_stream(stream);
         exit(EXIT_FAILURE);
     }
-    lines[0][v_strlen(lines[0]) - 1] = 0;
+    lines[0][sizes[0] - 1] = 0;
     line = lines[0];
     free(lines);
     free(sizes);
-    if (fclose(stream) != 0) {
-        printf("Cannot close file '%s': %s\n", PROC_STAT, strerror(errno));
-        exit(EXIT_FAILURE);
-    }
+    close_stream(stream);
     return line;
 }
 
