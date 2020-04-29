@@ -16,28 +16,6 @@ void    free_files(char **files) {
     free(files);
 }
 
-bool        match_pattern(const char *regex, const char *file) {
-    regex_t         preg;
-    char            *buffer = NULL;
-    size_t          size = 0;
-    int             errcode;
-
-    if (regex && (errcode = regcomp(&preg, regex, REG_EXTENDED)) != 0) {
-        size = regerror(errcode, &preg, buffer, size);
-        buffer = alloc_buffer(size + 1);
-        regerror(errcode, &preg, buffer, size);
-        printf("Cannot compile regex: %s\n", buffer);
-        free(buffer);
-        exit(EXIT_FAILURE);
-    }
-    if (regexec(&preg, file, 0, NULL, 0) == 0) {
-        regfree(&preg);
-        return true;
-    }
-    regfree(&preg);
-    return false;
-}
-
 char    **add_file(char **files, size_t *size, const char *file, const char *regex) {
     if (regex && !match_pattern(regex, file)) {
         return files;

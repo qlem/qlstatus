@@ -29,6 +29,7 @@
 #include <linux/if_ether.h>
 
 /* GLOBAL */
+#define TOKEN_SIZE 10
 #define BASE 10
 #define PERCENT(value, total) value * 100 / total
 
@@ -51,6 +52,7 @@
 
 /* CPU USAGE */
 #define PROC_STAT "/proc/stat"
+#define CPU_STATS_PATTERN "^cpu[ \t]+(([0-9]+ ){9}[0-9]+)$"
 #define CPU_USAGE_LABEL "cpu"
 #define CPU_STATS_SIZE 8
 
@@ -87,6 +89,21 @@ typedef struct      s_wireless {
     int             signal;
 }                   t_wireless;
 
+/* MEMORY */
+#define PROC_MEMINFO "/proc/meminfo"
+#define MEM_TOTAL_PATTERN "^MemTotal:[ \t]+([0-9]+) kB$"
+#define MEM_FREE_PATTERN "^MemFree:[ \t]+([0-9]+) kB$"
+#define MEM_BUFFERS_PATTERN "^Buffers:[ \t]+([0-9]+) kB$"
+#define MEM_CACHED_PATTERN "^Cached:[ \t]+([0-9]+) kB$"
+#define MEM_LABEL "mem"
+
+typedef struct  s_meminfo {
+    long        total;
+    long        free;
+    long        buffers;
+    long        cached;
+}               t_meminfo;
+
 /* VOLUME */
 // TODO
 
@@ -99,14 +116,20 @@ char	*to_str(long nb);
 int     putstr(const char *str);
 void    print(char *fmt, ...);
 
+// regex
+bool    match_pattern(const char *regex, const char *str);
+char    *substring(const char *regex, const char *str);
+
 // memory allocation
 char    *alloc_buffer(size_t size);
 void    *alloc_ptr(size_t size);
 
 // read files / dirs
+void    close_stream(FILE *stream, const char *file);
+FILE    *open_stream(const char *file);
 void    free_files(char **files);
 char    **read_dir(const char *path, const char *regex);
-char    *read_file(const char *path);
+char    *read_file(const char *file);
 
 // modules
 char    *get_battery();
@@ -115,5 +138,6 @@ char    *get_brightness();
 char    *get_cpu_usage(t_cpu *cpu);
 char    *get_cpu_temp();
 char    *get_wireless();
+char    *get_memory();
 
 #endif /* !QLSTATUS_H_ */

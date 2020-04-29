@@ -24,6 +24,7 @@ int         main() {
     char    *cpu_temp;
     char    *cpu_usage;
     char    *wireless;
+    char    *memory;
 
     cpu = alloc_ptr(sizeof(t_cpu));
     cpu->prev_idle = 0;
@@ -34,12 +35,14 @@ int         main() {
         cpu_temp = get_cpu_temp();
         cpu_usage = get_cpu_usage(cpu);
         wireless = get_wireless();
-        print("t  t  t  t  t\n", cpu_usage, cpu_temp, brightness, battery, wireless);
+        memory = get_memory();
+        print("t  t  t  t  t  t\n", cpu_usage, cpu_temp, memory, brightness, battery, wireless);
         free(battery);
         free(brightness);
         free(cpu_temp);
         free(cpu_usage);
         free(wireless);
+        free(memory);
         v_sleep();
     }
     free(cpu);

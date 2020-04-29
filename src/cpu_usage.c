@@ -6,68 +6,6 @@
 
 #include "qlstatus.h"
 
-long        *parse_line(char *line) {
-    long    *stats;
-    char    *token;
-    long    stat;
-    int     i = 0;
-
-    stats = alloc_ptr(sizeof(long) * CPU_STATS_SIZE);
-    strtok(line, " ");
-    while ((token = strtok(NULL, " "))) {
-        if (i > CPU_STATS_SIZE - 1) {
-            return stats;
-        }
-        stat = to_int(token);
-        stats[i++] = stat;
-    }
-    if (i < CPU_STATS_SIZE) {
-        free(stats);
-        return NULL;
-    }
-    return stats;
-}
-
-void        close_stream(FILE *stream) {
-    if (fclose(stream) != 0) {
-        printf("Cannot close file '%s': %s\n", PROC_STAT, strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-}
-
-char        *get_line() {
-    FILE    *stream;
-    char    **lines;
-    size_t  *sizes;
-    char    *line;
-
-    if ((stream = fopen(PROC_STAT, "r")) == NULL) {
-        printf("Cannot open file '%s': %s\n", PROC_STAT, strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-    lines = alloc_ptr(sizeof(char *));
-    sizes = alloc_ptr(sizeof(size_t));
-    lines[0] = NULL;
-    sizes[0] = 0;
-    if (getline(lines, sizes, stream) == -1) {
-        if (errno) {
-            printf("Cannot read file '%s': %s\n", PROC_STAT, strerror(errno));
-        } else {
-            printf("Unable to compute cpu usage: '%s' is empty\n", PROC_STAT);
-        }
-        free(lines);
-        free(sizes);
-        close_stream(stream);
-        exit(EXIT_FAILURE);
-    }
-    lines[0][sizes[0] - 1] = 0;
-    line = lines[0];
-    free(lines);
-    free(sizes);
-    close_stream(stream);
-    return line;
-}
-
 long    compute_usage(t_cpu *cpu, const long *stats) {
     long    idle = 0;
     long    total = 0;
@@ -84,32 +22,68 @@ long    compute_usage(t_cpu *cpu, const long *stats) {
     }
     diff_idle = idle - cpu->prev_idle;
     diff_total = total - cpu->prev_total;
-    usage = (100 * (diff_total - diff_idle) / diff_total);
+    usage = PERCENT((diff_total - diff_idle), diff_total);
     cpu->prev_idle = idle;
     cpu->prev_total = total;
     return usage;
 }
 
+long        *parse_cpu_stats(char *line) {
+    long    *stats = NULL; 
+    char    *token;
+    long    stat;
+    int     i = 0;
+
+    stats = alloc_ptr(sizeof(long) * CPU_STATS_SIZE);
+    while ((token = strtok(line, " "))) {
+        line = NULL;
+        if (i > CPU_STATS_SIZE - 1) {
+            return stats;
+        }
+        stat = to_int(token);
+        stats[i++] = stat;
+    }
+    return stats;
+}
+
+char        *get_cpu_stats() {
+    FILE    *stream;
+    size_t  size = 0;
+    char    *line = NULL;
+    char    *stats = NULL;
+
+    stream = open_stream(PROC_STAT);
+    if (getline(&line, &size, stream) == -1) {
+        if (errno) {
+            printf("Cannot read file '%s': %s\n", PROC_STAT, strerror(errno));
+        } else {
+            printf("Unable to get cpu stats\n");
+        }
+        close_stream(stream, PROC_STAT);
+        exit(EXIT_FAILURE);
+    }
+    line[v_strlen(line) - 1] = 0;
+    stats = substring(CPU_STATS_PATTERN, line);
+    free(line);
+    close_stream(stream, PROC_STAT);
+    return stats;
+}
+
 char    *get_cpu_usage(t_cpu *cpu) {
     char    *token;
-    char    *buffer;
-    char    *line;
+    char    *rstats;
     long    *stats;
     long    usage;
 
-    line = get_line();
-    if ((stats = parse_line(line)) == NULL) {
-        free(line);
-        printf("No enough stats to compute cpu usage\n");
+    if ((rstats = get_cpu_stats()) == NULL) {
+        printf("Unable to get cpu stats\n");
         exit(EXIT_FAILURE);
     }
+    stats = parse_cpu_stats(rstats);
     usage = compute_usage(cpu, stats);
-    buffer = to_str(usage);
-    token = alloc_buffer(sizeof(char) * (v_strlen(buffer) +
-                v_strlen(CPU_USAGE_LABEL) + 3));
-    sprintf(token, "%s %s%%", CPU_USAGE_LABEL, buffer);
+    token = alloc_buffer(TOKEN_SIZE);
+    snprintf(token, TOKEN_SIZE, "%s %ld%%", CPU_USAGE_LABEL, usage);
+    free(rstats);
     free(stats);
-    free(line);
-    free(buffer);
     return token;
 }

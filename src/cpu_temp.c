@@ -68,7 +68,6 @@ char    *get_cpu_temp() {
     char        *path;
     char        **files;
     char        *token;
-    char        *buffer;
     long        temp = 0;
 
     if (has_asterisk(CPU_TEMP_DIR)) {
@@ -85,11 +84,9 @@ char    *get_cpu_temp() {
         exit(EXIT_FAILURE);
     }
     temp = compute_temp(files, path);
-    buffer = to_str(temp);
-    token = alloc_buffer(v_strlen(buffer) + v_strlen(CPU_TEMP_LABEL) + 4);
-    sprintf(token, "%s %s°", CPU_TEMP_LABEL, buffer);
+    token = alloc_buffer(TOKEN_SIZE);
+    snprintf(token, TOKEN_SIZE, "%s %ld°", CPU_TEMP_LABEL, temp);
     free_files(files);
-    free(buffer);
     free(path);
     return token;
 }

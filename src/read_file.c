@@ -6,6 +6,23 @@
 
 #include "qlstatus.h"
 
+void        close_stream(FILE *stream, const char *file) {
+    if (fclose(stream) != 0) {
+        printf("Cannot close file '%s': %s\n", file, strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+}
+
+FILE        *open_stream(const char *file) {
+    FILE    *stream;
+
+    if ((stream = fopen(file, "r")) == NULL) {
+        printf("Cannot open file '%s': %s\n", file, strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    return stream;
+}
+
 off_t   file_len(const char *path) {
     struct stat     info;
 
@@ -16,23 +33,23 @@ off_t   file_len(const char *path) {
     return info.st_size;
 }
 
-char        *read_file(const char *path) {
+char        *read_file(const char *file) {
     int     fd;
     char    *buffer;
     off_t   size;
 
-    if ((fd = open(path, O_RDONLY)) == -1) {
-        printf("Cannot open file '%s': %s\n", path, strerror(errno));
+    if ((fd = open(file, O_RDONLY)) == -1) {
+        printf("Cannot open file '%s': %s\n", file, strerror(errno));
         exit(EXIT_FAILURE);
     }
-    size = file_len(path);
+    size = file_len(file);
     buffer = alloc_buffer(size + 1);
     if (read(fd, buffer, size) == -1) {
-        printf("Cannot read file '%s': %s\n", path, strerror(errno));
+        printf("Cannot read file '%s': %s\n", file, strerror(errno));
         exit(EXIT_FAILURE);
     }
     if (close(fd) == -1) {
-        printf("Cannot close file '%s': %s\n", path, strerror(errno));
+        printf("Cannot close file '%s': %s\n", file, strerror(errno));
         exit(EXIT_FAILURE);
     }
     return buffer;

@@ -12,11 +12,13 @@ add_executable(qlstatus
     src/cpu_temp.c
     src/cpu_usage.c
     src/wireless.c
+    src/memory.c
     src/print.c
     src/to_str.c
     src/read_file.c
     src/read_dir.c
     src/common.c
+    src/regex.c
     src/qlstatus.h)
 
 target_include_directories(qlstatus PRIVATE /usr/include/libnl3)
