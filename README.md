@@ -10,6 +10,7 @@ A small program for generating an output stream for the status bar of window man
 - brightness level in percent
 - cpu usage in percent
 - cpu temperature in degree Celsius
+- used memory in percent
 - current audio volume in percent (not yet available)
 
 ## Configuration
