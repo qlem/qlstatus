@@ -74,7 +74,7 @@ typedef struct      s_cpu {
 #define WIRELESS_FLAG_HAS_ESSID (1 << 0)
 #define WIRELESS_FLAG_HAS_SIGNAL (1 << 1)
 #define WIRELESS_ESSID_MAX_SIZE 16
-#define WIRELESS_UNK_ESSID_LABEL "ESSID unk"
+#define WIRELESS_UNK_ESSID_LABEL "SSID unk"
 #define WIRELESS_UNK_QUALITY_LABEL "-"
 #define WIRELESS_PREFIX_ERROR "Wireless module error"
 #define NOISE_FLOOR_DBM (-90)
@@ -95,6 +95,7 @@ typedef struct      s_wireless {
 #define MEM_FREE_PATTERN "^MemFree:[ \t]+([0-9]+) kB$"
 #define MEM_BUFFERS_PATTERN "^Buffers:[ \t]+([0-9]+) kB$"
 #define MEM_CACHED_PATTERN "^Cached:[ \t]+([0-9]+) kB$"
+#define MEM_SRECLAIM_PATTERN "^SReclaimable:[ \t]+([0-9]+) kB$"
 #define MEM_LABEL "mem"
 
 typedef struct  s_meminfo {
@@ -102,6 +103,7 @@ typedef struct  s_meminfo {
     long        free;
     long        buffers;
     long        cached;
+    long        sreclaim;
 }               t_meminfo;
 
 /* VOLUME */
@@ -120,7 +122,7 @@ void    print(char *fmt, ...);
 bool    match_pattern(const char *regex, const char *str);
 char    *substring(const char *regex, const char *str);
 
-// memory allocation
+// alloc memory
 char    *alloc_buffer(size_t size);
 void    *alloc_ptr(size_t size);
 

@@ -17,6 +17,8 @@ void        set_mem_stat(t_meminfo *meminfo, char *rstat) {
         meminfo->buffers = to_int(stat);
     } else if ((stat = substring(MEM_CACHED_PATTERN, rstat))) {
         meminfo->cached = to_int(stat);
+    } else if ((stat = substring(MEM_SRECLAIM_PATTERN, rstat))) {
+        meminfo->sreclaim = to_int(stat);
     }
     free(rstat);
     free(stat);
@@ -34,7 +36,7 @@ int         get_meminfo(t_meminfo *meminfo) {
         set_mem_stat(meminfo, line);
         line = NULL;
         size = 0;
-        if (meminfo->total > -1 && meminfo->free > -1 && meminfo->buffers > -1 && meminfo->cached > -1) {
+        if (meminfo->total > -1 && meminfo->free > -1 && meminfo->buffers > -1 && meminfo->cached > -1 && meminfo->sreclaim > -1) {
             close_stream(stream, PROC_MEMINFO);
             return 0;
         }
@@ -57,11 +59,12 @@ char            *get_memory() {
     meminfo.free = -1;
     meminfo.buffers = -1;
     meminfo.cached = -1;
+    meminfo.sreclaim = -1;
     if (get_meminfo(&meminfo) == -1) {
         printf("Unable to get memory stats\n");
         exit(EXIT_FAILURE);
     }
-    used = meminfo.total - meminfo.free - meminfo.buffers - meminfo.cached;
+    used = meminfo.total - meminfo.free - meminfo.buffers - meminfo.cached - meminfo.sreclaim;
     token = alloc_buffer(TOKEN_SIZE);
     snprintf(token, TOKEN_SIZE, "%s %ld%%", MEM_LABEL, PERCENT(used, meminfo.total));
     return token;
