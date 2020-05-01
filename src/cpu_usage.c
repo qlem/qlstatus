@@ -69,21 +69,19 @@ char        *get_cpu_stats() {
     return stats;
 }
 
-char    *get_cpu_usage(t_cpu *cpu) {
-    char    *token;
-    char    *rstats;
-    long    *stats;
-    long    usage;
+void            *get_cpu_usage(void *data) {
+    t_module    *module = data;
+    t_cpu       *cpu = module->args;
+    char        *rstats;
+    long        *stats;
 
     if ((rstats = get_cpu_stats()) == NULL) {
         printf("Unable to get cpu stats\n");
         exit(EXIT_FAILURE);
     }
     stats = parse_cpu_stats(rstats);
-    usage = compute_usage(cpu, stats);
-    token = alloc_buffer(TOKEN_SIZE);
-    snprintf(token, TOKEN_SIZE, "%s %ld%%", CPU_USAGE_LABEL, usage);
+    module->value = compute_usage(cpu, stats);
     free(rstats);
     free(stats);
-    return token;
+    return NULL;
 }

@@ -6,12 +6,11 @@
 
 #include "qlstatus.h"
 
-char    *get_brightness() {
-    char    *token = NULL;
-    char    *buffer = NULL;
-    long    current = 0;
-    long    max = 0;
-    long    value = 0;
+void            *get_brightness(void *data) {
+    t_module    *module = data;
+    char        *buffer = NULL;
+    long        current = 0;
+    long        max = 0;
 
     buffer = read_file(BRIGHTNESS_CURRENT);
     current = to_int(buffer);
@@ -19,8 +18,6 @@ char    *get_brightness() {
     buffer = read_file(BRIGHTNESS_MAX);
     max = to_int(buffer);
     free(buffer);
-    value = PERCENT(current, max);
-    token = alloc_buffer(TOKEN_SIZE);
-    snprintf(token, TOKEN_SIZE, "%s %ld%%", BRIGHTNESS_LABEL, value);
-    return token;
+    module->value = PERCENT(current, max);
+    return NULL;
 }

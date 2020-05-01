@@ -64,11 +64,10 @@ long    compute_temp(char **files, char *parent) {
     return temp;
 }
 
-char    *get_cpu_temp() {
+void            *get_cpu_temp(void *data) {
+    t_module    *module = data; 
     char        *path;
     char        **files;
-    char        *token;
-    long        temp = 0;
 
     if (has_asterisk(CPU_TEMP_DIR)) {
         path = resolve_asterisk(CPU_TEMP_DIR);
@@ -83,10 +82,8 @@ char    *get_cpu_temp() {
         free(path);
         exit(EXIT_FAILURE);
     }
-    temp = compute_temp(files, path);
-    token = alloc_buffer(TOKEN_SIZE);
-    snprintf(token, TOKEN_SIZE, "%s %ld°", CPU_TEMP_LABEL, temp);
+    module->value = compute_temp(files, path);
     free_files(files);
     free(path);
-    return token;
+    return NULL;
 }

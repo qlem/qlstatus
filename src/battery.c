@@ -24,23 +24,19 @@ char    *get_battery_status() {
     return status;
 }
 
-char    *get_battery() {
-    char        *token = NULL;
-    char        *status = NULL;
+void            *get_battery(void *data) {
+    t_module    *module = data;
     char        *buffer = NULL;
     long        current = 0;
     long        max = 0;
-    long        value = 0;
 
-    status = get_battery_status();
+    module->label = get_battery_status();
     buffer = read_file(BAT_CURRENT);
     current = to_int(buffer);
     free(buffer);
     buffer = read_file(BAT_MAX);
     max = to_int(buffer);
     free(buffer);
-    value = PERCENT(current, max);
-    token = alloc_buffer(TOKEN_SIZE);
-    snprintf(token, TOKEN_SIZE, "%s %ld%%", status, value);
-    return token;
+    module->value = PERCENT(current, max);
+    return NULL;
 }

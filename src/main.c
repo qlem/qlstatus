@@ -6,45 +6,115 @@
 
 #include "qlstatus.h"
 
-void    v_sleep() {
-    struct timespec     tp;
-
-    tp.tv_sec = 1;
-    tp.tv_nsec = 0;
-    if (clock_nanosleep(CLOCK_REALTIME, 0, &tp, NULL)) {
-        printf("Call to 'clock_nanosleep()' failed: %s\n", strerror(errno));
-        exit(EXIT_FAILURE);
-    }
+void        init_volume(t_module *module) {
+    module->enabled = 0;
+    module->fmtid = 'V';
+    module->label = VOLUME_LABEL;
+    module->value = 0;
+    module->unit = "%";
+    module->routine = get_volume;
 }
 
-int         main() {
-    t_cpu   *cpu;
-    char    *battery;
-    char    *brightness;
-    char    *cpu_temp;
-    char    *cpu_usage;
-    char    *wireless;
-    char    *memory;
+void        init_wireless(t_module *module) {
+    module->enabled = 1;
+    module->fmtid = 'W';
+    module->label = WIRELESS_UNK_ESSID_LABEL;
+    module->value = 0;
+    module->unit = "%";
+    module->routine = get_wireless;
+}
 
-    cpu = alloc_ptr(sizeof(t_cpu));
-    cpu->prev_idle = 0;
-    cpu->prev_total = 0;
-    while (1) {
-        battery = get_battery();
-        brightness = get_brightness();
-        cpu_temp = get_cpu_temp();
-        cpu_usage = get_cpu_usage(cpu);
-        wireless = get_wireless();
-        memory = get_memory();
-        print("t  t  t  t  t  t\n", cpu_usage, cpu_temp, memory, brightness, battery, wireless);
-        free(battery);
-        free(brightness);
-        free(cpu_temp);
-        free(cpu_usage);
-        free(wireless);
-        free(memory);
-        v_sleep();
+void        init_memory(t_module *module) {
+    module->enabled = 1;
+    module->fmtid = 'M';
+    module->label = MEM_LABEL;
+    module->value = 0;
+    module->unit = "%";
+    module->routine = get_memory;
+}
+
+void        init_cpu_temp(t_module *module) {
+    module->enabled = 1;
+    module->fmtid = 'T';
+    module->label = CPU_TEMP_LABEL;
+    module->value = 0;
+    module->unit = "°";
+    module->routine = get_cpu_temp;
+}
+
+void        init_cpu_usage(t_module *module) {
+    module->enabled = 1;
+    module->fmtid = 'U';
+    module->label = CPU_USAGE_LABEL;
+    module->value = 0;
+    module->unit = "%";
+    module->routine = get_cpu_usage;
+}
+
+void        init_battery(t_module *module) {
+    module->enabled = 1;
+    module->fmtid = 'B';
+    module->label = BAT_LABEL_UNKNOW;
+    module->value = 0;
+    module->unit = "%";
+    module->routine = get_battery;
+}
+
+void        init_brightness(t_module *module) {
+    module->enabled = 1;
+    module->fmtid = 'L';
+    module->label = BRIGHTNESS_LABEL;
+    module->value = 0;
+    module->unit = "%";
+    module->routine = get_brightness;
+}
+
+int                     main() {
+    t_main              main;
+    t_cpu               cpu;
+    char                *buffer;
+    int                 i = -1;
+
+    cpu.prev_idle = 0;
+    cpu.prev_total = 0;
+
+    init_battery(&main.modules[0]);
+    init_brightness(&main.modules[1]);
+    init_cpu_temp(&main.modules[2]);
+    init_cpu_usage(&main.modules[3]);
+    main.modules[3].args = &cpu;
+    init_memory(&main.modules[4]);
+    init_volume(&main.modules[5]);
+    init_wireless(&main.modules[6]);
+
+    main.format = "%U  %T  %M  %L  %B  %W";
+
+    /* while (++i < main.msize) {
+        if (main.modules[i].enabled) {
+            // TODO set attr
+            if (pthread_create(&main.modules[i].thread, NULL, main.modules[i].routine, &main.modules[i]) != 0) {
+                printf("Cannot create a new thread: %s\n", strerror(errno));
+                exit(EXIT_FAILURE);
+            }
+        }
+    } */
+
+    while (true) {
+        while (++i < NB_MODULES) {
+            if (main.modules[i].enabled) {
+                main.modules[i].routine(&main.modules[i]);
+            }
+        }
+        i = -1;
+        buffer = format(&main);
+        putstr(buffer);
+        write(1, "\n", 1);
+        free(buffer);
+        v_sleep(TO_SEC((long)RATE), REMAINING_NSEC((long)RATE));
     }
-    free(cpu);
+
+    // MEMORY LEAKS
+    // essid label
+
     return 0;
 }

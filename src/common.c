@@ -6,9 +6,23 @@
 
 #include "qlstatus.h"
 
+void    v_sleep(time_t sec, long nsec) {
+    struct timespec     tp;
+
+    tp.tv_sec = sec;
+    tp.tv_nsec = nsec;
+    if (clock_nanosleep(CLOCK_REALTIME, 0, &tp, NULL)) {
+        printf("Call to 'clock_nanosleep()' failed: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+}
+
 size_t  v_strlen(const char *str) {
     size_t     i = -1;
-
+    
+    if (str == NULL) {
+        return 0;
+    }
     while (str[++i]) {}
     return i;
 }

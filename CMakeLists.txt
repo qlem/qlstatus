@@ -13,7 +13,8 @@ add_executable(qlstatus
     src/cpu_usage.c
     src/wireless.c
     src/memory.c
-    src/print.c
+    src/volume.c
+    src/format.c
     src/to_str.c
     src/read_file.c
     src/read_dir.c
@@ -22,4 +23,4 @@ add_executable(qlstatus
     src/qlstatus.h)
 
 target_include_directories(qlstatus PRIVATE /usr/include/libnl3)
-target_link_libraries(qlstatus -lnl-3 -lnl-genl-3)
+target_link_libraries(qlstatus -lpthread -lnl-3 -lnl-genl-3 -lpulse)

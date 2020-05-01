@@ -108,10 +108,12 @@ static int      scan_callback(struct nl_msg *msg, void *data) {
             if (ssid_len > WIRELESS_ESSID_MAX_SIZE) {
                 wireless->essid = alloc_buffer(WIRELESS_ESSID_MAX_SIZE + 1);
                 v_strncpy(wireless->essid, (char *)ssid, WIRELESS_ESSID_MAX_SIZE);
-                wireless->essid[WIRELESS_ESSID_MAX_SIZE - 1] = '.';
+                wireless->essid[WIRELESS_ESSID_MAX_SIZE - 1] = ':';
+                wireless->essid[WIRELESS_ESSID_MAX_SIZE - 2] = '.';
             } else {
-                wireless->essid = alloc_buffer(ssid_len + 1);
+                wireless->essid = alloc_buffer(ssid_len + 2);
                 v_strncpy(wireless->essid, (char *)ssid, ssid_len);
+                wireless->essid[ssid_len] = ':';
             }
         }
     }
@@ -216,12 +218,10 @@ char        *get_essid_buffer(t_wireless *wireless) {
     return buffer;
 }
 
-char        *get_wireless() {
+void                    *get_wireless(void *data) {
+    t_module            *module = data;
     t_wireless          wireless;
     struct nl_sock      *socket;
-    char                *essid;
-    char                *quality;
-    char                *token;
 
     socket = nl_socket_alloc();
     if (genl_connect(socket) != 0) {
@@ -233,12 +233,12 @@ char        *get_wireless() {
         nl_socket_free(socket);
         exit(EXIT_FAILURE);
     }
-    quality = get_quality_buffer(&wireless);
-    essid = get_essid_buffer(&wireless);
-    token = alloc_buffer(v_strlen(essid) + v_strlen(quality) + 4);
-    sprintf(token, "%s: %s%%", essid, quality);
-    free(quality);
-    free(essid);
+    if (wireless.flags & WIRELESS_FLAG_HAS_SIGNAL) {
+        module->value = wireless.signal;
+    } else {
+        module->value = 0;
+    }
+    module->label = get_essid_buffer(&wireless);
     nl_socket_free(socket);
-    return token;
+    return NULL;
 }
