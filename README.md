@@ -4,21 +4,26 @@ A small program for generating an output stream for the status bar of window man
 ---
 ![alt text](https://raw.githubusercontent.com/qlem/qlstatus/master/screenshot.png)
 
-## Modules
+## Features
 - current ESSID with signal quality in percent
-- battery status with percent remaining
+- battery status with remaining percent
 - brightness level in percent
 - cpu usage in percent
 - cpu temperature in degree Celsius
 - used memory in percent
-- current audio volume in percent (not yet available)
+- current audio volume in percent
 
 ## Configuration
-You can configure **qlstatus** by changing the values of the variables of the desired module in the header file `qlstatus.h`.
+You can edit `qlstatus.h` and change default value of any variable. Then compile the binary.
+
+### Configuration file
+*- Coming soon -*
 
 ## Dependencies
 - libc
-- [Netlink Protocol Library Suite](https://www.infradead.org/~tgr/libnl/) (libnl3)
+- POSIX threads (libpthread)
+- [PulseAudio Library](https://freedesktop.org/software/pulseaudio/doxygen/) (libpulse)
+- [Netlink Protocol Library Suite](https://www.infradead.org/~tgr/libnl/) (libnl3 libnl-genl-3)
 
 ## Compilation
 TODO
