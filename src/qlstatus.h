@@ -151,7 +151,6 @@ typedef struct  s_meminfo {
 /* VOLUME */
 #define PULSE_SINK_NAME "alsa_output.pci-0000_00_1f.3.analog-stereo"
 #define PULSE_APP_NAME "qlstatus"
-// #define PULSE_APP_NAME_LEN 8
 #define PULSE_RATE 1E8
 #define VOLUME_LABEL "vol"
 #define VOLUME_MUTED_LABEL "mut"

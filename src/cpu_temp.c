@@ -65,7 +65,7 @@ long    compute_temp(char **files, char *parent) {
 }
 
 void            *get_cpu_temp(void *data) {
-    t_module    *module = data; 
+    t_module    *module = data;
     char        *path;
     char        **files;
 

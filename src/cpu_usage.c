@@ -29,7 +29,7 @@ long    compute_usage(t_cpu *cpu, const long *stats) {
 }
 
 long        *parse_cpu_stats(char *line) {
-    long    *stats = NULL; 
+    long    *stats = NULL;
     char    *token;
     long    stat;
     int     i = 0;

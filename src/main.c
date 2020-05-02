@@ -8,7 +8,7 @@
 
 int                     create_thread(t_module *module) {
     pthread_attr_t      attr;
-    
+
     if (pthread_attr_init(&attr) != 0) {
         printf("Cannot init thread attribute\n");
         exit(EXIT_FAILURE);
@@ -53,7 +53,7 @@ int                     main() {
             create_thread(&main.modules[i]);
         }
     }
- 
+
     while (true) {
         i = -1;
         while (++i < NB_MODULES) {
@@ -67,9 +67,5 @@ int                     main() {
         free(buffer);
         v_sleep(SEC((long)RATE), NSEC((long)RATE));
     }
-
-    /* MEMORY LEAKS */
-    // essid label
-    // lot of libpulse stuff
     return 0;
 }

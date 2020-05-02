@@ -19,7 +19,7 @@ void    v_sleep(time_t sec, long nsec) {
 
 size_t  v_strlen(const char *str) {
     size_t     i = -1;
-    
+
     if (str == NULL) {
         return 0;
     }

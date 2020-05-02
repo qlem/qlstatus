@@ -6,7 +6,7 @@
 
 #include "qlstatus.h"
 
-void        sink_info_cb(pa_context *context, const pa_sink_info *info, 
+void        sink_info_cb(pa_context *context, const pa_sink_info *info,
                          int eol, void *data) {
     t_module        *module = data;
     pa_volume_t     volume_avg;
@@ -28,18 +28,12 @@ void            *get_volume(void *data) {
 
     pa_mainloop         *mainloop;
     pa_mainloop_api     *mloop_api;
-    /* pa_proplist         *proplist; */
     pa_context          *context;
     pa_operation        *operation;
 
     mainloop = pa_mainloop_new();
     mloop_api = pa_mainloop_get_api(mainloop);
     context = pa_context_new(mloop_api, PULSE_APP_NAME);
-    /* proplist = pa_proplist_new();
-    pa_proplist_set(proplist, PA_PROP_APPLICATION_NAME, PULSE_APP_NAME,
-                        PULSE_APP_NAME_LEN);
-    context = pa_context_new_with_proplist(mloop_api, PULSE_APP_NAME, proplist);
-    pa_proplist_free(proplist); */
 
     pa_context_connect(context, NULL, PA_CONTEXT_NOFAIL, NULL);
     while (true) {
@@ -49,12 +43,12 @@ void            *get_volume(void *data) {
         }
     }
 
-    operation = pa_context_get_sink_info_by_name(context, PULSE_SINK_NAME, 
-                        &sink_info_cb, module);
+    operation = pa_context_get_sink_info_by_name(context, PULSE_SINK_NAME,
+                    &sink_info_cb, module);
     while (true) {
         pa_mainloop_iterate(mainloop, 0, 0);
         if (pa_operation_get_state(operation) != PA_OPERATION_RUNNING) {
-            operation = pa_context_get_sink_info_by_name(context, 
+            operation = pa_context_get_sink_info_by_name(context,
                     PULSE_SINK_NAME, &sink_info_cb, module);
         }
         v_sleep(0, (long)PULSE_RATE);

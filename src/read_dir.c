@@ -16,7 +16,8 @@ void    free_files(char **files) {
     free(files);
 }
 
-char    **add_file(char **files, size_t *size, const char *file, const char *regex) {
+char    **add_file(char **files, size_t *size, const char *file,
+                   const char *regex) {
     if (regex && !match_pattern(regex, file)) {
         return files;
     }

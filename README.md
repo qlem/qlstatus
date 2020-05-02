@@ -22,7 +22,7 @@ You can edit `qlstatus.h` and change default value of any variable. Then compile
 ## Dependencies
 - libc
 - POSIX threads (libpthread)
-- [PulseAudio Library](https://freedesktop.org/software/pulseaudio/doxygen/) (libpulse)
+- PulseAudio Library (libpulse)
 - [Netlink Protocol Library Suite](https://www.infradead.org/~tgr/libnl/) (libnl3 libnl-genl-3)
 
 ## Compilation

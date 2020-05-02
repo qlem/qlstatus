@@ -14,13 +14,18 @@ char        *append_module(t_module *module, char *buffer) {
 
     value = to_str(module->value);
     len = v_strlen(buffer);
-    mlen = v_strlen(module->label) + v_strlen(value) + v_strlen(module->unit) + 1;
+    mlen = v_strlen(module->label) + v_strlen(value) +
+                    v_strlen(module->unit) + 1;
     new = alloc_buffer(sizeof(char) * (len + mlen + 1));
     if (buffer) {
         sprintf(new, "%s%s %s%s", buffer, module->label, value, module->unit);
         free(buffer);
     } else {
         sprintf(new, "%s %s%s", module->label, value, module->unit);
+    }
+    // free label only for wireless module
+    if (module->fmtid == 'W') {
+        free(module->label);
     }
     free(value);
     return new;
@@ -42,7 +47,8 @@ char        *format(t_main *main) {
             ++i;
             j = -1;
             while (++j < NB_MODULES) {
-                if (main->modules[j].enabled && main->modules[j].fmtid == fmt[i]) {
+                if (main->modules[j].enabled &&
+                    main->modules[j].fmtid == fmt[i]) {
                     buffer = append_module(&main->modules[j], buffer);
                     break;
                 }

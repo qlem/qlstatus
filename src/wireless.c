@@ -15,11 +15,13 @@ static uint32_t     nl80211_xbm_to_percent(int32_t xbm, int32_t divisor) {
     if (xbm > SIGNAL_MAX_DBM) {
         xbm = SIGNAL_MAX_DBM;
     }
-    return 100 - 70 * (((float)SIGNAL_MAX_DBM - (float)xbm) / ((float)SIGNAL_MAX_DBM - (float)NOISE_FLOOR_DBM));
+    return 100 - 70 * (((float)SIGNAL_MAX_DBM - (float)xbm) /
+            ((float)SIGNAL_MAX_DBM - (float)NOISE_FLOOR_DBM));
 }
 
 // Based on NetworkManager/src/platform/wifi/wifi-utils-nl80211.c
-static void     find_ssid(uint8_t *ies, uint32_t ies_len, uint8_t **ssid, uint32_t *ssid_len) {
+static void     find_ssid(uint8_t *ies, uint32_t ies_len, uint8_t **ssid,
+                          uint32_t *ssid_len) {
     *ssid = NULL;
     *ssid_len = 0;
     while (ies_len > 2 && ies[0] != WLAN_EID_SSID) {
@@ -49,7 +51,8 @@ static int      station_callback(struct nl_msg *msg, void *data) {
     if (tb[NL80211_ATTR_STA_INFO] == NULL) {
         return NL_SKIP;
     }
-    if (nla_parse_nested(s_info, NL80211_STA_INFO_MAX, tb[NL80211_ATTR_STA_INFO], stats_policy)) {
+    if (nla_parse_nested(s_info, NL80211_STA_INFO_MAX,
+                         tb[NL80211_ATTR_STA_INFO], stats_policy)) {
         return NL_SKIP;
     }
     if (s_info[NL80211_STA_INFO_SIGNAL] != NULL) {
@@ -84,14 +87,16 @@ static int      scan_callback(struct nl_msg *msg, void *data) {
     if (tb[NL80211_ATTR_BSS] == NULL) {
         return NL_SKIP;
     }
-    if (nla_parse_nested(bss, NL80211_BSS_MAX, tb[NL80211_ATTR_BSS], bss_policy)) {
+    if (nla_parse_nested(bss, NL80211_BSS_MAX, tb[NL80211_ATTR_BSS],
+                         bss_policy)) {
         return NL_SKIP;
     }
     if (bss[NL80211_BSS_STATUS] == NULL) {
         return NL_SKIP;
     }
     status = nla_get_u32(bss[NL80211_BSS_STATUS]);
-    if (status != NL80211_BSS_STATUS_ASSOCIATED && status != NL80211_BSS_STATUS_IBSS_JOINED) {
+    if (status != NL80211_BSS_STATUS_ASSOCIATED && status !=
+        NL80211_BSS_STATUS_IBSS_JOINED) {
         return NL_SKIP;
     }
     if (bss[NL80211_BSS_BSSID] == NULL) {
@@ -107,7 +112,8 @@ static int      scan_callback(struct nl_msg *msg, void *data) {
             wireless->flags |= WIRELESS_FLAG_HAS_ESSID;
             if (ssid_len > WIRELESS_ESSID_MAX_SIZE) {
                 wireless->essid = alloc_buffer(WIRELESS_ESSID_MAX_SIZE + 1);
-                v_strncpy(wireless->essid, (char *)ssid, WIRELESS_ESSID_MAX_SIZE);
+                v_strncpy(wireless->essid, (char *)ssid,
+                          WIRELESS_ESSID_MAX_SIZE);
                 wireless->essid[WIRELESS_ESSID_MAX_SIZE - 1] = ':';
                 wireless->essid[WIRELESS_ESSID_MAX_SIZE - 2] = '.';
             } else {
@@ -123,24 +129,31 @@ static int      scan_callback(struct nl_msg *msg, void *data) {
 static int      send_for_station(t_wireless *wireless, struct nl_sock *socket) {
     struct nl_msg       *msg;
 
-    if (nl_socket_modify_cb(socket, NL_CB_VALID, NL_CB_CUSTOM, station_callback, wireless) < 0) {
-        printf("%s: unable to modify station callback\n", WIRELESS_PREFIX_ERROR);
+    if (nl_socket_modify_cb(socket, NL_CB_VALID, NL_CB_CUSTOM, station_callback,
+        wireless) < 0) {
+        printf("%s: unable to modify station callback\n",
+                WIRELESS_PREFIX_ERROR);
         return -NLE_RANGE;
     }
     if ((msg = nlmsg_alloc()) == NULL) {
-        printf("%s: unable to alloc memory for Netlink message\n", WIRELESS_PREFIX_ERROR);
+        printf("%s: unable to alloc memory for Netlink message\n",
+                WIRELESS_PREFIX_ERROR);
         return -1;
     }
-    if (!genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, wireless->nl80211_id, 0, NLM_F_DUMP, NL80211_CMD_GET_STATION, 0)) {
-        printf("%s: unable to add header to Netlink message\n", WIRELESS_PREFIX_ERROR);
+    if (!genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, wireless->nl80211_id, 0,
+        NLM_F_DUMP, NL80211_CMD_GET_STATION, 0)) {
+        printf("%s: unable to add header to Netlink message\n",
+                WIRELESS_PREFIX_ERROR);
         goto error;
     }
     if (nla_put_u32(msg, NL80211_ATTR_IFINDEX, wireless->if_index) < 0) {
-        printf("%s: unable to add attribute to Netlink message\n", WIRELESS_PREFIX_ERROR);
+        printf("%s: unable to add attribute to Netlink message\n",
+                WIRELESS_PREFIX_ERROR);
         goto error;
     }
     if (nla_put(msg, NL80211_ATTR_MAC, 6, wireless->bssid) < 0) {
-        printf("%s: unable to add attribute to Netlink message\n", WIRELESS_PREFIX_ERROR);
+        printf("%s: unable to add attribute to Netlink message\n",
+                WIRELESS_PREFIX_ERROR);
         goto error;
     }
     if (nl_send_sync(socket, msg) < 0) {
@@ -157,7 +170,8 @@ error:
 static int      send_for_scan(t_wireless *wireless, struct nl_sock *socket) {
     struct nl_msg       *msg;
 
-    if (nl_socket_modify_cb(socket, NL_CB_VALID, NL_CB_CUSTOM, scan_callback, wireless) < 0) {
+    if (nl_socket_modify_cb(socket, NL_CB_VALID, NL_CB_CUSTOM, scan_callback,
+        wireless) < 0) {
         printf("%s: unable to modify scan callback\n", WIRELESS_PREFIX_ERROR);
         return -NLE_RANGE;
     }
@@ -172,15 +186,19 @@ static int      send_for_scan(t_wireless *wireless, struct nl_sock *socket) {
         return -1;
     }
     if ((msg = nlmsg_alloc()) == NULL) {
-        printf("%s: unable to alloc memory for Netlink message\n", WIRELESS_PREFIX_ERROR);
+        printf("%s: unable to alloc memory for Netlink message\n",
+                WIRELESS_PREFIX_ERROR);
         return -1;
     }
-    if (!genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, wireless->nl80211_id, 0, NLM_F_DUMP, NL80211_CMD_GET_SCAN, 0)) {
-        printf("%s: unable to add header to Netlink message\n", WIRELESS_PREFIX_ERROR);
+    if (!genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, wireless->nl80211_id, 0,
+        NLM_F_DUMP, NL80211_CMD_GET_SCAN, 0)) {
+        printf("%s: unable to add header to Netlink message\n",
+                WIRELESS_PREFIX_ERROR);
         goto error;
     }
     if (nla_put_u32(msg, NL80211_ATTR_IFINDEX, wireless->if_index) < 0) {
-        printf("%s: unable to add attribute to Netlink message\n", WIRELESS_PREFIX_ERROR);
+        printf("%s: unable to add attribute to Netlink message\n",
+                WIRELESS_PREFIX_ERROR);
         goto error;
     }
     if (nl_send_sync(socket, msg) < 0) {
@@ -201,7 +219,8 @@ char        *get_quality_buffer(t_wireless *wireless) {
         buffer = to_str(wireless->signal);
     } else {
         buffer = alloc_buffer(v_strlen(WIRELESS_UNK_QUALITY_LABEL) + 1);
-        buffer = v_strncpy(buffer, WIRELESS_UNK_QUALITY_LABEL, v_strlen(WIRELESS_UNK_QUALITY_LABEL));
+        buffer = v_strncpy(buffer, WIRELESS_UNK_QUALITY_LABEL,
+                           v_strlen(WIRELESS_UNK_QUALITY_LABEL));
     }
     return buffer;
 }
@@ -213,7 +232,8 @@ char        *get_essid_buffer(t_wireless *wireless) {
         buffer = wireless->essid;
     } else {
         buffer = alloc_buffer(v_strlen(WIRELESS_UNK_ESSID_LABEL) + 1);
-        buffer = v_strncpy(buffer, WIRELESS_UNK_ESSID_LABEL, v_strlen(WIRELESS_UNK_ESSID_LABEL));
+        buffer =  v_strncpy(buffer, WIRELESS_UNK_ESSID_LABEL,
+                            v_strlen(WIRELESS_UNK_ESSID_LABEL));
     }
     return buffer;
 }
@@ -225,11 +245,13 @@ void                    *get_wireless(void *data) {
 
     socket = nl_socket_alloc();
     if (genl_connect(socket) != 0) {
-        printf("%s: unable to alloc memory for Netlink socket\n", WIRELESS_PREFIX_ERROR);
+        printf("%s: unable to alloc memory for Netlink socket\n",
+                WIRELESS_PREFIX_ERROR);
         exit(EXIT_FAILURE);
     }
     v_memset(&wireless, 0, sizeof(t_wireless));
-    if (send_for_scan(&wireless, socket) < 0 || send_for_station(&wireless, socket) < 0) {
+    if (send_for_scan(&wireless, socket) < 0 || send_for_station(&wireless,
+        socket) < 0) {
         nl_socket_free(socket);
         exit(EXIT_FAILURE);
     }

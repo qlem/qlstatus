@@ -33,7 +33,7 @@ char    *substring(const char *regex, const char *str) {
     if (regexec(&preg, str, 2, pmatch, 0) == 0) {
         if (pmatch[1].rm_so > -1) {
             size = pmatch[1].rm_eo - pmatch[1].rm_so;
-            buffer = alloc_buffer(size + 1); 
+            buffer = alloc_buffer(size + 1);
             while (++i < (int)size) {
                 buffer[i] = str[pmatch[1].rm_so + i];
             }

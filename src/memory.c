@@ -36,7 +36,9 @@ int         get_mem_stats(t_meminfo *meminfo) {
         parse_mem_stat(meminfo, line);
         line = NULL;
         size = 0;
-        if (meminfo->total > -1 && meminfo->free > -1 && meminfo->buffers > -1 && meminfo->cached > -1 && meminfo->sreclaim > -1) {
+        if (meminfo->total > -1 && meminfo->free > -1 &&
+            meminfo->buffers > -1 && meminfo->cached > -1 &&
+            meminfo->sreclaim > -1) {
             close_stream(stream, PROC_MEMINFO);
             return 0;
         }
@@ -64,7 +66,8 @@ void            *get_memory(void *data) {
         printf("Unable to get memory stats\n");
         exit(EXIT_FAILURE);
     }
-    used = meminfo.total - meminfo.free - meminfo.buffers - meminfo.cached - meminfo.sreclaim;
+    used = meminfo.total - meminfo.free - meminfo.buffers - meminfo.cached -
+            meminfo.sreclaim;
     module->value = PERCENT(used, meminfo.total);
     return NULL;
 }
