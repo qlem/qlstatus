@@ -7,6 +7,7 @@ set(CMAKE_C_FLAGS "-W -Wall -Wextra -Werror")
 
 add_executable(qlstatus
     src/main.c
+    src/init.c
     src/battery.c
     src/brightness.c
     src/cpu_temp.c

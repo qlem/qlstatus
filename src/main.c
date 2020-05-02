@@ -6,74 +6,26 @@
 
 #include "qlstatus.h"
 
-void        init_volume(t_module *module) {
-    module->enabled = 0;
-    module->fmtid = 'V';
-    module->label = VOLUME_LABEL;
-    module->value = 0;
-    module->unit = "%";
-    module->routine = get_volume;
-    module->is_thread = 1;
-}
-
-void        init_wireless(t_module *module) {
-    module->enabled = 1;
-    module->fmtid = 'W';
-    module->label = WIRELESS_UNK_ESSID_LABEL;
-    module->value = 0;
-    module->unit = "%";
-    module->routine = get_wireless;
-    module->is_thread = 0;
-}
-
-void        init_memory(t_module *module) {
-    module->enabled = 1;
-    module->fmtid = 'M';
-    module->label = MEM_LABEL;
-    module->value = 0;
-    module->unit = "%";
-    module->routine = get_memory;
-    module->is_thread = 0;
-}
-
-void        init_cpu_temp(t_module *module) {
-    module->enabled = 1;
-    module->fmtid = 'T';
-    module->label = CPU_TEMP_LABEL;
-    module->value = 0;
-    module->unit = "°";
-    module->routine = get_cpu_temp;
-    module->is_thread = 0;
-}
-
-void        init_cpu_usage(t_module *module) {
-    module->enabled = 1;
-    module->fmtid = 'U';
-    module->label = CPU_USAGE_LABEL;
-    module->value = 0;
-    module->unit = "%";
-    module->routine = get_cpu_usage;
-    module->is_thread = 0;
-}
-
-void        init_battery(t_module *module) {
-    module->enabled = 1;
-    module->fmtid = 'B';
-    module->label = BAT_LABEL_UNKNOW;
-    module->value = 0;
-    module->unit = "%";
-    module->routine = get_battery;
-    module->is_thread = 0;
-}
-
-void        init_brightness(t_module *module) {
-    module->enabled = 1;
-    module->fmtid = 'L';
-    module->label = BRIGHTNESS_LABEL;
-    module->value = 0;
-    module->unit = "%";
-    module->routine = get_brightness;
-    module->is_thread = 0;
+int                     create_thread(t_module *module) {
+    pthread_attr_t      attr;
+    
+    if (pthread_attr_init(&attr) != 0) {
+        printf("Cannot init thread attribute\n");
+        exit(EXIT_FAILURE);
+    }
+    if (pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED) != 0) {
+        printf("Cannot set detach state of thread attribute\n");
+        exit(EXIT_FAILURE);
+    }
+    if (pthread_create(&module->thread, &attr, module->routine, module) != 0) {
+        printf("Cannot create a new thread: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    if (pthread_attr_destroy(&attr) != 0) {
+        printf("Cannot destroy thread attribute\n");
+        exit(EXIT_FAILURE);
+    }
+    return 0;
 }
 
 int                     main() {
@@ -87,22 +39,18 @@ int                     main() {
 
     init_battery(&main.modules[0]);
     init_brightness(&main.modules[1]);
-    init_cpu_temp(&main.modules[2]);
-    init_cpu_usage(&main.modules[3]);
-    main.modules[3].args = &cpu;
+    init_cpu_usage(&main.modules[2]);
+    main.modules[2].args = &cpu;
+    init_cpu_temp(&main.modules[3]);
     init_memory(&main.modules[4]);
     init_volume(&main.modules[5]);
     init_wireless(&main.modules[6]);
 
-    main.format = "%U  %T  %M  %L  %B  %W";
+    main.format = DEFAULT_FORMAT;
 
     while (++i < NB_MODULES) {
         if (main.modules[i].enabled && main.modules[i].is_thread) {
-            // TODO set attr
-            if (pthread_create(&main.modules[i].thread, NULL, main.modules[i].routine, &main.modules[i]) != 0) {
-                printf("Cannot create a new thread: %s\n", strerror(errno));
-                exit(EXIT_FAILURE);
-            }
+            create_thread(&main.modules[i]);
         }
     }
  
@@ -120,9 +68,8 @@ int                     main() {
         v_sleep(SEC((long)RATE), NSEC((long)RATE));
     }
 
-    // MEMORY LEAKS
+    /* MEMORY LEAKS */
     // essid label
     // lot of libpulse stuff
-
     return 0;
 }

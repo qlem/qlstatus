@@ -51,9 +51,8 @@ char    *v_strncpy(char *dest, const char *src, size_t n) {
 }
 
 int     putstr(const char *str) {
-    size_t      size = 0;
+    size_t  size = v_strlen(str);
 
-    size = v_strlen(str);
     write(1, str, size);
     return size;
 }

@@ -53,7 +53,7 @@ typedef struct      s_module {
     long            value;
     char            *unit;
     void            *args;
-    void            *(*routine) (void *);
+    void            *(*routine)(void *);
     uint8_t         is_thread;
     pthread_t       thread;
 }                   t_module;
@@ -149,11 +149,12 @@ typedef struct  s_meminfo {
 }               t_meminfo;
 
 /* VOLUME */
-#define PA_APP_NAME "qlstatus"
-#define PA_APP_NAME_LEN 8
-#define PA_RATE 1E8
+#define PULSE_SINK_NAME "alsa_output.pci-0000_00_1f.3.analog-stereo"
+#define PULSE_APP_NAME "qlstatus"
+// #define PULSE_APP_NAME_LEN 8
+#define PULSE_RATE 1E8
 #define VOLUME_LABEL "vol"
-#define VOLUME_MUTED_LABEL "muted"
+#define VOLUME_MUTED_LABEL "mut"
 
 /* FUNCTIONS */
 size_t  v_strlen(const char *str);
@@ -181,6 +182,15 @@ FILE    *open_stream(const char *file);
 void    free_files(char **files);
 char    **read_dir(const char *path, const char *regex);
 char    *read_file(const char *file);
+
+// init
+void    init_volume(t_module *module);
+void    init_battery(t_module *module);
+void    init_cpu_usage(t_module *module);
+void    init_cpu_temp(t_module *module);
+void    init_memory(t_module *module);
+void    init_wireless(t_module *module);
+void    init_brightness(t_module *module);
 
 // modules
 void    *get_battery(void *data);
