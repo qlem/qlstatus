@@ -41,8 +41,8 @@
 #define BASE 10
 #define RATE 1E9
 #define NB_MODULES 7
-#define TO_SEC(nsec) nsec / (unsigned long)1E9
-#define REMAINING_NSEC(nsec) nsec % (unsigned long)1E9
+#define SEC(nsec) nsec / (long)1E9
+#define NSEC(nsec) nsec % (long)1E9
 #define PERCENT(value, total) value * 100 / total
 
 /* MODULE STRUCTURE */
@@ -54,8 +54,8 @@ typedef struct      s_module {
     char            *unit;
     void            *args;
     void            *(*routine) (void *);
-    // pthread_t       thread;
-    // long            rate;
+    uint8_t         is_thread;
+    pthread_t       thread;
 }                   t_module;
 
 /* GLOBAL STRUCTURE */
@@ -151,6 +151,7 @@ typedef struct  s_meminfo {
 /* VOLUME */
 #define PA_APP_NAME "qlstatus"
 #define PA_APP_NAME_LEN 8
+#define PA_RATE 1E8
 #define VOLUME_LABEL "vol"
 #define VOLUME_MUTED_LABEL "muted"
 

@@ -19,9 +19,9 @@ void        sink_info_cb(pa_context *context, const pa_sink_info *info, int eol,
         volume = PERCENT(volume_avg, PA_VOLUME_NORM);
         module->value = volume;
         if (muted) {
-            module->label = "muted";
+            module->label = VOLUME_MUTED_LABEL;
         } else {
-            module->label = "vol";
+            module->label = VOLUME_LABEL;
         }
     }
 }
@@ -72,11 +72,8 @@ void        context_state_cb(pa_context *context, void *data) {
     }
 }
 
-void        *get_volume(void *data) {
-
+void            *get_volume(void *data) {
     t_module    *module = data;
-
-    char    *token = NULL;
 
     pa_mainloop         *mainloop;
     pa_mainloop_api     *mloop_api;
@@ -91,7 +88,7 @@ void        *get_volume(void *data) {
     pa_proplist_set(proplist, PA_PROP_APPLICATION_NAME, PA_APP_NAME, PA_APP_NAME_LEN);
     context = pa_context_new_with_proplist(mloop_api, PA_APP_NAME, proplist);
 
-    pa_context_set_state_callback(context, &context_state_cb, NULL);
+    /* pa_context_set_state_callback(context, &context_state_cb, NULL); */
 
     pa_context_connect(context, NULL, PA_CONTEXT_NOFAIL, NULL);
 
@@ -99,7 +96,6 @@ void        *get_volume(void *data) {
         pa_mainloop_iterate(mainloop, 0, 0);
         state = pa_context_get_state(context);
         if (state == PA_CONTEXT_READY) {
-            printf("-> ready\n");
             break;
         }
     }
@@ -114,12 +110,12 @@ void        *get_volume(void *data) {
         if (pa_operation_get_state(operation) != PA_OPERATION_RUNNING) {
             operation = pa_context_get_sink_info_by_index(context, 0, &sink_info_cb, module);
         }
-        v_sleep(0, (long)4E6);
+        v_sleep(0, (long)PA_RATE);
     }
 
     pa_context_disconnect(context);
     pa_proplist_free(proplist);
     pa_mainloop_free(mainloop);
 
-    return token;
+    return NULL;
 }

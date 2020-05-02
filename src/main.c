@@ -13,6 +13,7 @@ void        init_volume(t_module *module) {
     module->value = 0;
     module->unit = "%";
     module->routine = get_volume;
+    module->is_thread = 1;
 }
 
 void        init_wireless(t_module *module) {
@@ -22,6 +23,7 @@ void        init_wireless(t_module *module) {
     module->value = 0;
     module->unit = "%";
     module->routine = get_wireless;
+    module->is_thread = 0;
 }
 
 void        init_memory(t_module *module) {
@@ -31,6 +33,7 @@ void        init_memory(t_module *module) {
     module->value = 0;
     module->unit = "%";
     module->routine = get_memory;
+    module->is_thread = 0;
 }
 
 void        init_cpu_temp(t_module *module) {
@@ -40,6 +43,7 @@ void        init_cpu_temp(t_module *module) {
     module->value = 0;
     module->unit = "°";
     module->routine = get_cpu_temp;
+    module->is_thread = 0;
 }
 
 void        init_cpu_usage(t_module *module) {
@@ -49,6 +53,7 @@ void        init_cpu_usage(t_module *module) {
     module->value = 0;
     module->unit = "%";
     module->routine = get_cpu_usage;
+    module->is_thread = 0;
 }
 
 void        init_battery(t_module *module) {
@@ -58,6 +63,7 @@ void        init_battery(t_module *module) {
     module->value = 0;
     module->unit = "%";
     module->routine = get_battery;
+    module->is_thread = 0;
 }
 
 void        init_brightness(t_module *module) {
@@ -67,6 +73,7 @@ void        init_brightness(t_module *module) {
     module->value = 0;
     module->unit = "%";
     module->routine = get_brightness;
+    module->is_thread = 0;
 }
 
 int                     main() {
@@ -89,32 +96,33 @@ int                     main() {
 
     main.format = "%U  %T  %M  %L  %B  %W";
 
-    /* while (++i < main.msize) {
-        if (main.modules[i].enabled) {
+    while (++i < NB_MODULES) {
+        if (main.modules[i].enabled && main.modules[i].is_thread) {
             // TODO set attr
             if (pthread_create(&main.modules[i].thread, NULL, main.modules[i].routine, &main.modules[i]) != 0) {
                 printf("Cannot create a new thread: %s\n", strerror(errno));
                 exit(EXIT_FAILURE);
             }
         }
-    } */
-
+    }
+ 
     while (true) {
+        i = -1;
         while (++i < NB_MODULES) {
-            if (main.modules[i].enabled) {
+            if (main.modules[i].enabled && !main.modules[i].is_thread) {
                 main.modules[i].routine(&main.modules[i]);
             }
         }
-        i = -1;
         buffer = format(&main);
         putstr(buffer);
         write(1, "\n", 1);
         free(buffer);
-        v_sleep(TO_SEC((long)RATE), REMAINING_NSEC((long)RATE));
+        v_sleep(SEC((long)RATE), NSEC((long)RATE));
     }
 
     // MEMORY LEAKS
     // essid label
+    // lot of libpulse stuff
 
     return 0;
 }
