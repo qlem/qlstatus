@@ -31,6 +31,8 @@ void            *get_volume(void *data) {
     pa_context          *context;
     pa_operation        *operation;
 
+    // TODO error handling
+
     mainloop = pa_mainloop_new();
     mloop_api = pa_mainloop_get_api(mainloop);
     context = pa_context_new(mloop_api, PULSE_APP_NAME);

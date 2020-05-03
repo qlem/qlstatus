@@ -47,11 +47,18 @@ void        init_cpu_temp(t_module *module) {
 }
 
 void        init_cpu_usage(t_module *module) {
+    t_cpu   *cpu = NULL;
+
+    cpu = alloc_ptr(sizeof(t_cpu));
+    cpu->prev_idle = 0;
+    cpu->prev_total = 0;
+
     module->enabled = 1;
     module->fmtid = 'U';
     module->label = CPU_USAGE_LABEL;
     module->value = 0;
     module->unit = "%";
+    module->args = cpu;
     module->routine = get_cpu_usage;
     module->is_thread = 0;
 }

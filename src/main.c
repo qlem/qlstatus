@@ -30,17 +30,12 @@ int                     create_thread(t_module *module) {
 
 int                     main() {
     t_main              main;
-    t_cpu               cpu;
     char                *buffer;
     int                 i = -1;
-
-    cpu.prev_idle = 0;
-    cpu.prev_total = 0;
 
     init_battery(&main.modules[0]);
     init_brightness(&main.modules[1]);
     init_cpu_usage(&main.modules[2]);
-    main.modules[2].args = &cpu;
     init_cpu_temp(&main.modules[3]);
     init_memory(&main.modules[4]);
     init_volume(&main.modules[5]);
