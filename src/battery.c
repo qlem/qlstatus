@@ -6,19 +6,31 @@
 
 #include "qlstatus.h"
 
+char            *get_path(const char *dir, const char *pw_name,
+                          const char *file) {
+    char        *path = NULL;
+
+    path = alloc_buffer(v_strlen(dir) + v_strlen(pw_name) + v_strlen(file) + 3);
+    sprintf(path, "%s/%s/%s", dir, pw_name, file);
+    return path;
+}
+
 char    *get_battery_status() {
-    char    *buffer;
+    char    *buffer = NULL;
+    char    *path = NULL;
     char    *status = NULL;
 
-    buffer = read_file(BAT_STATUS);
-    if (strcmp(buffer, BAT_STATUS_CHARGING) == 0) {
-        status = BAT_LABEL_CHARGING;
-    } else if (strcmp(buffer, BAT_STATUS_DISCHARGING) == 0) {
-        status = BAT_LABEL_DISCHARGING;
-    } else if (strcmp(buffer, BAT_STATUS_FULL) == 0) {
-        status = BAT_LABEL_FULL;
+    path = get_path(POWER_DIR, BATTERY_NAME, BATTERY_STATUS_FILE);
+    buffer = read_file(path);
+    free(path);
+    if (strcmp(buffer, BATTERY_STATUS_CHARGING) == 0) {
+        status = BATTERY_LABEL_CHARGING;
+    } else if (strcmp(buffer, BATTERY_STATUS_DISCHARGING) == 0) {
+        status = BATTERY_LABEL_DISCHARGING;
+    } else if (strcmp(buffer, BATTERY_STATUS_FULL) == 0) {
+        status = BATTERY_LABEL_FULL;
     } else {
-        status = BAT_LABEL_UNKNOW;
+        status = BATTERY_LABEL_UNKNOW;
     }
     free(buffer);
     return status;
@@ -26,17 +38,22 @@ char    *get_battery_status() {
 
 void            *get_battery(void *data) {
     t_module    *module = data;
+    char        *path = NULL;
     char        *buffer = NULL;
     long        current = 0;
     long        max = 0;
 
     module->label = get_battery_status();
-    buffer = read_file(BAT_CURRENT);
+    path = get_path(POWER_DIR, BATTERY_NAME, BATTERY_CURRENT_FILE);
+    buffer = read_file(path);
     current = to_int(buffer);
     free(buffer);
-    buffer = read_file(BAT_MAX);
+    free(path);
+    path = get_path(POWER_DIR, BATTERY_NAME, BATTERY_MAX_FILE);
+    buffer = read_file(path);
     max = to_int(buffer);
     free(buffer);
+    free(path);
     module->value = PERCENT(current, max);
     return NULL;
 }

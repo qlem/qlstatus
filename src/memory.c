@@ -32,7 +32,9 @@ int         get_mem_stats(t_meminfo *meminfo) {
 
     stream = open_stream(PROC_MEMINFO);
     while ((nb = getline(&line, &size, stream)) != -1) {
-        line[v_strlen(line) - 1] = 0;
+        if (line[v_strlen(line) - 1] == '\n') {
+            line[v_strlen(line) - 1] = 0;
+        }
         parse_mem_stat(meminfo, line);
         line = NULL;
         size = 0;

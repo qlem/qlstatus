@@ -44,25 +44,8 @@
 #define SEC(nsec) nsec / (long)1E9
 #define NSEC(nsec) nsec % (long)1E9
 #define PERCENT(value, total) value * 100 / total
-
-/* MODULE STRUCTURE */
-typedef struct      s_module {
-    uint8_t         enabled;
-    char            fmtid;
-    char            *label;
-    long            value;
-    char            *unit;
-    void            *args;
-    void            *(*routine)(void *);
-    uint8_t         is_thread;
-    pthread_t       thread;
-}                   t_module;
-
-/* GLOBAL STRUCTURE */
-typedef struct      s_main {
-    t_module        modules[NB_MODULES];
-    char            *format;
-}                   t_main;
+#define CONFIG_FILE ".config/qlstatus/qlstatus.config"
+#define HOME_PATTERN "^HOME=(/home/[a-zA-Z]+)$"
 
 /* OUTPUT FORMAT
  * %U: cpu usage
@@ -75,17 +58,51 @@ typedef struct      s_main {
  */
 #define DEFAULT_FORMAT "%U  %T  %M  %L  %V  %B  %W"
 
+/* MODULE */
+typedef struct      s_module {
+    uint8_t         enabled;
+    char            fmtid;
+    char            *label;
+    long            value;
+    char            *unit;
+    void            *opts;
+    int             s_opts;
+    void            *(*routine)(void *);
+    uint8_t         is_thread;
+    pthread_t       thread;
+}                   t_module;
+
+/* OPTION */
+typedef struct      s_opt {
+    char            *key;
+    char            *value;
+    char            *p_value;
+}                   t_opt;
+
+#define BATTERY_OPTS 7
+#define CPU_USAGE_OPTS 2
+#define CPU_TEMP_OPTS 2
+#define MEM_OPTS 2
+#define BRIGHTNESS_OPTS 2
+#define VOLUME_OPTS 2
+#define WIRELESS_OPTS 1
+#define OPT_LABEL_PATTERN "^[a-z]+$"
+#define OPT_NUMBER_PATTERN "^[0-9]+$"
+#define OPT_BOOLEAN_PATTERN "^0|1$"
+
 /* BATTERY */
-#define BAT_CURRENT "/sys/class/power_supply/BAT0/energy_now"
-#define BAT_MAX "/sys/class/power_supply/BAT0/energy_full_design"
-#define BAT_STATUS "/sys/class/power_supply/BAT0/status"
-#define BAT_STATUS_FULL "Full\n"
-#define BAT_STATUS_CHARGING "Charging\n"
-#define BAT_STATUS_DISCHARGING "Discharging\n"
-#define BAT_LABEL_FULL "full"
-#define BAT_LABEL_CHARGING "chr"
-#define BAT_LABEL_DISCHARGING "bat"
-#define BAT_LABEL_UNKNOW "unk"
+#define BATTERY_NAME "BAT0"
+#define POWER_DIR "/sys/class/power_supply"
+#define BATTERY_CURRENT_FILE "energy_now"
+#define BATTERY_MAX_FILE "energy_full_design"
+#define BATTERY_STATUS_FILE "status"
+#define BATTERY_STATUS_FULL "Full\n"
+#define BATTERY_STATUS_CHARGING "Charging\n"
+#define BATTERY_STATUS_DISCHARGING "Discharging\n"
+#define BATTERY_LABEL_FULL "full"
+#define BATTERY_LABEL_CHARGING "chr"
+#define BATTERY_LABEL_DISCHARGING "bat"
+#define BATTERY_LABEL_UNKNOW "unk"
 
 /* BRIGHTNESS */
 #define BRIGHTNESS_CURRENT "/sys/class/backlight/intel_backlight/actual_brightness"
@@ -155,6 +172,12 @@ typedef struct  s_meminfo {
 #define VOLUME_LABEL "vol"
 #define VOLUME_MUTED_LABEL "mut"
 
+/* GLOBAL STRUCTURE */
+typedef struct          s_main {
+    t_module            *modules;
+    char                *format;
+}                       t_main;
+
 /* FUNCTIONS */
 size_t  v_strlen(const char *str);
 char    *v_strncpy(char *dest, const char *src, size_t n);
@@ -182,16 +205,10 @@ void    free_files(char **files);
 char    **read_dir(const char *path, const char *regex);
 char    *read_file(const char *file);
 
-// init
-void    init_volume(t_module *module);
-void    init_battery(t_module *module);
-void    init_cpu_usage(t_module *module);
-void    init_cpu_temp(t_module *module);
-void    init_memory(t_module *module);
-void    init_wireless(t_module *module);
-void    init_brightness(t_module *module);
+// init modules
+int     parse_config_file(t_main *main, const char *file);
 
-// modules
+// module routines
 void    *get_battery(void *data);
 void    *get_volume(void *data);
 void    *get_brightness(void *data);

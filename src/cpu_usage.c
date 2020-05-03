@@ -62,7 +62,9 @@ char        *get_cpu_stats() {
         close_stream(stream, PROC_STAT);
         exit(EXIT_FAILURE);
     }
-    line[v_strlen(line) - 1] = 0;
+    if (line[v_strlen(line) - 1] == '\n') {
+        line[v_strlen(line) - 1] = 0;
+    }
     stats = substring(CPU_STATS_PATTERN, line);
     free(line);
     close_stream(stream, PROC_STAT);
@@ -71,7 +73,7 @@ char        *get_cpu_stats() {
 
 void            *get_cpu_usage(void *data) {
     t_module    *module = data;
-    t_cpu       *cpu = module->args;
+    t_cpu       *cpu = module->opts;
     char        *rstats;
     long        *stats;
 
