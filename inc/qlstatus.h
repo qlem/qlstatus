@@ -44,7 +44,7 @@
 #define SEC(nsec) nsec / (long)1e9
 #define NSEC(nsec) nsec % (long)1e9
 #define PERCENT(value, total) value * 100 / total
-#define CONFIG_FILE ".config/qlstatus/qlstatus.config"
+#define CONFIG_FILE ".config/qlstatus/qlstatus.conf"
 #define HOME_PATTERN "^HOME=(/home/[a-zA-Z]+)$"
 
 /* OUTPUT FORMAT
