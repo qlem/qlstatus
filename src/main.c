@@ -75,6 +75,7 @@ int                     create_thread(t_module *module) {
 int                     main(int argc, char **argv, char **env) {
     struct timespec     tp;
     t_main              main;
+    t_cpu               cpu;
     char                *buffer;
     char                *config;
     int                 i = -1;
@@ -82,11 +83,13 @@ int                     main(int argc, char **argv, char **env) {
     (void)argc;
     (void)argv;
 
+    // global options
     t_opt       opts_main[GLOBAL_OPTS] = {
         {OPT_FORMAT, DEFAULT_FORMAT, OPT_FORMAT_PATTERN, OPT_TEXT},
         {OPT_RATE,   RATE,           OPT_RATE_PATTERN,   OPT_TEXT}
     };
 
+    // battery options
     t_opt       opts_battery[BATTERY_OPTS] = {
         {OPT_BAT_ENABLED, "1",                OPT_BOOLEAN_PATTERN,  OPT_BOOLEAN},
         {OPT_BAT_LB_UNK,  BATTERY_LABEL_UNK,  OPT_LABEL_PATTERN,    OPT_TEXT},
@@ -97,51 +100,62 @@ int                     main(int argc, char **argv, char **env) {
         {OPT_BAT_CRITIC,  "20",               OPT_NUMBER_PATTERN,   OPT_NUMBER}
     };
 
+    // cpu usage options
     t_opt       opts_cpu_usage[CPU_USAGE_OPTS] = {
         {OPT_UCPU_ENABLED, "1",             OPT_BOOLEAN_PATTERN, OPT_BOOLEAN},
         {OPT_UCPU_LABEL,   CPU_USAGE_LABEL, OPT_LABEL_PATTERN,   OPT_TEXT},
         {OPT_UCPU_CRITIC,  "80",            OPT_NUMBER_PATTERN,  OPT_NUMBER}
     };
 
+    // cpu temp options
     t_opt       opts_cpu_temp[CPU_TEMP_OPTS] = {
         {OPT_TCPU_ENABLED, "1",            OPT_BOOLEAN_PATTERN, OPT_BOOLEAN},
         {OPT_TCPU_LABEL,   CPU_TEMP_LABEL, OPT_LABEL_PATTERN,   OPT_TEXT},
         {OPT_TCPU_CRITIC,  "70",           OPT_NUMBER_PATTERN,  OPT_NUMBER}
     };
 
+    // memory options
     t_opt       opts_memory[MEM_OPTS] = {
         {OPT_MEM_ENABLED, "1",       OPT_BOOLEAN_PATTERN, OPT_BOOLEAN},
         {OPT_MEM_LABEL,   MEM_LABEL, OPT_LABEL_PATTERN,   OPT_TEXT},
         {OPT_MEM_CRITIC,  "80",      OPT_NUMBER_PATTERN,  OPT_NUMBER}
     };
 
+    // brightness options
     t_opt       opts_brightness[BRIGHTNESS_OPTS] = {
         {OPT_BRG_ENABLED, "1",              OPT_BOOLEAN_PATTERN, OPT_BOOLEAN},
         {OPT_BRG_LABEL,   BRIGHTNESS_LABEL, OPT_LABEL_PATTERN,   OPT_TEXT}
     };
 
+    // volume options
     t_opt       opts_volume[VOLUME_OPTS] = {
         {OPT_VOL_ENABLED,  "1",                OPT_BOOLEAN_PATTERN, OPT_BOOLEAN},
         {OPT_VOL_LABEL,    VOLUME_LABEL,       OPT_LABEL_PATTERN,   OPT_TEXT},
         {OPT_VOL_LB_MUTED, VOLUME_MUTED_LABEL, OPT_LABEL_PATTERN,   OPT_TEXT},
     };
 
+    // wireless options
     t_opt       opts_wireless[WIRELESS_OPTS] = {
         {OPT_WLAN_ENABLED, "1",                OPT_BOOLEAN_PATTERN, OPT_BOOLEAN},
         {OPT_WLAN_LB_UNK,  WIRELESS_UNK_LABEL, OPT_LABEL_PATTERN,   OPT_TEXT}
     };
 
+    // extra data for cpu usage module
+    cpu.prev_idle = 0;
+    cpu.prev_total = 0;
+
+    // modules
     t_module            modules[NB_MODULES] = {
-        {1, 'U', CPU_USAGE_LABEL, 0, "%", &opts_cpu_usage, CPU_USAGE_OPTS, get_cpu_usage, 0, 0},
-        {1, 'T', CPU_TEMP_LABEL, 0, "%", &opts_cpu_temp, CPU_TEMP_OPTS, get_cpu_temp, 0, 0},
-        {1, 'M', MEM_LABEL, 0, "%", &opts_memory, MEM_OPTS, get_memory, 0, 0},
-        {1, 'L', BRIGHTNESS_LABEL, 0, "%", &opts_brightness, BRIGHTNESS_OPTS, get_brightness, 0, 0},
-        {1, 'V', VOLUME_LABEL, 0, "%", &opts_volume, VOLUME_OPTS, get_volume, 1, 0},
-        {1, 'B', BATTERY_LABEL_UNK, 0, "%", &opts_battery, BATTERY_OPTS, get_battery, 0, 0},
-        {1, 'W', WIRELESS_UNK_LABEL, 0, "%", &opts_wireless, WIRELESS_OPTS, get_wireless, 0, 0}
+        {1, 'U', CPU_USAGE_LABEL, 0, "%", &opts_cpu_usage, CPU_USAGE_OPTS, &cpu, get_cpu_usage, 0, 0},
+        {1, 'T', CPU_TEMP_LABEL, 0, "°", &opts_cpu_temp, CPU_TEMP_OPTS, NULL, get_cpu_temp, 0, 0},
+        {1, 'M', MEM_LABEL, 0, "%", &opts_memory, MEM_OPTS, NULL, get_memory, 0, 0},
+        {1, 'L', BRIGHTNESS_LABEL, 0, "%", &opts_brightness, BRIGHTNESS_OPTS, NULL, get_brightness, 0, 0},
+        {1, 'V', VOLUME_LABEL, 0, "%", &opts_volume, VOLUME_OPTS, NULL, get_volume, 1, 0},
+        {1, 'B', BATTERY_LABEL_UNK, 0, "%", &opts_battery, BATTERY_OPTS, NULL, get_battery, 0, 0},
+        {1, 'W', WIRELESS_UNK_LABEL, 0, "%", &opts_wireless, WIRELESS_OPTS, NULL, get_wireless, 0, 0}
     };
 
-    // init
+    // init + load config file
     main.modules = modules;
     main.opts = opts_main;
     main.format = DEFAULT_FORMAT;

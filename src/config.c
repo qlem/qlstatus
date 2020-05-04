@@ -85,15 +85,15 @@ int             check_global_opts(t_main *main, char **opt) {
     while (++i < GLOBAL_OPTS) {
         if (strcmp(opt[0], main->opts[i].key) == 0) {
             if (!match_pattern(main->opts[i].p_value, opt[1])) {
-                printf("Option value do not match pattern: %s\n", main->opts[i].key);
+                printf("Invalid option value: %s\n", opt[0]);
                 return -1;
             }
             main->opts[i].value = opt[1];
             // set global format
-            if (i == 0) {
+            if (strcmp(main->opts[i].key, OPT_FORMAT) == 0) {
                 main->format = opt[1];
             // set global rate
-            } else if (i == 1) {
+            } else if (strcmp(main->opts[i].key, OPT_RATE) == 0) {
                 main->rate = opt[1];
             }
             return 0;
@@ -113,7 +113,7 @@ int             check_module_opts(t_module *modules, char **opt) {
         while (++j < modules[i].s_opts) {
             if (strcmp(opt[0], opts[j].key) == 0) {
                 if (!match_pattern(opts[j].p_value, opt[1])) {
-                    printf("Option value do not match pattern: %s\n", opts[j].key);
+                    printf("Invalid option value: %s\n", opt[0]);
                     return -1;
                 }
                 opts[j].value = opt[1];
@@ -141,13 +141,8 @@ int         parse_config_line(t_main *main, char *line) {
         free_opt(opt);
         return 0;
     }
-    if (!opt[0] && opt[1]) {
-        printf("Key expected for value: %s\n", opt[1]);
-        free_opt(opt);
-        return -1;
-    }
-    if (opt[0] && !opt[1]) {
-        printf("Value expected for key: %s\n", opt[0]);
+    if (!opt[0] || !opt[1]) {
+        printf("Incomplete option: %s\n", opt[0] ? opt[0] : opt[1]);
         free_opt(opt);
         return -1;
     }

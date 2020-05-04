@@ -67,6 +67,7 @@ typedef struct      s_module {
     char            *unit;
     void            *opts;
     int             s_opts;
+    void            *data;
     void            *(*routine)(void *);
     uint8_t         is_thread;
     pthread_t       thread;

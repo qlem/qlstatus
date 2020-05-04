@@ -6,9 +6,8 @@
 
 #include "qlstatus.h"
 
-char            *get_path(const char *dir, const char *pw_name,
-                          const char *file) {
-    char        *path = NULL;
+char        *get_path(const char *dir, const char *pw_name, const char *file) {
+    char    *path = NULL;
 
     path = alloc_buffer(v_strlen(dir) + v_strlen(pw_name) + v_strlen(file) + 3);
     sprintf(path, "%s/%s/%s", dir, pw_name, file);

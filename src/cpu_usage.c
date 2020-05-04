@@ -73,7 +73,7 @@ char        *get_cpu_stats() {
 
 void            *get_cpu_usage(void *data) {
     t_module    *module = data;
-    t_cpu       *cpu = module->opts;
+    t_cpu       *cpu = module->data;
     char        *rstats;
     long        *stats;
 
