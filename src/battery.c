@@ -14,45 +14,88 @@ char        *get_path(const char *dir, const char *pw_name, const char *file) {
     return path;
 }
 
-char    *get_battery_status() {
-    char    *buffer = NULL;
-    char    *path = NULL;
-    char    *status = NULL;
-
-    path = get_path(POWER_DIR, BATTERY_NAME, BATTERY_STATUS_FILE);
-    buffer = read_file(path);
-    free(path);
-    if (strcmp(buffer, BATTERY_STATUS_CHARGING) == 0) {
-        status = BATTERY_LABEL_CHR;
-    } else if (strcmp(buffer, BATTERY_STATUS_DISCHARGING) == 0) {
-        status = BATTERY_LABEL_DIS;
-    } else if (strcmp(buffer, BATTERY_STATUS_FULL) == 0) {
-        status = BATTERY_LABEL_FULL;
+int     set_battery_label(t_module *module, t_power *power) {
+    if (strcmp(power->status, BATTERY_STATUS_DIS) == 0) {
+        module->label = get_option_value(module->opts, OPT_BAT_LB_DIS, 
+                            BATTERY_OPTS);
+    } else if (strcmp(power->status, BATTERY_STATUS_CHR) == 0) {
+        module->label = get_option_value(module->opts, OPT_BAT_LB_CHR, 
+                            BATTERY_OPTS);
+    } else if (strcmp(power->status, BATTERY_STATUS_FULL) == 0) {
+        module->label = get_option_value(module->opts, OPT_BAT_LB_FULL, 
+                            BATTERY_OPTS);
     } else {
-        status = BATTERY_LABEL_UNK;
+        module->label = get_option_value(module->opts, OPT_BAT_LB_UNK, 
+                            BATTERY_OPTS);
     }
-    free(buffer);
-    return status;
+    return 0;
+}
+
+int         parse_power_line(t_power *power, const char *line) {
+    char    *status = NULL;
+    char    *current = NULL;
+    char    *max = NULL;
+
+    if ((status = substring(PW_STATUS_PATTERN, line))) {
+        power->status = status;
+    } else if ((max = substring(PW_MAX_PATTERN, line))) {
+        power->max = to_int(max);
+        free(max);
+    } else if ((current = substring(PW_CURRENT_PATTERN, line))) {
+        power->current = to_int(current);
+        free(current);
+    }
+    return 0; 
+}
+
+int         parse_power_file(t_power *power, const char *file) {
+    FILE    *stream;
+    size_t  size = 0;
+    char    *line = NULL;
+    ssize_t nb;
+
+    stream = open_stream(file);
+    while ((nb = getline(&line, &size, stream)) != -1) {
+        if (line[v_strlen(line) - 1] == '\n') {
+            line[v_strlen(line) - 1] = 0;
+        }
+        parse_power_line(power, line);
+        free(line);
+        line = NULL;
+        size = 0;
+        if (power->status && power->current > -1 && power->max > -1) {
+            close_stream(stream, PROC_MEMINFO);
+            return 0;
+        }
+    }
+    if (nb == -1 && errno) {
+        printf("Error reading file '%s': %s\n", file, strerror(errno));
+        close_stream(stream, file);
+        exit(EXIT_FAILURE);
+    }
+    close_stream(stream, file);
+    return -1;
 }
 
 void            *get_battery(void *data) {
     t_module    *module = data;
-    char        *path = NULL;
-    char        *buffer = NULL;
-    long        current = 0;
-    long        max = 0;
+    t_power     power;
+    char        *file = NULL;
+    char        *bat = NULL;
 
-    module->label = get_battery_status();
-    path = get_path(POWER_DIR, BATTERY_NAME, BATTERY_CURRENT_FILE);
-    buffer = read_file(path);
-    current = to_int(buffer);
-    free(buffer);
-    free(path);
-    path = get_path(POWER_DIR, BATTERY_NAME, BATTERY_MAX_FILE);
-    buffer = read_file(path);
-    max = to_int(buffer);
-    free(buffer);
-    free(path);
-    module->value = PERCENT(current, max);
+    power.max = -1;
+    power.current = -1;
+    power.status = NULL;
+    bat = get_option_value(module->opts, OPT_BAT_NAME, BATTERY_OPTS);
+    file = get_path(POWER_DIR, bat, POWER_FILE);
+    if (parse_power_file(&power, file) == -1) {
+        printf("Cannot compute battery percent\n");
+        free(file);
+        exit(EXIT_FAILURE);
+    }
+    set_battery_label(module, &power);
+    module->value = PERCENT(power.current, power.max);
+    free(power.status);
+    free(file);
     return NULL;
 }

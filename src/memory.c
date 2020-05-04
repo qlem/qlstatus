@@ -65,7 +65,7 @@ void            *get_memory(void *data) {
     meminfo.cached = -1;
     meminfo.sreclaim = -1;
     if (get_mem_stats(&meminfo) == -1) {
-        printf("Unable to get memory stats\n");
+        printf("Cannot compute memory usage\n");
         exit(EXIT_FAILURE);
     }
     used = meminfo.total - meminfo.free - meminfo.buffers - meminfo.cached -

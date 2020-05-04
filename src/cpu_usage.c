@@ -57,7 +57,7 @@ char        *get_cpu_stats() {
         if (errno) {
             printf("Cannot read file '%s': %s\n", PROC_STAT, strerror(errno));
         } else {
-            printf("Unable to get cpu stats\n");
+            printf("Cannot compute cpu usage\n");
         }
         close_stream(stream, PROC_STAT);
         exit(EXIT_FAILURE);
@@ -78,7 +78,7 @@ void            *get_cpu_usage(void *data) {
     long        *stats;
 
     if ((rstats = get_cpu_stats()) == NULL) {
-        printf("Unable to get cpu stats\n");
+        printf("Cannot compute cpu usage\n");
         exit(EXIT_FAILURE);
     }
     stats = parse_cpu_stats(rstats);

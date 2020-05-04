@@ -149,16 +149,24 @@ typedef struct      s_opt {
 /* BATTERY */
 #define BATTERY_NAME "BAT0"
 #define POWER_DIR "/sys/class/power_supply"
-#define BATTERY_CURRENT_FILE "energy_now"
-#define BATTERY_MAX_FILE "energy_full_design"
-#define BATTERY_STATUS_FILE "status"
-#define BATTERY_STATUS_FULL "Full\n"
-#define BATTERY_STATUS_CHARGING "Charging\n"
-#define BATTERY_STATUS_DISCHARGING "Discharging\n"
+#define POWER_FILE "uevent"
+#define PW_STATUS_PATTERN "^POWER_SUPPLY_STATUS=(Discharging|Charging|Full|Unknown)$"
+#define PW_MAX_PATTERN "^POWER_SUPPLY_ENERGY_FULL_DESIGN=([0-9]+)$"
+#define PW_CURRENT_PATTERN "^POWER_SUPPLY_ENERGY_NOW=([0-9]+)$"
+#define BATTERY_STATUS_FULL "Full"
+#define BATTERY_STATUS_CHR "Charging"
+#define BATTERY_STATUS_DIS "Discharging"
+#define BATTERY_STATUS_UNK "Unknown"
 #define BATTERY_LABEL_FULL "full"
 #define BATTERY_LABEL_CHR "chr"
 #define BATTERY_LABEL_DIS "bat"
 #define BATTERY_LABEL_UNK "unk"
+
+typedef struct      s_power {
+    char            *status;
+    long            current;
+    long            max;
+}                   t_power;
 
 /* BRIGHTNESS */
 #define BRIGHTNESS_CURRENT "/sys/class/backlight/intel_backlight/actual_brightness"
@@ -243,6 +251,7 @@ void    v_sleep(time_t sec, long nsec);
 long    to_int(const char *str);
 char	*to_str(long nb);
 int     putstr(const char *str);
+char    *get_option_value(t_opt *opts, const char *key, int size);
 
 // format
 char    *format(t_main *main);

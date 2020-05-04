@@ -6,6 +6,17 @@
 
 #include "qlstatus.h"
 
+char    *get_option_value(t_opt *opts, const char *key, int size) {
+    int     i = -1;
+
+    while (++i < size) {
+        if (strcmp(opts[i].key, key) == 0) {
+            return opts[i].value;
+        }
+    }
+    return NULL;
+}
+
 void    v_sleep(time_t sec, long nsec) {
     struct timespec     tp;
 
