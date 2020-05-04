@@ -53,7 +53,7 @@ void            *get_volume(void *data) {
             operation = pa_context_get_sink_info_by_name(context,
                     PULSE_SINK_NAME, &sink_info_cb, module);
         }
-        v_sleep(0, (long)PULSE_RATE);
+        v_sleep(0, PULSE_RATE);
     }
 
     pa_context_disconnect(context);

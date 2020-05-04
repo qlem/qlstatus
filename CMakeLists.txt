@@ -20,8 +20,8 @@ add_executable(qlstatus
     src/read_file.c
     src/read_dir.c
     src/common.c
-    src/regex.c
-    src/qlstatus.h)
+    src/regex.c)
 
+include_directories(inc)
 target_include_directories(qlstatus PRIVATE /usr/include/libnl3)
 target_link_libraries(qlstatus -lpthread -lnl-3 -lnl-genl-3 -lpulse)

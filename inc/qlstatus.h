@@ -39,10 +39,10 @@
 
 /* GLOBAL */
 #define BASE 10
-#define RATE 1E9
+#define RATE "1s"
 #define NB_MODULES 7
-#define SEC(nsec) nsec / (long)1E9
-#define NSEC(nsec) nsec % (long)1E9
+#define SEC(nsec) nsec / (long)1e9
+#define NSEC(nsec) nsec % (long)1e9
 #define PERCENT(value, total) value * 100 / total
 #define CONFIG_FILE ".config/qlstatus/qlstatus.config"
 #define HOME_PATTERN "^HOME=(/home/[a-zA-Z]+)$"
@@ -72,23 +72,78 @@ typedef struct      s_module {
     pthread_t       thread;
 }                   t_module;
 
-/* OPTION */
+/* CONFIG */
+typedef enum    e_opt_type {
+    OPT_TEXT,
+    OPT_NUMBER,
+    OPT_BOOLEAN
+}               e_opt_type;
+
 typedef struct      s_opt {
     char            *key;
     char            *value;
     char            *p_value;
+    e_opt_type      type;
 }                   t_opt;
 
+// number of options per module
+#define GLOBAL_OPTS 2
 #define BATTERY_OPTS 7
-#define CPU_USAGE_OPTS 2
-#define CPU_TEMP_OPTS 2
-#define MEM_OPTS 2
+#define CPU_USAGE_OPTS 3
+#define CPU_TEMP_OPTS 3
+#define MEM_OPTS 3
 #define BRIGHTNESS_OPTS 2
-#define VOLUME_OPTS 2
-#define WIRELESS_OPTS 1
-#define OPT_LABEL_PATTERN "^[a-z]+$"
-#define OPT_NUMBER_PATTERN "^[0-9]+$"
-#define OPT_BOOLEAN_PATTERN "^0|1$"
+#define VOLUME_OPTS 3
+#define WIRELESS_OPTS 2
+
+// option patterns
+#define OPT_FORMAT_PATTERN "^.+$"
+#define OPT_RATE_PATTERN "^[0-9]+s$|^[0-9]+ms$"
+#define OPT_LABEL_PATTERN "^[a-z]{1,5}$"
+#define OPT_NUMBER_PATTERN "^[0-9]{1,4}$"
+#define OPT_BOOLEAN_PATTERN "^0$|^1$"
+#define OPT_BAT_NAME_PATTERN "^BAT[0-9]$"
+
+// global options
+#define OPT_FORMAT "format"
+#define OPT_RATE "rate"
+
+// battery options
+#define OPT_BAT_ENABLED "battery_enabled"
+#define OPT_BAT_NAME "battery_name"
+#define OPT_BAT_LB_FULL "battery_label_full"
+#define OPT_BAT_LB_CHR "battery_label_charging"
+#define OPT_BAT_LB_DIS "battery_label_discharging"
+#define OPT_BAT_LB_UNK "battery_label_unknown"
+#define OPT_BAT_CRITIC "battery_critical"
+
+// usage cpu options
+#define OPT_UCPU_ENABLED "cpu_usage_enabled"
+#define OPT_UCPU_LABEL "cpu_usage_label"
+#define OPT_UCPU_CRITIC "cpu_usage_critical"
+
+// temp cpu options
+#define OPT_TCPU_ENABLED "cpu_temp_enabled"
+#define OPT_TCPU_LABEL "cpu_temp_label"
+#define OPT_TCPU_CRITIC "cpu_temp_critical"
+
+// memory options
+#define OPT_MEM_ENABLED "memory_enabled"
+#define OPT_MEM_LABEL "memory_label"
+#define OPT_MEM_CRITIC "memory_critical"
+
+// brightness options
+#define OPT_BRG_ENABLED "brightness_enabled"
+#define OPT_BRG_LABEL "brightness_label"
+
+// volume options
+#define OPT_VOL_ENABLED "volume_enabled"
+#define OPT_VOL_LABEL "volume_label"
+#define OPT_VOL_LB_MUTED "volume_muted_label"
+
+// wireless options
+#define OPT_WLAN_ENABLED "wireless_enabled"
+#define OPT_WLAN_LB_UNK "wireless_unknown_label"
 
 /* BATTERY */
 #define BATTERY_NAME "BAT0"
@@ -100,9 +155,9 @@ typedef struct      s_opt {
 #define BATTERY_STATUS_CHARGING "Charging\n"
 #define BATTERY_STATUS_DISCHARGING "Discharging\n"
 #define BATTERY_LABEL_FULL "full"
-#define BATTERY_LABEL_CHARGING "chr"
-#define BATTERY_LABEL_DISCHARGING "bat"
-#define BATTERY_LABEL_UNKNOW "unk"
+#define BATTERY_LABEL_CHR "chr"
+#define BATTERY_LABEL_DIS "bat"
+#define BATTERY_LABEL_UNK "unk"
 
 /* BRIGHTNESS */
 #define BRIGHTNESS_CURRENT "/sys/class/backlight/intel_backlight/actual_brightness"
@@ -133,8 +188,7 @@ typedef struct      s_cpu {
 #define WIRELESS_FLAG_HAS_ESSID (1 << 0)
 #define WIRELESS_FLAG_HAS_SIGNAL (1 << 1)
 #define WIRELESS_ESSID_MAX_SIZE 16
-#define WIRELESS_UNK_ESSID_LABEL "SSID unk:"
-#define WIRELESS_UNK_QUALITY_LABEL "-"
+#define WIRELESS_UNK_LABEL "SSID unk:"
 #define WIRELESS_PREFIX_ERROR "Wireless module error"
 #define NOISE_FLOOR_DBM (-90)
 #define SIGNAL_MAX_DBM (-20)
@@ -168,7 +222,7 @@ typedef struct  s_meminfo {
 /* VOLUME */
 #define PULSE_SINK_NAME "alsa_output.pci-0000_00_1f.3.analog-stereo"
 #define PULSE_APP_NAME "qlstatus"
-#define PULSE_RATE 1E8
+#define PULSE_RATE (long)1e8
 #define VOLUME_LABEL "vol"
 #define VOLUME_MUTED_LABEL "mut"
 
@@ -176,6 +230,8 @@ typedef struct  s_meminfo {
 typedef struct          s_main {
     t_module            *modules;
     char                *format;
+    char                *rate;
+    t_opt               *opts;
 }                       t_main;
 
 /* FUNCTIONS */
@@ -193,6 +249,7 @@ char    *format(t_main *main);
 // regex
 bool    match_pattern(const char *regex, const char *str);
 char    *substring(const char *regex, const char *str);
+char    **multiple_subs(const char *regex, const char *str, int nmatch);
 
 // alloc memory
 char    *alloc_buffer(size_t size);

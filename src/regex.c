@@ -22,6 +22,36 @@ int             compile_regex(const char *regex, regex_t *preg) {
     return 0;
 }
 
+char        **multiple_subs(const char *regex, const char *str, int nmatch) {
+    char            **match = NULL;
+    regex_t         preg;
+    regmatch_t      pmatch[nmatch + 1];
+    size_t          size = 0;
+    int             i = -1;
+    int             j;
+
+    compile_regex(regex, &preg);
+    match = alloc_ptr(sizeof(char *) * nmatch);
+    while (++i < nmatch) {
+        match[i] = NULL;
+    }
+    if (regexec(&preg, str, nmatch + 1, pmatch, 0) == 0) {
+        i = 0;
+        while (++i < nmatch + 1) {
+            if (pmatch[i].rm_so > -1) {
+                size = pmatch[i].rm_eo - pmatch[i].rm_so;
+                match[i - 1] = alloc_buffer(size + 1);
+                j = -1;
+                while (++j < (int)size) {
+                    match[i - 1][j] = str[pmatch[i].rm_so + j];
+                }
+            }
+        }
+    }
+    regfree(&preg);
+    return match;
+}
+
 char    *substring(const char *regex, const char *str) {
     regex_t         preg;
     regmatch_t      pmatch[2];

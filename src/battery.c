@@ -24,13 +24,13 @@ char    *get_battery_status() {
     buffer = read_file(path);
     free(path);
     if (strcmp(buffer, BATTERY_STATUS_CHARGING) == 0) {
-        status = BATTERY_LABEL_CHARGING;
+        status = BATTERY_LABEL_CHR;
     } else if (strcmp(buffer, BATTERY_STATUS_DISCHARGING) == 0) {
-        status = BATTERY_LABEL_DISCHARGING;
+        status = BATTERY_LABEL_DIS;
     } else if (strcmp(buffer, BATTERY_STATUS_FULL) == 0) {
         status = BATTERY_LABEL_FULL;
     } else {
-        status = BATTERY_LABEL_UNKNOW;
+        status = BATTERY_LABEL_UNK;
     }
     free(buffer);
     return status;

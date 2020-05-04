@@ -212,28 +212,14 @@ error:
     return -1;
 }
 
-char        *get_quality_buffer(t_wireless *wireless) {
-    char    *buffer;
-
-    if (wireless->flags & WIRELESS_FLAG_HAS_SIGNAL) {
-        buffer = to_str(wireless->signal);
-    } else {
-        buffer = alloc_buffer(v_strlen(WIRELESS_UNK_QUALITY_LABEL) + 1);
-        buffer = v_strncpy(buffer, WIRELESS_UNK_QUALITY_LABEL,
-                           v_strlen(WIRELESS_UNK_QUALITY_LABEL));
-    }
-    return buffer;
-}
-
 char        *get_essid_buffer(t_wireless *wireless) {
     char    *buffer;
 
     if (wireless->flags & WIRELESS_FLAG_HAS_ESSID) {
         buffer = wireless->essid;
     } else {
-        buffer = alloc_buffer(v_strlen(WIRELESS_UNK_ESSID_LABEL) + 1);
-        buffer =  v_strncpy(buffer, WIRELESS_UNK_ESSID_LABEL,
-                            v_strlen(WIRELESS_UNK_ESSID_LABEL));
+        buffer = alloc_buffer(v_strlen(WIRELESS_UNK_LABEL) + 1);
+        buffer =  v_strncpy(buffer, WIRELESS_UNK_LABEL,v_strlen(WIRELESS_UNK_LABEL));
     }
     return buffer;
 }
