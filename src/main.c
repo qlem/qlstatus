@@ -146,13 +146,13 @@ int                     main(int argc, char **argv, char **env) {
 
     // modules
     t_module            modules[NB_MODULES] = {
-        {1, 'U', CPU_USAGE_LABEL, 0, "%", &opts_cpu_usage, CPU_USAGE_OPTS, &cpu, get_cpu_usage, 0, 0},
-        {1, 'T', CPU_TEMP_LABEL, 0, "°", &opts_cpu_temp, CPU_TEMP_OPTS, NULL, get_cpu_temp, 0, 0},
-        {1, 'M', MEM_LABEL, 0, "%", &opts_memory, MEM_OPTS, NULL, get_memory, 0, 0},
-        {1, 'L', BRIGHTNESS_LABEL, 0, "%", &opts_brightness, BRIGHTNESS_OPTS, NULL, get_brightness, 0, 0},
-        {1, 'V', VOLUME_LABEL, 0, "%", &opts_volume, VOLUME_OPTS, NULL, get_volume, 1, 0},
-        {1, 'B', BATTERY_LABEL_UNK, 0, "%", &opts_battery, BATTERY_OPTS, NULL, get_battery, 0, 0},
-        {1, 'W', WIRELESS_UNK_LABEL, 0, "%", &opts_wireless, WIRELESS_OPTS, NULL, get_wireless, 0, 0}
+        {1, 'U', CPU_USAGE_LABEL, 0, "%", &cpu, opts_cpu_usage, CPU_USAGE_OPTS, get_cpu_usage, 0, 0},
+        {1, 'T', CPU_TEMP_LABEL, 0, "°", NULL, opts_cpu_temp, CPU_TEMP_OPTS, get_cpu_temp, 0, 0},
+        {1, 'M', MEM_LABEL, 0, "%", NULL, opts_memory, MEM_OPTS, get_memory, 0, 0},
+        {1, 'L', BRIGHTNESS_LABEL, 0, "%", NULL, opts_brightness, BRIGHTNESS_OPTS, get_brightness, 0, 0},
+        {1, 'V', VOLUME_LABEL, 0, "%", NULL, opts_volume, VOLUME_OPTS, get_volume, 1, 0},
+        {1, 'B', BATTERY_LABEL_UNK, 0, "%", NULL, opts_battery, BATTERY_OPTS, get_battery, 0, 0},
+        {1, 'W', WIRELESS_UNK_LABEL, 0, "%", NULL, opts_wireless, WIRELESS_OPTS, get_wireless, 0, 0}
     };
 
     // init + load config file

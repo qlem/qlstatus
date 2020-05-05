@@ -63,13 +63,33 @@ static int      station_callback(struct nl_msg *msg, void *data) {
     return NL_SKIP;
 }
 
-static int      scan_callback(struct nl_msg *msg, void *data) {
-    t_wireless          *wireless = data;
+void            resolve_essid(t_wireless *wireless, struct nlattr *attr) {
     uint8_t             *ssid;
     uint32_t            ssid_len;
-    uint32_t            status;
     uint8_t             *bss_ies;
     uint32_t            bss_ies_len;
+
+    bss_ies = nla_data(attr);
+    bss_ies_len = nla_len(attr);
+    find_ssid(bss_ies, bss_ies_len, &ssid, &ssid_len);
+    if (ssid && ssid_len) {
+        wireless->flags |= WIRELESS_FLAG_HAS_ESSID;
+        if (ssid_len > WIRELESS_ESSID_MAX_SIZE) {
+            wireless->essid = alloc_buffer(WIRELESS_ESSID_MAX_SIZE + 1);
+            v_strncpy(wireless->essid, (char *)ssid, WIRELESS_ESSID_MAX_SIZE);
+            wireless->essid[WIRELESS_ESSID_MAX_SIZE - 1] = ':';
+            wireless->essid[WIRELESS_ESSID_MAX_SIZE - 2] = '.';
+        } else {
+            wireless->essid = alloc_buffer(ssid_len + 2);
+            v_strncpy(wireless->essid, (char *)ssid, ssid_len);
+            wireless->essid[ssid_len] = ':';
+        }
+    }
+}
+
+static int      scan_callback(struct nl_msg *msg, void *data) {
+    t_wireless          *wireless = data;
+    uint32_t            status;
     struct genlmsghdr   *gnlh = nlmsg_data(nlmsg_hdr(msg));
     struct nlattr       *attr = genlmsg_attrdata(gnlh, 0);
     int                 attrlen = genlmsg_attrlen(gnlh, 0);
@@ -105,23 +125,7 @@ static int      scan_callback(struct nl_msg *msg, void *data) {
 
     memcpy(wireless->bssid, nla_data(bss[NL80211_BSS_BSSID]), ETH_ALEN);
     if (bss[NL80211_BSS_INFORMATION_ELEMENTS]) {
-        bss_ies = nla_data(bss[NL80211_BSS_INFORMATION_ELEMENTS]);
-        bss_ies_len = nla_len(bss[NL80211_BSS_INFORMATION_ELEMENTS]);
-        find_ssid(bss_ies, bss_ies_len, &ssid, &ssid_len);
-        if (ssid && ssid_len) {
-            wireless->flags |= WIRELESS_FLAG_HAS_ESSID;
-            if (ssid_len > WIRELESS_ESSID_MAX_SIZE) {
-                wireless->essid = alloc_buffer(WIRELESS_ESSID_MAX_SIZE + 1);
-                v_strncpy(wireless->essid, (char *)ssid,
-                          WIRELESS_ESSID_MAX_SIZE);
-                wireless->essid[WIRELESS_ESSID_MAX_SIZE - 1] = ':';
-                wireless->essid[WIRELESS_ESSID_MAX_SIZE - 2] = '.';
-            } else {
-                wireless->essid = alloc_buffer(ssid_len + 2);
-                v_strncpy(wireless->essid, (char *)ssid, ssid_len);
-                wireless->essid[ssid_len] = ':';
-            }
-        }
+        resolve_essid(wireless, bss[NL80211_BSS_INFORMATION_ELEMENTS]);
     }
     return NL_SKIP;
 }
@@ -131,7 +135,7 @@ static int      send_for_station(t_wireless *wireless, struct nl_sock *socket) {
 
     if (nl_socket_modify_cb(socket, NL_CB_VALID, NL_CB_CUSTOM, station_callback,
         wireless) < 0) {
-        printf("%s: unable to modify station callback\n",
+        printf("%s: unable to set callback for station\n",
                 WIRELESS_PREFIX_ERROR);
         return -NLE_RANGE;
     }
@@ -172,7 +176,7 @@ static int      send_for_scan(t_wireless *wireless, struct nl_sock *socket) {
 
     if (nl_socket_modify_cb(socket, NL_CB_VALID, NL_CB_CUSTOM, scan_callback,
         wireless) < 0) {
-        printf("%s: unable to modify scan callback\n", WIRELESS_PREFIX_ERROR);
+        printf("%s: unable to set callback for scan\n", WIRELESS_PREFIX_ERROR);
         return -NLE_RANGE;
     }
     wireless->nl80211_id = genl_ctrl_resolve(socket, NL80211);
@@ -212,16 +216,19 @@ error:
     return -1;
 }
 
-char        *get_essid_buffer(t_wireless *wireless) {
-    char    *buffer;
+int         set_wireless_label(t_module *module, t_wireless *wireless) {
+    char    *unk;
 
-    if (wireless->flags & WIRELESS_FLAG_HAS_ESSID) {
-        buffer = wireless->essid;
-    } else {
-        buffer = alloc_buffer(v_strlen(WIRELESS_UNK_LABEL) + 1);
-        buffer =  v_strncpy(buffer, WIRELESS_UNK_LABEL,v_strlen(WIRELESS_UNK_LABEL));
+    unk = get_option_value(module->opts, OPT_WLAN_LB_UNK, module->s_opts);
+    if (strcmp(unk, module->label) != 0) {
+        free(module->label);
     }
-    return buffer;
+    if (wireless->flags & WIRELESS_FLAG_HAS_ESSID) {
+        module->label = wireless->essid;
+    } else {
+        module->label = unk;
+    }
+    return 0;
 }
 
 void                    *get_wireless(void *data) {
@@ -246,7 +253,7 @@ void                    *get_wireless(void *data) {
     } else {
         module->value = 0;
     }
-    module->label = get_essid_buffer(&wireless);
+    set_wireless_label(module, &wireless);
     nl_socket_free(socket);
     return NULL;
 }

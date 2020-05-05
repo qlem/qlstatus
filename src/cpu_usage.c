@@ -6,7 +6,7 @@
 
 #include "qlstatus.h"
 
-long    compute_usage(t_cpu *cpu, const long *stats) {
+long    compute_cpu_usage(t_cpu *cpu, const long *stats) {
     long    idle = 0;
     long    total = 0;
     long    usage = 0;
@@ -46,7 +46,7 @@ long        *parse_cpu_stats(char *line) {
     return stats;
 }
 
-char        *get_cpu_stats() {
+char        *parse_cpu_file() {
     FILE    *stream;
     size_t  size = 0;
     char    *line = NULL;
@@ -55,7 +55,7 @@ char        *get_cpu_stats() {
     stream = open_stream(PROC_STAT);
     if (getline(&line, &size, stream) == -1) {
         if (errno) {
-            printf("Cannot read file '%s': %s\n", PROC_STAT, strerror(errno));
+            printf("Cannot read file %s: %s\n", PROC_STAT, strerror(errno));
         } else {
             printf("Cannot compute cpu usage\n");
         }
@@ -77,12 +77,12 @@ void            *get_cpu_usage(void *data) {
     char        *rstats;
     long        *stats;
 
-    if ((rstats = get_cpu_stats()) == NULL) {
+    if ((rstats = parse_cpu_file()) == NULL) {
         printf("Cannot compute cpu usage\n");
         exit(EXIT_FAILURE);
     }
     stats = parse_cpu_stats(rstats);
-    module->value = compute_usage(cpu, stats);
+    module->value = compute_cpu_usage(cpu, stats);
     free(rstats);
     free(stats);
     return NULL;

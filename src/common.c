@@ -23,7 +23,7 @@ void    v_sleep(time_t sec, long nsec) {
     tp.tv_sec = sec;
     tp.tv_nsec = nsec;
     if (clock_nanosleep(CLOCK_REALTIME, 0, &tp, NULL)) {
-        printf("Call to 'clock_nanosleep()' failed: %s\n", strerror(errno));
+        printf("Call to clock_nanosleep() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 }
@@ -31,9 +31,6 @@ void    v_sleep(time_t sec, long nsec) {
 size_t  v_strlen(const char *str) {
     size_t     i = -1;
 
-    if (str == NULL) {
-        return 0;
-    }
     while (str[++i]) {}
     return i;
 }
@@ -72,7 +69,7 @@ char    *alloc_buffer(size_t size) {
     char    *buffer;
 
     if ((buffer = malloc(sizeof(char) * size)) == NULL) {
-        printf("Call to 'malloc()' failed: %s\n", strerror(errno));
+        printf("Call to malloc() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
     v_memset(buffer, 0, size);
@@ -83,7 +80,7 @@ void    *alloc_ptr(size_t size) {
     void    *ptr;
 
     if ((ptr = malloc(size)) == NULL) {
-        printf("Call to 'malloc()' failed: %s\n", strerror(errno));
+        printf("Call to malloc() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
     return ptr;
@@ -94,7 +91,7 @@ long    to_int(const char *str) {
 
     nb = strtol(str, NULL, BASE);
     if ((nb == LONG_MIN || nb == LONG_MAX)) {
-        printf("Call to 'strtol()' failed: %s\n", strerror(errno));
+        printf("Call to strtol() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
     return nb;

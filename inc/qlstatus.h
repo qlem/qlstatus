@@ -58,21 +58,6 @@
  */
 #define DEFAULT_FORMAT "%U  %T  %M  %L  %V  %B  %W"
 
-/* MODULE */
-typedef struct      s_module {
-    uint8_t         enabled;
-    char            fmtid;
-    char            *label;
-    long            value;
-    char            *unit;
-    void            *opts;
-    int             s_opts;
-    void            *data;
-    void            *(*routine)(void *);
-    uint8_t         is_thread;
-    pthread_t       thread;
-}                   t_module;
-
 /* CONFIG */
 typedef enum    e_opt_type {
     OPT_TEXT,
@@ -145,6 +130,21 @@ typedef struct      s_opt {
 // wireless options
 #define OPT_WLAN_ENABLED "wireless_enabled"
 #define OPT_WLAN_LB_UNK "wireless_unknown_label"
+
+/* MODULE TYPE */
+typedef struct      s_module {
+    uint8_t         enabled;
+    char            fmtid;
+    char            *label;
+    long            value;
+    char            *unit;
+    void            *data;
+    t_opt           *opts;
+    int             s_opts;
+    void            *(*routine)(void *);
+    uint8_t         is_thread;
+    pthread_t       thread;
+}                   t_module;
 
 /* BATTERY */
 #define BATTERY_NAME "BAT0"

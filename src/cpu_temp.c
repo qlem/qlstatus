@@ -6,16 +6,6 @@
 
 #include "qlstatus.h"
 
-bool    has_asterisk(char *path) {
-    size_t  length;
-
-    length = v_strlen(path);
-    if (length >= 2 && path[length - 1] == '*' && path[length - 2] == '/') {
-        return true;
-    }
-    return false;
-}
-
 char    *resolve_asterisk(char *path) {
     char            *parent;
     char            *resolved = NULL;
@@ -37,6 +27,16 @@ char    *resolve_asterisk(char *path) {
     free_files(files);
     free(parent);
     return resolved;
+}
+
+bool    has_asterisk(char *path) {
+    size_t  length;
+
+    length = v_strlen(path);
+    if (length >= 2 && path[length - 1] == '*' && path[length - 2] == '/') {
+        return true;
+    }
+    return false;
 }
 
 long    compute_temp(char **files, char *parent) {
@@ -77,7 +77,7 @@ void            *get_cpu_temp(void *data) {
     }
     files = read_dir(path, CPU_TEMP_INPUT_PATTERN);
     if (!files[0][0]) {
-        printf("No input files found in '%s'\n", path);
+        printf("Cannot compute cpu temp, no input files found in %s\n", path);
         free_files(files);
         free(path);
         exit(EXIT_FAILURE);

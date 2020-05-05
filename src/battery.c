@@ -6,7 +6,8 @@
 
 #include "qlstatus.h"
 
-char        *get_path(const char *dir, const char *pw_name, const char *file) {
+char        *resolve_power_file(const char *dir, const char *pw_name, 
+                                const char *file) {
     char    *path = NULL;
 
     path = alloc_buffer(v_strlen(dir) + v_strlen(pw_name) + v_strlen(file) + 3);
@@ -64,12 +65,12 @@ int         parse_power_file(t_power *power, const char *file) {
         line = NULL;
         size = 0;
         if (power->status && power->current > -1 && power->max > -1) {
-            close_stream(stream, PROC_MEMINFO);
+            close_stream(stream, file);
             return 0;
         }
     }
     if (nb == -1 && errno) {
-        printf("Error reading file '%s': %s\n", file, strerror(errno));
+        printf("Error reading file %s: %s\n", file, strerror(errno));
         close_stream(stream, file);
         exit(EXIT_FAILURE);
     }
@@ -87,7 +88,7 @@ void            *get_battery(void *data) {
     power.current = -1;
     power.status = NULL;
     bat = get_option_value(module->opts, OPT_BAT_NAME, BATTERY_OPTS);
-    file = get_path(POWER_DIR, bat, POWER_FILE);
+    file = resolve_power_file(POWER_DIR, bat, POWER_FILE);
     if (parse_power_file(&power, file) == -1) {
         printf("Cannot compute battery percent\n");
         free(file);

@@ -24,7 +24,7 @@ void        parse_mem_stat(t_meminfo *meminfo, char *rstat) {
     free(stat);
 }
 
-int         get_mem_stats(t_meminfo *meminfo) {
+int         parse_mem_file(t_meminfo *meminfo) {
     FILE    *stream;
     size_t  size = 0;
     char    *line = NULL;
@@ -46,7 +46,7 @@ int         get_mem_stats(t_meminfo *meminfo) {
         }
     }
     if (nb == -1 && errno) {
-        printf("Error reading file '%s': %s\n", PROC_MEMINFO, strerror(errno));
+        printf("Error reading file %s: %s\n", PROC_MEMINFO, strerror(errno));
         close_stream(stream, PROC_MEMINFO);
         exit(EXIT_FAILURE);
     }
@@ -64,7 +64,7 @@ void            *get_memory(void *data) {
     meminfo.buffers = -1;
     meminfo.cached = -1;
     meminfo.sreclaim = -1;
-    if (get_mem_stats(&meminfo) == -1) {
+    if (parse_mem_file(&meminfo) == -1) {
         printf("Cannot compute memory usage\n");
         exit(EXIT_FAILURE);
     }

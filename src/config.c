@@ -193,7 +193,7 @@ int     parse_config_file(t_main *main, const char *file) {
         size = 0;
     }
     if (nb == -1 && errno) {
-        printf("Error reading file '%s': %s\n", file, strerror(errno));
+        printf("Error reading file %s: %s\n", file, strerror(errno));
         close_stream(stream, file);
         exit(EXIT_FAILURE);
     }

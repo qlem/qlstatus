@@ -13,19 +13,17 @@ char        *append_module(t_module *module, char *buffer) {
     size_t  mlen = 0;
 
     value = to_str(module->value);
-    len = v_strlen(buffer);
-    mlen = v_strlen(module->label) + v_strlen(value) +
-                    v_strlen(module->unit) + 1;
+    if (buffer) {
+        len = v_strlen(buffer);
+    }
+    mlen = v_strlen(module->label) + v_strlen(value) + 
+                v_strlen(module->unit) + 1;
     new = alloc_buffer(sizeof(char) * (len + mlen + 1));
     if (buffer) {
         sprintf(new, "%s%s %s%s", buffer, module->label, value, module->unit);
         free(buffer);
     } else {
         sprintf(new, "%s %s%s", module->label, value, module->unit);
-    }
-    // free label only for wireless module
-    if (module->fmtid == 'W') {
-        free(module->label);
     }
     free(value);
     return new;
@@ -60,7 +58,7 @@ char        *format(t_main *main) {
         } else {
             size = v_strlen(buffer) + 2;
             if ((buffer = realloc(buffer, sizeof(char) * size)) == NULL) {
-                printf("Call to 'realloc()' failed: %s\n", strerror(errno));
+                printf("Call to realloc() failed: %s\n", strerror(errno));
                 exit(EXIT_FAILURE);
             }
             buffer[size - 2] = fmt[i];
