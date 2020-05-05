@@ -150,7 +150,7 @@ static int      send_for_station(t_wireless *wireless, struct nl_sock *socket) {
                 WIRELESS_PREFIX_ERROR);
         goto error;
     }
-    if (nla_put_u32(msg, NL80211_ATTR_IFINDEX, wireless->if_index) < 0) {
+    if (nla_put_u32(msg, NL80211_ATTR_IFINDEX, wireless->ifindex) < 0) {
         printf("%s: unable to add attribute to Netlink message\n",
                 WIRELESS_PREFIX_ERROR);
         goto error;
@@ -184,8 +184,8 @@ static int      send_for_scan(t_wireless *wireless, struct nl_sock *socket) {
         printf("%s: unable to resolve Netlink family\n", WIRELESS_PREFIX_ERROR);
         return -NLE_OBJ_NOTFOUND;
     }
-    wireless->if_index = if_nametoindex(WIRELESS_INTERFACE);
-    if (wireless->if_index == 0) {
+    wireless->ifindex = if_nametoindex(wireless->ifname);
+    if (wireless->ifindex == 0) {
         printf("%s: %s\n", WIRELESS_PREFIX_ERROR, strerror(errno));
         return -1;
     }
@@ -200,7 +200,7 @@ static int      send_for_scan(t_wireless *wireless, struct nl_sock *socket) {
                 WIRELESS_PREFIX_ERROR);
         goto error;
     }
-    if (nla_put_u32(msg, NL80211_ATTR_IFINDEX, wireless->if_index) < 0) {
+    if (nla_put_u32(msg, NL80211_ATTR_IFINDEX, wireless->ifindex) < 0) {
         printf("%s: unable to add attribute to Netlink message\n",
                 WIRELESS_PREFIX_ERROR);
         goto error;
@@ -243,6 +243,8 @@ void                    *get_wireless(void *data) {
         exit(EXIT_FAILURE);
     }
     v_memset(&wireless, 0, sizeof(t_wireless));
+    wireless.ifname = get_option_value(module->opts, OPT_WLAN_IFACE,
+                                       WIRELESS_OPTS);
     if (send_for_scan(&wireless, socket) < 0 || send_for_station(&wireless,
         socket) < 0) {
         nl_socket_free(socket);

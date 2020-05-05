@@ -67,23 +67,27 @@ long    compute_temp(char **files, char *parent) {
 void            *get_cpu_temp(void *data) {
     t_module    *module = data;
     char        *path;
+    char        *rpath;
+    // char        *in_pattern;
     char        **files;
 
-    if (has_asterisk(CPU_TEMP_DIR)) {
-        path = resolve_asterisk(CPU_TEMP_DIR);
+    // in_pattern = get_option_value(module->opts, OPT_TCPU_INPUT, CPU_TEMP_OPTS);
+    path = get_option_value(module->opts, OPT_TCPU_DIR, CPU_TEMP_OPTS);
+    if (has_asterisk(path)) {
+        rpath = resolve_asterisk(path);
     } else {
-        path = alloc_buffer(v_strlen(CPU_TEMP_DIR) + 1);
-        v_strncpy(path, CPU_TEMP_DIR, v_strlen(CPU_TEMP_DIR));
+        rpath = alloc_buffer(v_strlen(path) + 1);
+        v_strncpy(rpath, path, v_strlen(path));
     }
-    files = read_dir(path, CPU_TEMP_INPUT_PATTERN);
+    files = read_dir(rpath, CPU_TEMP_INPUT);
     if (!files[0][0]) {
-        printf("Cannot compute cpu temp, no input files found in %s\n", path);
+        printf("Cannot compute cpu temp, no input files found in %s\n", rpath);
         free_files(files);
-        free(path);
+        free(rpath);
         exit(EXIT_FAILURE);
     }
-    module->value = compute_temp(files, path);
+    module->value = compute_temp(files, rpath);
     free_files(files);
-    free(path);
+    free(rpath);
     return NULL;
 }

@@ -59,36 +59,32 @@
 #define DEFAULT_FORMAT "%U  %T  %M  %L  %V  %B  %W"
 
 /* CONFIG */
-typedef enum    e_opt_type {
-    OPT_TEXT,
-    OPT_NUMBER,
-    OPT_BOOLEAN
-}               e_opt_type;
-
 typedef struct      s_opt {
     char            *key;
     char            *value;
     char            *p_value;
-    e_opt_type      type;
 }                   t_opt;
 
 // number of options per module
 #define GLOBAL_OPTS 2
 #define BATTERY_OPTS 7
 #define CPU_USAGE_OPTS 3
-#define CPU_TEMP_OPTS 3
+#define CPU_TEMP_OPTS 5
 #define MEM_OPTS 3
-#define BRIGHTNESS_OPTS 2
-#define VOLUME_OPTS 3
-#define WIRELESS_OPTS 2
+#define BRIGHTNESS_OPTS 3
+#define VOLUME_OPTS 4
+#define WIRELESS_OPTS 3
 
 // option patterns
-#define OPT_FORMAT_PATTERN "^.+$"
-#define OPT_RATE_PATTERN "^[0-9]+s$|^[0-9]+ms$"
-#define OPT_LABEL_PATTERN "^[a-z]{1,5}$"
+#define OPT_TEXT_PATTERN "^.{1,100}$"
 #define OPT_NUMBER_PATTERN "^[0-9]{1,4}$"
 #define OPT_BOOLEAN_PATTERN "^0$|^1$"
+#define OPT_PATH_PATTERN "^\\/.+([^/*]|\\/\\*)$"
+#define OPT_LABEL_PATTERN "^[a-z]{1,5}$"
+#define OPT_FORMAT_PATTERN "^.+$"
+#define OPT_RATE_PATTERN "^[0-9]+s$|^[0-9]+ms$"
 #define OPT_BAT_NAME_PATTERN "^BAT[0-9]$"
+#define OPT_IN_TEMP_PATTERN "^([1-9])$|^([1-9]-[1-9])$"
 
 // global options
 #define OPT_FORMAT "format"
@@ -111,6 +107,8 @@ typedef struct      s_opt {
 // temp cpu options
 #define OPT_TCPU_ENABLED "cpu_temp_enabled"
 #define OPT_TCPU_LABEL "cpu_temp_label"
+#define OPT_TCPU_DIR "cpu_temp_dir"
+#define OPT_TCPU_INPUT "cpu_temp_input_pattern"
 #define OPT_TCPU_CRITIC "cpu_temp_critical"
 
 // memory options
@@ -121,15 +119,18 @@ typedef struct      s_opt {
 // brightness options
 #define OPT_BRG_ENABLED "brightness_enabled"
 #define OPT_BRG_LABEL "brightness_label"
+#define OPT_BRG_DIR "brightness_dir"
 
 // volume options
 #define OPT_VOL_ENABLED "volume_enabled"
 #define OPT_VOL_LABEL "volume_label"
 #define OPT_VOL_LB_MUTED "volume_muted_label"
+#define OPT_VOL_SINK "volume_sink_name"
 
 // wireless options
 #define OPT_WLAN_ENABLED "wireless_enabled"
 #define OPT_WLAN_LB_UNK "wireless_unknown_label"
+#define OPT_WLAN_IFACE "wireless_interface"
 
 /* MODULE TYPE */
 typedef struct      s_module {
@@ -169,8 +170,9 @@ typedef struct      s_power {
 }                   t_power;
 
 /* BRIGHTNESS */
-#define BRIGHTNESS_CURRENT "/sys/class/backlight/intel_backlight/actual_brightness"
-#define BRIGHTNESS_MAX "/sys/class/backlight/intel_backlight/max_brightness"
+#define BRIGHTNESS_DIR "/sys/class/backlight/intel_backlight"
+#define BRIGHTNESS_CURRENT "actual_brightness"
+#define BRIGHTNESS_MAX "max_brightness"
 #define BRIGHTNESS_LABEL "brg"
 
 /* CPU USAGE */
@@ -186,7 +188,7 @@ typedef struct      s_cpu {
 
 /* CPU TEMP */
 #define CPU_TEMP_DIR "/sys/devices/platform/coretemp.0/hwmon/*"
-#define CPU_TEMP_INPUT_PATTERN "^temp[2-5]_input$"
+#define CPU_TEMP_INPUT "^temp[2-5]_input$"
 #define CPU_TEMP_LABEL "cpu"
 #define CPU_TEMP_ROUND_THRESHOLD 500
 
@@ -204,7 +206,8 @@ typedef struct      s_cpu {
 
 typedef struct      s_wireless {
     unsigned int    flags;
-    unsigned int    if_index;
+    unsigned int    ifindex;
+    char            *ifname;
     int             nl80211_id;
     uint8_t         bssid[ETH_ALEN];
     char            *essid;
