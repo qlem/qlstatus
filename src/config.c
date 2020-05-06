@@ -56,29 +56,6 @@ char        *trim(char *str) {
     return trim;
 }
 
-char        **parse_opt(char *line) {
-    char    **opt = NULL;
-    int     i = -1;
-    int     j = 0;
-
-    opt = alloc_ptr(sizeof(char *) * 2);
-    opt[0] = NULL;
-    opt[1] = NULL;
-    while (line[++i] && line[i] != '=') {}
-    opt[0] = alloc_buffer(i + 1);
-    v_strncpy(opt[0], line, i);
-    opt[0] = trim(opt[0]);
-    while (line[++i]) {
-        j++;
-    }
-    if (j > 0) {
-        opt[1] = alloc_buffer(j + 1);
-        v_strncpy(opt[1], line + (i - j), j);
-        opt[1] = trim(opt[1]);
-    }
-    return opt;
-}
-
 int             check_global_opts(t_main *main, char **opt) {
     int         i = -1;
 
@@ -118,8 +95,8 @@ int             check_module_opts(t_module *modules, char **opt) {
                 }
                 opts[j].value = opt[1];
                 // turn on / off module
-                if (j == 0 && to_int(opt[1]) == 0) {
-                    modules[i].enabled = 0;
+                if (j == 0) {
+                    modules[i].enabled = to_int(opt[1]);
                 // set module label
                 } else if (j == 1) {
                     modules[i].label= opt[1];
@@ -129,6 +106,29 @@ int             check_module_opts(t_module *modules, char **opt) {
         }
     }
     return 1;
+}
+
+char        **parse_opt(char *line) {
+    char    **opt = NULL;
+    int     i = -1;
+    int     j = 0;
+
+    opt = alloc_ptr(sizeof(char *) * 2);
+    opt[0] = NULL;
+    opt[1] = NULL;
+    while (line[++i] && line[i] != '=') {}
+    opt[0] = alloc_buffer(i + 1);
+    v_strncpy(opt[0], line, i);
+    opt[0] = trim(opt[0]);
+    while (line[++i]) {
+        j++;
+    }
+    if (j > 0) {
+        opt[1] = alloc_buffer(j + 1);
+        v_strncpy(opt[1], line + (i - j), j);
+        opt[1] = trim(opt[1]);
+    }
+    return opt;
 }
 
 int         parse_config_line(t_main *main, char *line) {

@@ -108,7 +108,7 @@ typedef struct      s_opt {
 #define OPT_TCPU_ENABLED "cpu_temp_enabled"
 #define OPT_TCPU_LABEL "cpu_temp_label"
 #define OPT_TCPU_DIR "cpu_temp_dir"
-#define OPT_TCPU_INPUT "cpu_temp_input_pattern"
+#define OPT_TCPU_INPUT "cpu_temp_input"
 #define OPT_TCPU_CRITIC "cpu_temp_critical"
 
 // memory options
@@ -188,7 +188,6 @@ typedef struct      s_cpu {
 
 /* CPU TEMP */
 #define CPU_TEMP_DIR "/sys/devices/platform/coretemp.0/hwmon/*"
-#define CPU_TEMP_INPUT "^temp[2-5]_input$"
 #define CPU_TEMP_LABEL "cpu"
 #define CPU_TEMP_ROUND_THRESHOLD 500
 
