@@ -85,64 +85,64 @@ int                     main(int argc, char **argv, char **env) {
 
     // global options
     t_opt       opts_main[GLOBAL_OPTS] = {
-        {OPT_FORMAT, DEFAULT_FORMAT, OPT_FORMAT_PATTERN},
-        {OPT_RATE,   RATE,           OPT_RATE_PATTERN}
+        {OPT_FORMAT, DEFAULT_FORMAT, OPT_FORMAT_PATTERN, OPT_OTHER},
+        {OPT_RATE,   RATE,           OPT_RATE_PATTERN,   OPT_OTHER}
     };
 
     // battery options
     t_opt       opts_battery[BATTERY_OPTS] = {
-        {OPT_BAT_ENABLED, "1",                OPT_BOOLEAN_PATTERN},
-        {OPT_BAT_LB_UNK,  BATTERY_LABEL_UNK,  OPT_LABEL_PATTERN},
-        {OPT_BAT_LB_FULL, BATTERY_LABEL_FULL, OPT_LABEL_PATTERN},
-        {OPT_BAT_LB_CHR,  BATTERY_LABEL_CHR,  OPT_LABEL_PATTERN},
-        {OPT_BAT_LB_DIS,  BATTERY_LABEL_DIS,  OPT_LABEL_PATTERN},
-        {OPT_BAT_NAME,    BATTERY_NAME,       OPT_BAT_NAME_PATTERN},
-        {OPT_BAT_CRITIC,  "20",               OPT_NUMBER_PATTERN}
+        {OPT_BAT_ENABLED, "1",                OPT_BOOLEAN_PATTERN,  OPT_STATE},
+        {OPT_BAT_LB_UNK,  BATTERY_LABEL_UNK,  OPT_LABEL_PATTERN,    OPT_LABEL},
+        {OPT_BAT_LB_FULL, BATTERY_LABEL_FULL, OPT_LABEL_PATTERN,    OPT_OTHER},
+        {OPT_BAT_LB_CHR,  BATTERY_LABEL_CHR,  OPT_LABEL_PATTERN,    OPT_OTHER},
+        {OPT_BAT_LB_DIS,  BATTERY_LABEL_DIS,  OPT_LABEL_PATTERN,    OPT_OTHER},
+        {OPT_BAT_NAME,    BATTERY_NAME,       OPT_BAT_NAME_PATTERN, OPT_OTHER},
+        {OPT_BAT_CRITIC,  "20",               OPT_NUMBER_PATTERN,   OPT_OTHER}
     };
 
     // cpu usage options
     t_opt       opts_cpu_usage[CPU_USAGE_OPTS] = {
-        {OPT_UCPU_ENABLED, "1",             OPT_BOOLEAN_PATTERN},
-        {OPT_UCPU_LABEL,   CPU_USAGE_LABEL, OPT_LABEL_PATTERN},
-        {OPT_UCPU_CRITIC,  "80",            OPT_NUMBER_PATTERN}
+        {OPT_UCPU_ENABLED, "1",             OPT_BOOLEAN_PATTERN, OPT_STATE},
+        {OPT_UCPU_LABEL,   CPU_USAGE_LABEL, OPT_LABEL_PATTERN,   OPT_LABEL},
+        {OPT_UCPU_CRITIC,  "80",            OPT_NUMBER_PATTERN,  OPT_OTHER}
     };
 
     // cpu temp options
     t_opt       opts_cpu_temp[CPU_TEMP_OPTS] = {
-        {OPT_TCPU_ENABLED, "1",            OPT_BOOLEAN_PATTERN},
-        {OPT_TCPU_LABEL,   CPU_TEMP_LABEL, OPT_LABEL_PATTERN},
-        {OPT_TCPU_DIR,     CPU_TEMP_DIR,   OPT_PATH_PATTERN},
-        {OPT_TCPU_INPUT,   "1",            OPT_IN_TEMP_PATTERN},
-        {OPT_TCPU_CRITIC,  "70",           OPT_NUMBER_PATTERN}
+        {OPT_TCPU_ENABLED, "1",            OPT_BOOLEAN_PATTERN, OPT_STATE},
+        {OPT_TCPU_LABEL,   CPU_TEMP_LABEL, OPT_LABEL_PATTERN,   OPT_LABEL},
+        {OPT_TCPU_DIR,     CPU_TEMP_DIR,   OPT_PATH_PATTERN,    OPT_OTHER},
+        {OPT_TCPU_INPUT,   "1",            OPT_IN_TEMP_PATTERN, OPT_OTHER},
+        {OPT_TCPU_CRITIC,  "70",           OPT_NUMBER_PATTERN,  OPT_OTHER}
     };
 
     // memory options
     t_opt       opts_memory[MEM_OPTS] = {
-        {OPT_MEM_ENABLED, "1",       OPT_BOOLEAN_PATTERN},
-        {OPT_MEM_LABEL,   MEM_LABEL, OPT_LABEL_PATTERN},
-        {OPT_MEM_CRITIC,  "80",      OPT_NUMBER_PATTERN}
+        {OPT_MEM_ENABLED, "1",       OPT_BOOLEAN_PATTERN, OPT_STATE},
+        {OPT_MEM_LABEL,   MEM_LABEL, OPT_LABEL_PATTERN,   OPT_LABEL},
+        {OPT_MEM_CRITIC,  "80",      OPT_NUMBER_PATTERN,  OPT_OTHER}
     };
 
     // brightness options
     t_opt       opts_brightness[BRIGHTNESS_OPTS] = {
-        {OPT_BRG_ENABLED, "1",              OPT_BOOLEAN_PATTERN},
-        {OPT_BRG_LABEL,   BRIGHTNESS_LABEL, OPT_LABEL_PATTERN},
-        {OPT_BRG_DIR,     BRIGHTNESS_DIR,   OPT_PATH_PATTERN}
+        {OPT_BRG_ENABLED, "1",              OPT_BOOLEAN_PATTERN, OPT_STATE},
+        {OPT_BRG_LABEL,   BRIGHTNESS_LABEL, OPT_LABEL_PATTERN,   OPT_LABEL},
+        {OPT_BRG_DIR,     BRIGHTNESS_DIR,   OPT_PATH_PATTERN,    OPT_OTHER}
     };
 
     // volume options
     t_opt       opts_volume[VOLUME_OPTS] = {
-        {OPT_VOL_ENABLED,  "1",                OPT_BOOLEAN_PATTERN},
-        {OPT_VOL_LABEL,    VOLUME_LABEL,       OPT_LABEL_PATTERN},
-        {OPT_VOL_LB_MUTED, VOLUME_MUTED_LABEL, OPT_LABEL_PATTERN},
-        {OPT_VOL_SINK,     PULSE_SINK_NAME,    OPT_TEXT_PATTERN}
+        {OPT_VOL_ENABLED,  "1",                OPT_BOOLEAN_PATTERN, OPT_STATE},
+        {OPT_VOL_LABEL,    VOLUME_LABEL,       OPT_LABEL_PATTERN,   OPT_LABEL},
+        {OPT_VOL_LB_MUTED, VOLUME_MUTED_LABEL, OPT_LABEL_PATTERN,   OPT_OTHER},
+        {OPT_VOL_SINK,     PULSE_SINK_NAME,    OPT_TEXT_PATTERN,    OPT_OTHER}
     };
 
     // wireless options
     t_opt       opts_wireless[WIRELESS_OPTS] = {
-        {OPT_WLAN_ENABLED, "1",                OPT_BOOLEAN_PATTERN},
-        {OPT_WLAN_LB_UNK,  WIRELESS_UNK_LABEL, OPT_LABEL_PATTERN},
-        {OPT_WLAN_IFACE,   WIRELESS_INTERFACE, OPT_TEXT_PATTERN}
+        {OPT_WLAN_ENABLED, "1",                OPT_BOOLEAN_PATTERN, OPT_STATE},
+        {OPT_WLAN_LB_UNK,  WIRELESS_UNK_LABEL, OPT_LABEL_PATTERN,   OPT_LABEL},
+        {OPT_WLAN_IFACE,   WIRELESS_INTERFACE, OPT_TEXT_PATTERN,    OPT_OTHER}
     };
 
     // extra data for cpu usage module

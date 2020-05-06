@@ -59,10 +59,17 @@
 #define DEFAULT_FORMAT "%U  %T  %M  %L  %V  %B  %W"
 
 /* CONFIG */
+typedef enum        opt_type {
+    OPT_STATE,
+    OPT_LABEL,
+    OPT_OTHER
+}                   opt_type;
+
 typedef struct      s_opt {
     char            *key;
     char            *value;
     char            *p_value;
+    opt_type        type;
 }                   t_opt;
 
 // number of options per module
