@@ -30,11 +30,8 @@
 #include <linux/nl80211.h>
 #include <linux/if_ether.h>
 
-#include <pulse/mainloop.h>
 #include <pulse/thread-mainloop.h>
 #include <pulse/context.h>
-#include <pulse/proplist.h>
-#include <pulse/subscribe.h>
 #include <pulse/introspect.h>
 #include <pulse/volume.h>
 
@@ -241,7 +238,6 @@ typedef struct  s_meminfo {
 // volume
 #define PULSE_SINK_NAME "alsa_output.pci-0000_00_1f.3.analog-stereo"
 #define PULSE_APP_NAME "qlstatus"
-#define PULSE_RATE (long)1e6
 #define VOLUME_LABEL "vol"
 #define VOLUME_MUTED_LABEL "mut"
 

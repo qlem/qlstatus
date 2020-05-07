@@ -170,7 +170,7 @@ int     main(int argc, char **argv, char **env) {
     char            *config;
     char            *buffer;
     int             err = 0;
-    int             i = -1;
+    int             i;
 
     // init global struct + load config file
     main.modules = modules;
