@@ -31,6 +31,7 @@
 #include <linux/if_ether.h>
 
 #include <pulse/mainloop.h>
+#include <pulse/thread-mainloop.h>
 #include <pulse/context.h>
 #include <pulse/proplist.h>
 #include <pulse/subscribe.h>
@@ -58,7 +59,7 @@
  */
 #define DEFAULT_FORMAT "%U  %T  %M  %L  %V  %B  %W"
 
-/* CONFIG */
+/* OPTIONS */
 typedef enum        opt_type {
     OPT_STATE,
     OPT_LABEL,
@@ -139,7 +140,7 @@ typedef struct      s_opt {
 #define OPT_WLAN_LB_UNK "wireless_unknown_label"
 #define OPT_WLAN_IFACE "wireless_interface"
 
-/* MODULE TYPE */
+/* MODULES */
 typedef struct      s_module {
     uint8_t         enabled;
     char            fmtid;
@@ -154,7 +155,7 @@ typedef struct      s_module {
     pthread_t       thread;
 }                   t_module;
 
-/* BATTERY */
+// battery
 #define BATTERY_NAME "BAT0"
 #define POWER_DIR "/sys/class/power_supply"
 #define POWER_FILE "uevent"
@@ -176,13 +177,13 @@ typedef struct      s_power {
     long            max;
 }                   t_power;
 
-/* BRIGHTNESS */
+// brightness
 #define BRIGHTNESS_DIR "/sys/class/backlight/intel_backlight"
 #define BRIGHTNESS_CURRENT "actual_brightness"
 #define BRIGHTNESS_MAX "max_brightness"
 #define BRIGHTNESS_LABEL "brg"
 
-/* CPU USAGE */
+// usage cpu
 #define PROC_STAT "/proc/stat"
 #define CPU_STATS_PATTERN "^cpu[ \t]+(([0-9]+ ){9}[0-9]+)$"
 #define CPU_USAGE_LABEL "cpu"
@@ -193,12 +194,12 @@ typedef struct      s_cpu {
     long            prev_total;
 }                   t_cpu;
 
-/* CPU TEMP */
+// temp cpu
 #define CPU_TEMP_DIR "/sys/devices/platform/coretemp.0/hwmon/*"
 #define CPU_TEMP_LABEL "cpu"
 #define CPU_TEMP_ROUND_THRESHOLD 500
 
-/* WIRELESS */
+// wireless
 #define NL80211 "nl80211"
 #define WLAN_EID_SSID 0
 #define WIRELESS_INTERFACE "wlp2s0"
@@ -220,7 +221,7 @@ typedef struct      s_wireless {
     int             signal;
 }                   t_wireless;
 
-/* MEMORY */
+// memory
 #define PROC_MEMINFO "/proc/meminfo"
 #define MEM_TOTAL_PATTERN "^MemTotal:[ \t]+([0-9]+) kB$"
 #define MEM_FREE_PATTERN "^MemFree:[ \t]+([0-9]+) kB$"
@@ -237,12 +238,18 @@ typedef struct  s_meminfo {
     long        sreclaim;
 }               t_meminfo;
 
-/* VOLUME */
+// volume
 #define PULSE_SINK_NAME "alsa_output.pci-0000_00_1f.3.analog-stereo"
 #define PULSE_APP_NAME "qlstatus"
-#define PULSE_RATE (long)1e8
+#define PULSE_RATE (long)1e6
 #define VOLUME_LABEL "vol"
 #define VOLUME_MUTED_LABEL "mut"
+
+typedef struct              s_pulse {
+    pa_threaded_mainloop    *mainloop;
+    pa_context              *context;
+    int                     connected;
+}                           t_pulse;
 
 /* GLOBAL STRUCTURE */
 typedef struct          s_main {

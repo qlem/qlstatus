@@ -52,33 +52,30 @@ int             resolve_rate(t_main *main, struct timespec *tp) {
 
 int                     create_thread(t_module *module) {
     pthread_attr_t      attr;
+    int                 err = 0;
 
-    if (pthread_attr_init(&attr) != 0) {
-        printf("Cannot init thread attribute\n");
+    if ((err = pthread_attr_init(&attr)) != 0) {
+        printf("Thread error: %s\n", strerror(err));
         exit(EXIT_FAILURE);
     }
-    if (pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED) != 0) {
-        printf("Cannot set detach state of thread attribute\n");
+    if ((err = pthread_attr_setdetachstate(&attr,
+                                PTHREAD_CREATE_JOINABLE)) != 0) {
+        printf("Thread error: %s\n", strerror(err));
         exit(EXIT_FAILURE);
     }
-    if (pthread_create(&module->thread, &attr, module->routine, module) != 0) {
-        printf("Cannot create a new thread: %s\n", strerror(errno));
+    if ((err = pthread_create(&module->thread, &attr, module->routine,
+                                module)) != 0) {
+        printf("Thread error: %s\n", strerror(err));
         exit(EXIT_FAILURE);
     }
-    if (pthread_attr_destroy(&attr) != 0) {
-        printf("Cannot destroy thread attribute\n");
+    if ((err = pthread_attr_destroy(&attr) != 0)) {
+        printf("Thread error: %s\n", strerror(err));
         exit(EXIT_FAILURE);
     }
     return 0;
 }
 
-int                     main(int argc, char **argv, char **env) {
-    struct timespec     tp;
-    t_main              main;
-    t_cpu               cpu;
-    char                *buffer;
-    char                *config;
-    int                 i = -1;
+int     main(int argc, char **argv, char **env) {
 
     (void)argc;
     (void)argv;
@@ -146,8 +143,15 @@ int                     main(int argc, char **argv, char **env) {
     };
 
     // extra data for cpu usage module
+    t_cpu   cpu;
     cpu.prev_idle = 0;
     cpu.prev_total = 0;
+
+    // extra data for volume module
+    t_pulse     pulse;
+    pulse.mainloop = NULL;
+    pulse.context = NULL;
+    pulse.connected = 0;
 
     // modules
     t_module            modules[NB_MODULES] = {
@@ -155,12 +159,20 @@ int                     main(int argc, char **argv, char **env) {
         {1, 'T', CPU_TEMP_LABEL, 0, "°", NULL, opts_cpu_temp, CPU_TEMP_OPTS, get_cpu_temp, 0, 0},
         {1, 'M', MEM_LABEL, 0, "%", NULL, opts_memory, MEM_OPTS, get_memory, 0, 0},
         {1, 'L', BRIGHTNESS_LABEL, 0, "%", NULL, opts_brightness, BRIGHTNESS_OPTS, get_brightness, 0, 0},
-        {1, 'V', VOLUME_LABEL, 0, "%", NULL, opts_volume, VOLUME_OPTS, get_volume, 1, 0},
+        {1, 'V', VOLUME_LABEL, 0, "%", &pulse, opts_volume, VOLUME_OPTS, get_volume, 1, 0},
         {1, 'B', BATTERY_LABEL_UNK, 0, "%", NULL, opts_battery, BATTERY_OPTS, get_battery, 0, 0},
         {1, 'W', WIRELESS_UNK_LABEL, 0, "%", NULL, opts_wireless, WIRELESS_OPTS, get_wireless, 0, 0}
     };
 
-    // init + load config file
+    // vars declaration
+    struct timespec tp;
+    t_main          main;
+    char            *config;
+    char            *buffer;
+    int             err = 0;
+    int             i = -1;
+
+    // init global struct + load config file
     main.modules = modules;
     main.opts = opts_main;
     main.format = DEFAULT_FORMAT;
@@ -171,21 +183,33 @@ int                     main(int argc, char **argv, char **env) {
     }
     resolve_rate(&main, &tp);
 
-    // launch thread modules
-    while (++i < NB_MODULES) {
-        if (main.modules[i].enabled && main.modules[i].is_thread) {
-            create_thread(&main.modules[i]);
-        }
-    }
-
-    // loop
+    // main loop
     while (true) {
+        // launch threaded modules
+        i = -1;
+        while (++i < NB_MODULES) {
+            if (main.modules[i].enabled && main.modules[i].is_thread) {
+                create_thread(&main.modules[i]);
+            }
+        }
+        // execute other modules
         i = -1;
         while (++i < NB_MODULES) {
             if (main.modules[i].enabled && !main.modules[i].is_thread) {
                 main.modules[i].routine(&main.modules[i]);
             }
         }
+        // waiting for threaded modules
+        i = -1;
+        while (++i < NB_MODULES) {
+            if (main.modules[i].enabled && main.modules[i].is_thread) {
+                if ((err = pthread_join(main.modules[i].thread, NULL))) {
+                    printf("Thread error: %s\n", strerror(err));
+                    exit(EXIT_FAILURE);
+                }
+            }
+        }
+        // output
         buffer = format(&main);
         putstr(buffer);
         write(1, "\n", 1);
