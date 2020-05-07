@@ -6,6 +6,16 @@
 
 #include "qlstatus.h"
 
+void            destroy_wireless(void *data) {
+    t_module    *module = data;
+    char        *unk = NULL;
+
+    unk = get_option_value(module->opts, OPT_WLAN_LB_UNK, module->s_opts);
+    if (strcmp(unk, module->label) != 0) {
+        free(module->label);
+    }
+}
+
 // Based on NetworkManager/src/platform/wifi/wifi-utils-nl80211.c
 static uint32_t     nl80211_xbm_to_percent(int32_t xbm, int32_t divisor) {
     xbm /= divisor;

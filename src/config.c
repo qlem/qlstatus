@@ -66,6 +66,7 @@ int             check_global_opts(t_main *main, char **opt) {
                 return -1;
             }
             main->opts[i].value = opt[1];
+            main->opts[i].to_free = 1;
             // set global format
             if (strcmp(main->opts[i].key, OPT_FORMAT) == 0) {
                 main->format = opt[1];
@@ -94,6 +95,7 @@ int             check_module_opts(t_module *modules, char **opt) {
                     return -1;
                 }
                 opts[j].value = opt[1];
+                opts[j].to_free = 1;
                 // turn on / off module
                 if (opts[j].type == OPT_STATE) {
                     modules[i].enabled = to_int(opt[1]);

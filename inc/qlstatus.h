@@ -16,12 +16,12 @@
 #include <fcntl.h>
 #include <string.h>
 #include <time.h>
-#include <stdarg.h>
 #include <dirent.h>
 #include <regex.h>
 #include <stdbool.h>
 #include <limits.h>
 #include <errno.h>
+#include <signal.h>
 
 #include <net/if.h>
 #include <netlink/netlink.h>
@@ -68,13 +68,14 @@ typedef struct      s_opt {
     char            *value;
     char            *p_value;
     opt_type        type;
+    uint8_t         to_free;
 }                   t_opt;
 
 // number of options per module
 #define GLOBAL_OPTS 2
 #define BATTERY_OPTS 7
-#define CPU_USAGE_OPTS 3
-#define CPU_TEMP_OPTS 5
+#define CPU_OPTS 3
+#define TEMP_OPTS 5
 #define MEM_OPTS 3
 #define BRIGHTNESS_OPTS 3
 #define VOLUME_OPTS 4
@@ -105,16 +106,16 @@ typedef struct      s_opt {
 #define OPT_BAT_CRITIC "battery_critical"
 
 // usage cpu options
-#define OPT_UCPU_ENABLED "cpu_usage_enabled"
-#define OPT_UCPU_LABEL "cpu_usage_label"
-#define OPT_UCPU_CRITIC "cpu_usage_critical"
+#define OPT_CPU_ENABLED "cpu_usage_enabled"
+#define OPT_CPU_LABEL "cpu_usage_label"
+#define OPT_CPU_CRITIC "cpu_usage_critical"
 
 // temp cpu options
-#define OPT_TCPU_ENABLED "cpu_temp_enabled"
-#define OPT_TCPU_LABEL "cpu_temp_label"
-#define OPT_TCPU_DIR "cpu_temp_dir"
-#define OPT_TCPU_INPUT "cpu_temp_input"
-#define OPT_TCPU_CRITIC "cpu_temp_critical"
+#define OPT_TEMP_ENABLED "temperature_enabled"
+#define OPT_TEMP_LABEL "temperature_label"
+#define OPT_TEMP_DIR "temperature_dir"
+#define OPT_TEMP_INPUT "temperature_input"
+#define OPT_TEMP_CRITIC "temperature_critical"
 
 // memory options
 #define OPT_MEM_ENABLED "memory_enabled"
@@ -148,7 +149,7 @@ typedef struct      s_module {
     t_opt           *opts;
     int             s_opts;
     void            *(*routine)(void *);
-    uint8_t         is_thread;
+    void            (*destroy)(void *);
     pthread_t       thread;
 }                   t_module;
 
@@ -183,7 +184,7 @@ typedef struct      s_power {
 // usage cpu
 #define PROC_STAT "/proc/stat"
 #define CPU_STATS_PATTERN "^cpu[ \t]+(([0-9]+ ){9}[0-9]+)$"
-#define CPU_USAGE_LABEL "cpu"
+#define CPU_LABEL "cpu"
 #define CPU_STATS_SIZE 8
 
 typedef struct      s_cpu {
@@ -191,10 +192,10 @@ typedef struct      s_cpu {
     long            prev_total;
 }                   t_cpu;
 
-// temp cpu
-#define CPU_TEMP_DIR "/sys/devices/platform/coretemp.0/hwmon/*"
-#define CPU_TEMP_LABEL "cpu"
-#define CPU_TEMP_ROUND_THRESHOLD 500
+// temperature
+#define TEMP_DIR "/sys/devices/platform/coretemp.0/hwmon/*"
+#define TEMP_LABEL "temp"
+#define TEMP_ROUND_THRESHOLD 500
 
 // wireless
 #define NL80211 "nl80211"
@@ -259,7 +260,7 @@ typedef struct          s_main {
 size_t  v_strlen(const char *str);
 char    *v_strncpy(char *dest, const char *src, size_t n);
 void    v_memset(void *ptr, uint8_t c, size_t size);
-void    v_sleep(time_t sec, long nsec);
+int     v_sleep(time_t sec, long nsec);
 long    to_int(const char *str);
 char	*to_str(long nb);
 int     putstr(const char *str);
@@ -292,8 +293,17 @@ void    *get_battery(void *data);
 void    *get_volume(void *data);
 void    *get_brightness(void *data);
 void    *get_cpu_usage(void *data);
-void    *get_cpu_temp(void *data);
+void    *get_temperature(void *data);
 void    *get_wireless(void *data);
 void    *get_memory(void *data);
+
+// free modules
+void    destroy_battery(void *data);
+void    destroy_volume(void *data);
+void    destroy_wireless(void *data);
+void    destroy_brightness(void *data);
+void    destroy_cpu(void *data);
+void    destroy_memory(void *data);
+void    destroy_temperature(void *data);
 
 #endif /* !QLSTATUS_H_ */

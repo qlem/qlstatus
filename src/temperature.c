@@ -85,13 +85,13 @@ long    compute_temp(char **files, char *parent) {
     temp = sum / i;
     rem = temp % 1000;
     temp = temp / 1000;
-    if (rem >= CPU_TEMP_ROUND_THRESHOLD) {
+    if (rem >= TEMP_ROUND_THRESHOLD) {
        temp += 1;
     }
     return temp;
 }
 
-void            *get_cpu_temp(void *data) {
+void            *get_temperature(void *data) {
     t_module    *module = data;
     char        *path;
     char        *rpath;
@@ -99,14 +99,14 @@ void            *get_cpu_temp(void *data) {
     char        *in_regex;
     char        **files;
 
-    path = get_option_value(module->opts, OPT_TCPU_DIR, CPU_TEMP_OPTS);
+    path = get_option_value(module->opts, OPT_TEMP_DIR, TEMP_OPTS);
     if (has_asterisk(path)) {
         rpath = resolve_asterisk(path);
     } else {
         rpath = alloc_buffer(v_strlen(path) + 1);
         v_strncpy(rpath, path, v_strlen(path));
     }
-    in = get_option_value(module->opts, OPT_TCPU_INPUT, CPU_TEMP_OPTS);
+    in = get_option_value(module->opts, OPT_TEMP_INPUT, TEMP_OPTS);
     in_regex = resolve_temp_input_regex(in);
     files = read_dir(rpath, in_regex);
     if (!files[0][0]) {

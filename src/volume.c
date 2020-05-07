@@ -6,6 +6,15 @@
 
 #include "qlstatus.h"
 
+void            destroy_volume(void *data) {
+    t_module    *module = data;
+    t_pulse     *pulse = module->data;
+
+    pa_threaded_mainloop_stop(pulse->mainloop);
+    pa_context_disconnect(pulse->context);
+    pa_threaded_mainloop_free(pulse->mainloop);
+}
+
 void        sink_info_cb(pa_context *context, const pa_sink_info *info,
                          int eol, void *data) {
     t_module        *module = data;
@@ -76,9 +85,5 @@ void        *get_volume(void *data) {
         pa_threaded_mainloop_wait(pulse->mainloop);
     }
     pa_threaded_mainloop_unlock(pulse->mainloop);
-
-    /* pa_threaded_mainloop_stop(pulse->mainloop);
-    pa_threaded_mainloop_free(pulse->mainloop); */
-    pthread_exit(NULL);
     return NULL;
 }

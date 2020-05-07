@@ -17,15 +17,20 @@ char    *get_option_value(t_opt *opts, const char *key, int size) {
     return NULL;
 }
 
-void    v_sleep(time_t sec, long nsec) {
+int                     v_sleep(time_t sec, long nsec) {
     struct timespec     tp;
+    int                 err = 0;
 
     tp.tv_sec = sec;
     tp.tv_nsec = nsec;
-    if (clock_nanosleep(CLOCK_REALTIME, 0, &tp, NULL)) {
-        printf("Call to clock_nanosleep() failed: %s\n", strerror(errno));
+    if ((err = clock_nanosleep(CLOCK_REALTIME, 0, &tp, NULL))) {
+        if (err == EINTR) {
+            return 0;
+        }
+        printf("Call to clock_nanosleep() failed: %s\n", strerror(err));
         exit(EXIT_FAILURE);
     }
+    return 0;
 }
 
 size_t  v_strlen(const char *str) {

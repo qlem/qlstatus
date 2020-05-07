@@ -6,6 +6,19 @@
 
 #include "qlstatus.h"
 
+char        *append_single_char(char *buffer, char c) {
+    size_t  size = 0;
+
+    size = v_strlen(buffer) + 2;
+    if ((buffer = realloc(buffer, sizeof(char) * size)) == NULL) {
+        printf("Call to realloc() failed: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    buffer[size - 2] = c;
+    buffer[size - 1] = 0;
+    return buffer;
+}
+
 char        *append_module(t_module *module, char *buffer) {
     char    *new = NULL;
     char    *value = NULL;
@@ -32,7 +45,6 @@ char        *append_module(t_module *module, char *buffer) {
 char        *format(t_main *main) {
     char    *fmt = main->format;
     char    *buffer = NULL;
-    size_t  size = 0;
     int     i = -1;
     int     j;
 
@@ -52,18 +64,13 @@ char        *format(t_main *main) {
                 }
             }
             if (j == NB_MODULES) {
-                printf("Bad format\n");
+                printf("Format error\n");
                 exit(EXIT_FAILURE);
             }
         } else {
-            size = v_strlen(buffer) + 2;
-            if ((buffer = realloc(buffer, sizeof(char) * size)) == NULL) {
-                printf("Call to realloc() failed: %s\n", strerror(errno));
-                exit(EXIT_FAILURE);
-            }
-            buffer[size - 2] = fmt[i];
-            buffer[size - 1] = 0;
+            buffer = append_single_char(buffer, fmt[i]);
         }
     }
+    buffer = append_single_char(buffer, '\n');
     return buffer;
 }
