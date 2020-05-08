@@ -60,9 +60,9 @@ int                     create_thread(t_module *module) {
         printf("Call to pthread_attr_init() failed: %s\n", strerror(err));
         exit(EXIT_FAILURE);
     }
-    if ((err = pthread_attr_setdetachstate(&attr, 
+    if ((err = pthread_attr_setdetachstate(&attr,
                                            PTHREAD_CREATE_JOINABLE)) != 0) {
-        printf("Call to pthread_attr_setdetachstate() failed: %s\n", 
+        printf("Call to pthread_attr_setdetachstate() failed: %s\n",
                                                                 strerror(err));
         exit(EXIT_FAILURE);
     }
@@ -276,7 +276,7 @@ int     main(int argc, char **argv, char **env) {
         while (++i < NB_MODULES) {
             if (main.modules[i].enabled) {
                 if ((err = pthread_join(main.modules[i].thread, NULL))) {
-                    printf("Call to pthread_join() failed: %s\n", 
+                    printf("Call to pthread_join() failed: %s\n",
                                                             strerror(err));
                     exit(EXIT_FAILURE);
                 }
