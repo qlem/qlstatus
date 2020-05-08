@@ -20,7 +20,7 @@ Light, modular, simple to use, simple to maintain.. No Memory Leaks !
 Each module is displayed with the form `label value[unit]`. See `format` option to format the output.
 
 ## Configuration
-You should override the default option values by editing `~/.config/qlstatus/qlstatus.conf`. 
+You should override the default option values by editing `~/.config/qlstatus/qlstatus.conf`.  
 Each option has `key = value` form. Commented lines is not yet supported in the config file.
 
 ### Global options
