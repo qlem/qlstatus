@@ -111,7 +111,7 @@ typedef struct      s_opt {
 #define OPT_CPU_LABEL "cpu_usage_label"
 #define OPT_CPU_CRITIC "cpu_usage_critical"
 
-// temp cpu options
+// temperature
 #define OPT_TEMP_ENABLED "temperature_enabled"
 #define OPT_TEMP_LABEL "temperature_label"
 #define OPT_TEMP_DIR "temperature_dir"
