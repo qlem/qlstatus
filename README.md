@@ -102,7 +102,7 @@ Make sur that the modules present in the format string are enabled. See the opti
 - libc
 - POSIX threads (libpthread)
 - PulseAudio Library (libpulse)
-- [Netlink Protocol Library Suite](https://www.infradead.org/~tgr/libnl/) (libnl3 libnl-genl-3)
+- [Netlink Protocol Library Suite](https://www.infradead.org/~tgr/libnl/) (libnl3)
 
 ## Compilation
 TODO

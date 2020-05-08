@@ -10,8 +10,8 @@ add_executable(qlstatus
     src/config.c
     src/battery.c
     src/brightness.c
-        src/temperature.c
-        src/cpu.c
+    src/temperature.c
+    src/cpu.c
     src/wireless.c
     src/memory.c
     src/volume.c
