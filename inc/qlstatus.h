@@ -39,8 +39,9 @@
 #define BASE 10
 #define RATE "1s"
 #define NB_MODULES 7
-#define SEC(nsec) nsec / (long)1e9
-#define NSEC(nsec) nsec % (long)1e9
+#define NSEC 999999999
+#define NSEC_TO_SEC(nsec) nsec / (long)1e9
+#define REM_NSEC(nsec) nsec % (long)1e9
 #define PERCENT(value, total) value * 100 / total
 #define CONFIG_FILE ".config/qlstatus/qlstatus.conf"
 #define HOME_PATTERN "^HOME=(/home/[a-zA-Z]+)$"

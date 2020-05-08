@@ -39,8 +39,8 @@ int             resolve_rate(t_main *main, struct timespec *tp) {
         free(buf[0]);
     } else if (unit[1]) {
         nsec = val * (long)1e6;
-        tp->tv_sec = SEC(nsec);
-        tp->tv_nsec = NSEC(nsec);
+        tp->tv_sec = NSEC_TO_SEC(nsec);
+        tp->tv_nsec = REM_NSEC(nsec);
         free(unit[1]);
         free(buf[1]);
     } else {
@@ -107,6 +107,23 @@ void        free_resources(t_main *main) {
         if (main->modules[i].enabled && main->modules[i].destroy) {
             main->modules[i].destroy(&main->modules[i]);
         }
+    }
+}
+
+void        subtract_time(struct timespec *end, struct timespec *start,
+                          struct timespec *diff) {
+    long    sdiff = end->tv_sec - start->tv_sec;
+    long    nsdiff = end->tv_nsec - start->tv_nsec;
+
+    if (sdiff < 0) {
+        diff->tv_sec = 0;
+        diff->tv_nsec = 0;
+    } else if (nsdiff < 0) {
+        diff->tv_sec = sdiff - 1;
+        diff->tv_nsec = NSEC + nsdiff;
+    } else {
+        diff->tv_sec = sdiff;
+        diff->tv_nsec = nsdiff;
     }
 }
 
@@ -200,10 +217,11 @@ int     main(int argc, char **argv, char **env) {
     };
 
     // vars declaration
-    struct timespec     tp;
+    struct timespec     rate;
     struct timespec     start;
     struct timespec     end;
-    struct timespec     diff;
+    struct timespec     itime;
+    struct timespec     prate;
     struct sigaction    act;
     t_main              main;
     char                *config;
@@ -219,7 +237,7 @@ int     main(int argc, char **argv, char **env) {
     sigaction(SIGINT, &act, NULL);
     sigaction(SIGTERM, &act, NULL);
 
-    // init global struct + load config file
+    // init data + load config file
     main.modules = modules;
     main.opts = opts_main;
     main.format = DEFAULT_FORMAT;
@@ -228,26 +246,32 @@ int     main(int argc, char **argv, char **env) {
         parse_config_file(&main, config);
         free(config);
     }
-    resolve_rate(&main, &tp);
+    resolve_rate(&main, &rate);
 
     // main loop
     while (1) {
 
-        clock_gettime(CLOCK_REALTIME, &start);
+        // store start time
+        if (clock_gettime(CLOCK_REALTIME, &start) == -1) {
+            printf("Call to clock_gettime() failed: %s\n", strerror(errno));
+            exit(EXIT_FAILURE);
+        }
 
-        // free resources on SIGINT signal
+        // free resources on exit
         if (!running) {
             free_resources(&main);
             return 0;
         }
-        // launch threaded modules
+
+        // create and start a thread for each module
         i = -1;
         while (++i < NB_MODULES) {
             if (main.modules[i].enabled) {
                 create_thread(&main.modules[i]);
             }
         }
-        // waiting for threaded modules
+
+        // waiting for all the threads to finish
         i = -1;
         while (++i < NB_MODULES) {
             if (main.modules[i].enabled) {
@@ -258,16 +282,29 @@ int     main(int argc, char **argv, char **env) {
             }
         }
 
-        clock_gettime(CLOCK_REALTIME, &end);
-        diff.tv_sec = end.tv_sec - start.tv_sec;
-        diff.tv_nsec = end.tv_nsec - start.tv_nsec;
-        printf("time: %ld.%ld\n", diff.tv_sec, diff.tv_nsec);
-
         // output
         buffer = format(&main);
         putstr(buffer);
         free(buffer);
-        v_sleep(tp.tv_sec, tp.tv_nsec);
+
+        // adjust rate based on the execution time of the loop iteration
+        if (clock_gettime(CLOCK_REALTIME, &end) == -1) {
+            printf("Call to clock_gettime() failed: %s\n", strerror(errno));
+            exit(EXIT_FAILURE);
+        }
+        subtract_time(&end, &start, &itime);
+        // printf("time: %ld.%ld\n", itime.tv_sec, itime.tv_nsec);
+        subtract_time(&rate, &itime, &prate);
+        // printf("time: %ld.%ld\n", prate.tv_sec, prate.tv_nsec);
+
+        // waiting
+        if ((err = clock_nanosleep(CLOCK_REALTIME, 0, &prate, NULL))) {
+            if (err == EINTR) {
+                return 1;
+            }
+            printf("Call to clock_nanosleep() failed: %s\n", strerror(err));
+            exit(EXIT_FAILURE);
+        }
     }
     return 0;
 }

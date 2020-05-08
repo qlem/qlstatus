@@ -17,22 +17,6 @@ char    *get_option_value(t_opt *opts, const char *key, int size) {
     return NULL;
 }
 
-int                     v_sleep(time_t sec, long nsec) {
-    struct timespec     tp;
-    int                 err = 0;
-
-    tp.tv_sec = sec;
-    tp.tv_nsec = nsec;
-    if ((err = clock_nanosleep(CLOCK_REALTIME, 0, &tp, NULL))) {
-        if (err == EINTR) {
-            return 0;
-        }
-        printf("Call to clock_nanosleep() failed: %s\n", strerror(err));
-        exit(EXIT_FAILURE);
-    }
-    return 0;
-}
-
 size_t  v_strlen(const char *str) {
     size_t     i = -1;
 
@@ -66,7 +50,9 @@ char    *v_strncpy(char *dest, const char *src, size_t n) {
 int     putstr(const char *str) {
     size_t  size = v_strlen(str);
 
-    write(1, str, size);
+    if (write(1, str, size) == -1) {
+        printf("Call to write() failed: %s\n", strerror(errno));
+    }
     return size;
 }
 
