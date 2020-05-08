@@ -17,11 +17,24 @@ Light, modular, simple to use, simple to maintain.. No Memory Leaks !
 - current audio volume in percent
 - visual warning when critical threshold is reached for battery, cpu usage, temperature and used memory (coming soon)
 
-Each module is displayed with the form `label value[unit]`. See `format` option to format the output.
-
 ## Configuration
-You should override the default option values by editing `~/.config/qlstatus/qlstatus.conf`.  
+You should override the default value of some options by editing `~/.config/qlstatus/qlstatus.conf`.  
 Each option has `key = value` form. Commented lines is not yet supported in the config file.
+
+### Output format
+A module is displayed with the form `label value[unit]`. 
+You can change the order and the whitespaces between them by overriding the value of the `format` option.  
+
+Each module is represented by a character id escaped by the symbol `%`:
+- `%U` CPU
+- `%T` temperature
+- `%M` memory
+- `%L` brightness
+- `%V` volume
+- `%B` battery
+- `%W` wireless
+
+Make sur that the modules present in the format string are enabled. See the options below.
 
 ### Global options
 |Option |Description |Default value|
@@ -53,7 +66,7 @@ Each option has `key = value` form. Commented lines is not yet supported in the 
 |`temperature_enabled`|Enable or not this module. `1` or `0`|`1`|
 |`temperature_label`|Label displayed for this module|`temp`|
 |`temperature_dir`|Desired inputs directory. You can use an `*` in the last part of the path so the program resolve it by the 1st valid sub directory|`/sys/devices/platform/coretemp.0/hwmon/*`|
-|`temperature_input`|Numbers of the input files that will be treated by the program. Can be a range `2-5` or a single input `3`|`2-5`|
+|`temperature_input`|Input files numbers that will be treated by the program. Can be a range `2-5` or a single input `3`|`2-5`|
 |`temperature_critical`|Critical threshold under which the label will be modified|`70`|
 
 ### Memory options
