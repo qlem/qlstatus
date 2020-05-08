@@ -47,10 +47,10 @@ Make sur that the modules present in the format string are enabled. See the opti
 |:---   |:---        |:---         |
 |`battery_enabled`|Enable or not this module. `1` or `0`|`1`|
 |`battery_name`|Battery name. Can be found in `/sys/class/power_supply`|`BAT0`|
-|`battery_label_full`|Label displayed when the battery state is full.|`full`|
-|`battery_label_charging`|Label displayed when the battery state is charging.|`chr`|
-|`battery_label_discharging`|Label displayed when the battery state is discharging.|`bat`|
-|`battery_label_unknown`|Label displayed when the battery state is unknown |`unk`|
+|`battery_label_full`|Label displayed when the battery state is full|`full`|
+|`battery_label_charging`|Label displayed when the battery state is charging|`chr`|
+|`battery_label_discharging`|Label displayed when the battery state is discharging|`bat`|
+|`battery_label_unknown`|Label displayed when the battery state is unknown|`unk`|
 |`battery_critical`|Critical threshold under which the label will be modified|`20`|
 
 ### CPU usage options
