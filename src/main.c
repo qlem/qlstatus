@@ -251,19 +251,19 @@ int     main(int argc, char **argv, char **env) {
     // main loop
     while (1) {
 
-        // store start time
-        if (clock_gettime(CLOCK_REALTIME, &start) == -1) {
-            printf("Call to clock_gettime() failed: %s\n", strerror(errno));
-            exit(EXIT_FAILURE);
-        }
-
         // free resources on exit
         if (!running) {
             free_resources(&main);
             return 0;
         }
 
-        // create and start a thread for each module
+        // store start time
+        if (clock_gettime(CLOCK_REALTIME, &start) == -1) {
+            printf("Call to clock_gettime() failed: %s\n", strerror(errno));
+            exit(EXIT_FAILURE);
+        }
+
+        // create and start one thread for each module
         i = -1;
         while (++i < NB_MODULES) {
             if (main.modules[i].enabled) {
