@@ -55,9 +55,9 @@ char        *parse_cpu_file() {
     stream = open_stream(PROC_STAT);
     if (getline(&line, &size, stream) == -1) {
         if (errno) {
-            printf("Cannot read file %s: %s\n", PROC_STAT, strerror(errno));
+            printf("Error reading file %s: %s\n", PROC_STAT, strerror(errno));
         } else {
-            printf("Cannot compute cpu usage\n");
+            printf("Cannot compute cpu usage: file %s is empty\n", PROC_STAT);
         }
         close_stream(stream, PROC_STAT);
         exit(EXIT_FAILURE);

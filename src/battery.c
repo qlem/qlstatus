@@ -15,7 +15,7 @@ char        *resolve_power_file(const char *dir, const char *pw_name,
     return path;
 }
 
-int     set_battery_label(t_module *module, t_power *power) {
+void        set_battery_label(t_module *module, t_power *power) {
     if (strcmp(power->status, BATTERY_STATUS_DIS) == 0) {
         module->label = get_option_value(module->opts, OPT_BAT_LB_DIS, 
                             BATTERY_OPTS);
@@ -29,10 +29,9 @@ int     set_battery_label(t_module *module, t_power *power) {
         module->label = get_option_value(module->opts, OPT_BAT_LB_UNK, 
                             BATTERY_OPTS);
     }
-    return 0;
 }
 
-int         parse_power_line(t_power *power, const char *line) {
+void        parse_power_line(t_power *power, const char *line) {
     char    *status = NULL;
     char    *current = NULL;
     char    *max = NULL;
@@ -46,7 +45,6 @@ int         parse_power_line(t_power *power, const char *line) {
         power->current = to_int(current);
         free(current);
     }
-    return 0; 
 }
 
 int         parse_power_file(t_power *power, const char *file) {

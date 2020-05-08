@@ -150,7 +150,7 @@ typedef struct      s_module {
     t_opt           *opts;
     int             s_opts;
     void            *(*routine)(void *);
-    void            (*destroy)(void *);
+    void            (*mfree)(void *);
     pthread_t       thread;
 }                   t_module;
 
@@ -206,7 +206,6 @@ typedef struct      s_cpu {
 #define WIRELESS_FLAG_HAS_SIGNAL (1 << 1)
 #define WIRELESS_ESSID_MAX_SIZE 16
 #define WIRELESS_UNK_LABEL "SSID unk:"
-#define WIRELESS_PREFIX_ERROR "Wireless module error"
 #define NOISE_FLOOR_DBM (-90)
 #define SIGNAL_MAX_DBM (-20)
 
@@ -261,7 +260,6 @@ typedef struct          s_main {
 size_t  v_strlen(const char *str);
 char    *v_strncpy(char *dest, const char *src, size_t n);
 void    v_memset(void *ptr, uint8_t c, size_t size);
-int     v_sleep(time_t sec, long nsec);
 long    to_int(const char *str);
 char	*to_str(long nb);
 int     putstr(const char *str);
@@ -299,12 +297,7 @@ void    *get_wireless(void *data);
 void    *get_memory(void *data);
 
 // free modules
-void    destroy_battery(void *data);
-void    destroy_volume(void *data);
-void    destroy_wireless(void *data);
-void    destroy_brightness(void *data);
-void    destroy_cpu(void *data);
-void    destroy_memory(void *data);
-void    destroy_temperature(void *data);
+void    volume_free(void *data);
+void    wireless_free(void *data);
 
 #endif /* !QLSTATUS_H_ */

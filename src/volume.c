@@ -6,7 +6,7 @@
 
 #include "qlstatus.h"
 
-void            destroy_volume(void *data) {
+void            volume_free(void *data) {
     t_module    *module = data;
     t_pulse     *pulse = module->data;
 
@@ -36,19 +36,13 @@ void        sink_info_cb(pa_context *context, const pa_sink_info *info,
     pa_threaded_mainloop_signal(pulse->mainloop, 0);
 }
 
-void    context_state_cb(pa_context *context, void *data) {
-    t_module            *module = data;
-    t_pulse             *pulse = module->data;
-    pa_context_state_t  state;
+void            context_state_cb(pa_context *context, void *data) {
+    t_module    *module = data;
+    t_pulse     *pulse = module->data;
 
-    state = pa_context_get_state(context);
-    switch (state) {
-        case PA_CONTEXT_READY:
-            pulse->connected = 1;
-            pa_threaded_mainloop_signal(pulse->mainloop, 0);
-            break;
-        default:
-            break;
+    if (pa_context_get_state(context) == PA_CONTEXT_READY) {
+        pulse->connected = 1;
+        pa_threaded_mainloop_signal(pulse->mainloop, 0);
     }
 }
 

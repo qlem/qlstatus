@@ -110,7 +110,7 @@ void            *get_temperature(void *data) {
     in_regex = resolve_temp_input_regex(in);
     files = read_dir(rpath, in_regex);
     if (!files[0][0]) {
-        printf("Cannot compute cpu temp, no input files found in %s\n", rpath);
+        printf("Cannot compute temp, no input files found in %s\n", rpath);
         free(in_regex);
         free_files(files);
         free(rpath);

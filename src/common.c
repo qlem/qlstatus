@@ -52,6 +52,7 @@ int     putstr(const char *str) {
 
     if (write(1, str, size) == -1) {
         printf("Call to write() failed: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
     }
     return size;
 }
