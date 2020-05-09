@@ -294,7 +294,9 @@ int     main(int argc, char **argv, char **env) {
             exit(EXIT_FAILURE);
         }
         subtract_time(&end, &start, &itime);
+        /* printf("time: %ld.%ld\n", itime.tv_sec, itime.tv_nsec); */
         subtract_time(&rate, &itime, &prate);
+        /* printf("time: %ld.%ld\n", prate.tv_sec, prate.tv_nsec); */
 
         // waiting
         if ((err = clock_nanosleep(CLOCK_REALTIME, 0, &prate, NULL))) {

@@ -22,7 +22,7 @@ You should override the default value of some options by editing `~/.config/qlst
 Each option has `key = value` form.
 
 ### Output format
-A module is displayed with the form `label value[unit]`. 
+The modules are displayed with the form `label value[unit]`. 
 You can change the order and the whitespaces between them by overriding the value of the `format` option.  
 
 Each module is represented by a character id escaped by the symbol `%`:
