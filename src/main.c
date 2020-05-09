@@ -263,7 +263,7 @@ int     main(int argc, char **argv, char **env) {
             exit(EXIT_FAILURE);
         }
 
-        // create and start one thread for each module
+        // create and start a new thread for each module
         i = -1;
         while (++i < NB_MODULES) {
             if (main.modules[i].enabled) {
