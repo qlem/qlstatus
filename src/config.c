@@ -22,7 +22,7 @@ int             check_global_opts(t_main *main, char **opt, int nline) {
     while (++i < GLOBAL_OPTS) {
         if (strcmp(opt[0], main->opts[i].key) == 0) {
             if (!match_pattern(main->opts[i].p_value, opt[1])) {
-                printf("Invalid option value in line %d: %s\n", nline, opt[0]);
+                printf("Invalid option value at line %d: %s\n", nline, opt[0]);
                 return -1;
             }
             main->opts[i].value = opt[1];
@@ -51,7 +51,7 @@ int             check_module_opts(t_module *modules, char **opt, int nline) {
         while (++j < modules[i].s_opts) {
             if (strcmp(opt[0], opts[j].key) == 0) {
                 if (!match_pattern(opts[j].p_value, opt[1])) {
-                    printf("Invalid option value in line %d: %s\n",
+                    printf("Invalid option value at line %d: %s\n",
                                                             nline, opt[0]);
                     return -1;
                 }
@@ -187,7 +187,7 @@ int         parse_config_line(t_main *main, char *line, int nline) {
 
     // check if key and value exist
     if (!opt[0] || !opt[1]) {
-        printf("Invalid option in line %d: %s\n", nline,
+        printf("Invalid option at line %d: %s\n", nline,
                                                 opt[0] ? opt[0] : opt[1]);
         free(line);
         free_opt(opt);
@@ -212,7 +212,7 @@ int         parse_config_line(t_main *main, char *line, int nline) {
 
     // check if the option exist
     if (mcode == 1 && gcode == 1) {
-        printf("Unknown option in line %d: %s\n", nline, opt[0]);
+        printf("Unknown option at line %d: %s\n", nline, opt[0]);
         free(line);
         free_opt(opt);
         return -1;
