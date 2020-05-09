@@ -246,7 +246,7 @@ typedef struct  s_meminfo {
 typedef struct              s_pulse {
     pa_threaded_mainloop    *mainloop;
     pa_context              *context;
-    int                     connected;
+    uint8_t                 connected;
 }                           t_pulse;
 
 /* GLOBAL STRUCTURE */

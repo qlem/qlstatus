@@ -10,8 +10,8 @@ void            volume_free(void *data) {
     t_module    *module = data;
     t_pulse     *pulse = module->data;
 
-    pa_threaded_mainloop_stop(pulse->mainloop);
     pa_context_disconnect(pulse->context);
+    pa_threaded_mainloop_stop(pulse->mainloop);
     pa_threaded_mainloop_free(pulse->mainloop);
 }
 
@@ -57,17 +57,21 @@ void    pulse_connect(t_module *module) {
     pa_context_connect(pulse->context, NULL, PA_CONTEXT_NOFAIL |
             PA_CONTEXT_NOAUTOSPAWN, NULL);
     pa_threaded_mainloop_start(pulse->mainloop);
-    pa_threaded_mainloop_wait(pulse->mainloop);
+    while (pulse->connected == 0) {
+        pa_threaded_mainloop_lock(pulse->mainloop);
+        pa_threaded_mainloop_wait(pulse->mainloop);
+        pa_threaded_mainloop_unlock(pulse->mainloop);
+    }
 }
 
 void        *get_volume(void *data) {
     t_module            *module = data;
     t_pulse             *pulse = module->data;
-    char                *sink;
-    pa_operation        *op;
+    char                *sink = NULL;
+    pa_operation        *op = NULL;
 
     // TODO error handling
-    if (!pulse->connected) {
+    if (pulse->connected == 0) {
         pulse_connect(module);
         pthread_exit(NULL);
     }
@@ -79,5 +83,6 @@ void        *get_volume(void *data) {
         pa_threaded_mainloop_wait(pulse->mainloop);
     }
     pa_threaded_mainloop_unlock(pulse->mainloop);
+    free(op);
     return NULL;
 }
