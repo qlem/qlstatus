@@ -5,7 +5,7 @@ A small program that generates a system statistics stream for the status bar of 
 ![alt text](https://raw.githubusercontent.com/qlem/qlstatus/master/screenshot.png)
 
 ## Goals
-Light, modular, simple to use, simple to maintain.. No Memory Leaks !
+Light, modular, eazy to use, eazy to maintain.. No Memory Leaks !
 
 ## Features
 - current ESSID with signal quality in percent
