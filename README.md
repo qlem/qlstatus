@@ -96,7 +96,7 @@ Make sur that the modules present in the format string are enabled. See the opti
 |:---   |:---        |:---         |
 |`wireless_enabled`|Enable or not this module. `1` or `0`|`1`|
 |`wireless_unknown_label`|Label displayed when no SSID found|`SSID unk:`|
-|`wireless_interface`|Name of the wireless interface. Can be found with the command `ip link`|`wlp2s0`|
+|`wireless_interface`|Name of the wireless interface. Can be found with the command `ip link`|`wlan0`|
 
 ## Dependencies
 - libc

@@ -202,7 +202,7 @@ typedef struct      s_cpu {
 // wireless
 #define NL80211 "nl80211"
 #define WLAN_EID_SSID 0
-#define WIRELESS_INTERFACE "wlp2s0"
+#define WIRELESS_INTERFACE "wlan0"
 #define WIRELESS_FLAG_HAS_ESSID (1 << 0)
 #define WIRELESS_FLAG_HAS_SIGNAL (1 << 1)
 #define WIRELESS_ESSID_MAX_SIZE 16
