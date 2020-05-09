@@ -19,7 +19,7 @@ Light, modular, simple to use, simple to maintain.. No Memory Leaks !
 
 ## Configuration
 You should override the default value of some options by editing `~/.config/qlstatus/qlstatus.conf`.  
-Each option has `key = value` form. Commented lines is not yet supported in the config file.
+Each option has `key = value` form.
 
 ### Output format
 A module is displayed with the form `label value[unit]`. 

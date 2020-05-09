@@ -189,9 +189,9 @@ int     main(int argc, char **argv, char **env) {
 
     // wireless options
     t_opt       opts_wireless[WIRELESS_OPTS] = {
-        {OPT_WLAN_ENABLED, "1",                OPT_BOOLEAN_PATTERN, OPT_STATE, 0},
-        {OPT_WLAN_LB_UNK,  WIRELESS_UNK_LABEL, OPT_LABEL_PATTERN,   OPT_LABEL, 0},
-        {OPT_WLAN_IFACE,   WIRELESS_INTERFACE, OPT_TEXT_PATTERN,    OPT_OTHER, 0}
+        {OPT_WLAN_ENABLED, "1",                OPT_BOOLEAN_PATTERN,  OPT_STATE, 0},
+        {OPT_WLAN_LB_UNK,  WIRELESS_UNK_LABEL, OPT_WL_LABEL_PATTERN, OPT_LABEL, 0},
+        {OPT_WLAN_IFACE,   WIRELESS_INTERFACE, OPT_TEXT_PATTERN,     OPT_OTHER, 0}
     };
 
     // extra data for cpu usage module

@@ -51,12 +51,14 @@ int         parse_power_file(t_power *power, const char *file) {
     FILE    *stream;
     size_t  size = 0;
     char    *line = NULL;
+    size_t  sline;
     ssize_t nb;
 
     stream = open_stream(file);
     while ((nb = getline(&line, &size, stream)) != -1) {
-        if (line[v_strlen(line) - 1] == '\n') {
-            line[v_strlen(line) - 1] = 0;
+        sline = v_strlen(line);
+        if (line[sline - 1] == '\n') {
+            line[sline - 1] = 0;
         }
         parse_power_line(power, line);
         free(line);

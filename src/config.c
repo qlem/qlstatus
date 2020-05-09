@@ -110,18 +110,43 @@ int             check_module_opts(t_module *modules, char **opt) {
     return 1;
 }
 
+char        *remove_inline_comment(char *line) {
+    char    *sub = NULL;
+    int     i = -1;
+
+    while (line[++i]) {
+        if (line[i] == '#' && (line[i - 1] == ' ' || line[i - 1] == '\t')) {
+            sub = alloc_buffer(i + 1);
+            v_strncpy(sub, line, i);
+            free(line);
+            return sub;
+        }
+    }
+    return line;
+}
+
 char        **parse_opt(char *line) {
     char    **opt = NULL;
     int     i = -1;
     int     j = 0;
+    int     size;
 
     opt = alloc_ptr(sizeof(char *) * 2);
     opt[0] = NULL;
     opt[1] = NULL;
+    size = v_strlen(line);
+    if (size == 1 && line[0] == '=') {
+        opt[0] = alloc_buffer(2);
+        opt[0][0] = '=';
+        return opt;
+    }
     while (line[++i] && line[i] != '=') {}
     opt[0] = alloc_buffer(i + 1);
     v_strncpy(opt[0], line, i);
     opt[0] = trim(opt[0]);
+    if (line[i] != '=') {
+        i--;
+    }
     while (line[++i]) {
         j++;
     }
@@ -138,28 +163,41 @@ int         parse_config_line(t_main *main, char *line) {
     int     gcode;
     int     mcode;
 
-    opt = parse_opt(line);
-    if (!opt[0] && !opt[1]) {
-        free_opt(opt);
+    if (line[0] == 0) {
+        free(line);
         return 0;
     }
+    line = trim(line);
+    if (!line) {
+        return 0;
+    }
+    if (line[0] == '#') {
+        free(line);
+        return 0;
+    }
+    line = remove_inline_comment(line);
+    opt = parse_opt(line);
     if (!opt[0] || !opt[1]) {
         printf("Incomplete option: %s\n", opt[0] ? opt[0] : opt[1]);
+        free(line);
         free_opt(opt);
         return -1;
     }
     gcode = check_global_opts(main, opt);
     if (gcode == -1) {
+        free(line);
         free_opt(opt);
         return -1;
     }
     mcode = check_module_opts(main->modules, opt);
     if (mcode == -1) {
+        free(line);
         free_opt(opt);
         return -1;
     }
     if (mcode == 1 && gcode == 1) {
         printf("Unknown option: %s\n", opt[0]);
+        free(line);
         free_opt(opt);
         return -1;
     }
@@ -167,6 +205,7 @@ int         parse_config_line(t_main *main, char *line) {
     // debug
     printf("Set option [%s] to [%s]\n", opt[0], opt[1]);
 
+    free(line);
     free(opt[0]);
     free(opt);
     return 0;
@@ -176,21 +215,21 @@ int     parse_config_file(t_main *main, const char *file) {
     FILE    *stream;
     size_t  size = 0;
     char    *line = NULL;
+    size_t  sline = 0;
     ssize_t nb;
 
     if ((stream = fopen(file, "r")) == NULL) {
         return -1;
     }
     while ((nb = getline(&line, &size, stream)) != -1) {
-        if (line[v_strlen(line) - 1] == '\n') {
-            line[v_strlen(line) - 1] = 0;
+        sline = v_strlen(line);
+        if (line[sline - 1] == '\n') {
+            line[sline - 1] = 0;
         }
         if (parse_config_line(main, line) < 0) {
-            free(line);
             close_stream(stream, file);
             exit(EXIT_FAILURE);
         }
-        free(line);
         line = NULL;
         size = 0;
     }

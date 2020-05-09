@@ -50,6 +50,7 @@ char        *parse_cpu_file() {
     FILE    *stream;
     size_t  size = 0;
     char    *line = NULL;
+    size_t  sline;
     char    *stats = NULL;
 
     stream = open_stream(PROC_STAT);
@@ -62,8 +63,9 @@ char        *parse_cpu_file() {
         close_stream(stream, PROC_STAT);
         exit(EXIT_FAILURE);
     }
-    if (line[v_strlen(line) - 1] == '\n') {
-        line[v_strlen(line) - 1] = 0;
+    sline = v_strlen(line);
+    if (line[sline - 1] == '\n') {
+        line[sline - 1] = 0;
     }
     stats = substring(CPU_STATS_PATTERN, line);
     free(line);

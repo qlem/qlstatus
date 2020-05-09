@@ -28,12 +28,14 @@ int         parse_mem_file(t_meminfo *meminfo) {
     FILE    *stream;
     size_t  size = 0;
     char    *line = NULL;
+    size_t  sline;
     ssize_t nb;
 
     stream = open_stream(PROC_MEMINFO);
     while ((nb = getline(&line, &size, stream)) != -1) {
-        if (line[v_strlen(line) - 1] == '\n') {
-            line[v_strlen(line) - 1] = 0;
+        sline = v_strlen(line);
+        if (line[sline - 1] == '\n') {
+            line[sline - 1] = 0;
         }
         parse_mem_stat(meminfo, line);
         line = NULL;
