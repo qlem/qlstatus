@@ -1,5 +1,5 @@
 # ql-status
-A small program that generates a system statistics stream for the status bar of window managers like [spectrwm](https://github.com/conformal/spectrwm). Only for Linux based distributions, written in C.
+A small program that generates a stream of system statistics for the status bar of window managers like [spectrwm](https://github.com/conformal/spectrwm). Only for Linux based distributions, written in C.
 
 ---
 ![alt text](https://raw.githubusercontent.com/qlem/qlstatus/master/screenshot.png)
