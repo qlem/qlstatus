@@ -22,6 +22,5 @@ add_executable(qlstatus
     src/common.c
     src/regex.c)
 
-target_include_directories(qlstatus PRIVATE inc)
-target_include_directories(qlstatus PRIVATE /usr/include/libnl3)
+target_include_directories(qlstatus PRIVATE inc /usr/include/libnl3)
 target_link_libraries(qlstatus -lpthread -lnl-3 -lnl-genl-3 -lpulse)
