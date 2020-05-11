@@ -1,5 +1,5 @@
-/build/
-/cmake-build-debug/
-/.idea/
-/compile_commands.json
-/.clangd
+.idea/
+build/
+.clangd/
+cmake-build-debug/
+compile_commands.json
