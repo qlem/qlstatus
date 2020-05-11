@@ -43,7 +43,13 @@ Make sur that the modules present in the format string are enabled.
 - [Netlink Protocol Library Suite](https://www.infradead.org/~tgr/libnl/) (libnl3)
 
 ## Compilation
-TODO
+```
+$> cd /path/to/repo
+$> mkdir build
+$> cmake -B build/ .
+$> cmake --build build/
+$> cp build/qlstatus ~/bin
+```
 
 ## License
 MIT
