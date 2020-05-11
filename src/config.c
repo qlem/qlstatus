@@ -16,8 +16,8 @@ void    free_opt(char **opt) {
     free(opt);
 }
 
-int             check_global_opts(t_main *main, char **opt, int nline) {
-    int         i = -1;
+int         check_global_opts(t_main *main, char **opt, int nline) {
+    int     i = -1;
 
     while (++i < GLOBAL_OPTS) {
         if (strcmp(opt[0], main->opts[i].key) == 0) {
@@ -71,14 +71,14 @@ int             check_module_opts(t_module *modules, char **opt, int nline) {
     return 1;
 }
 
-int      count_whitespace_from_end(const char *str, int len) {
+int         count_whitespace_from_end(const char *str, int len) {
     int     i = len;
 
     while (--i >= 0 && (str[i] == ' ' || str[i] == '\t')) {}
     return len - (i + 1);
 }
 
-int      count_whitespace_from_start(const char *str) {
+int         count_whitespace_from_start(const char *str) {
     int     i = -1;
 
     while (str[++i] && (str[i] == ' ' || str[i] == '\t')) {}
@@ -228,7 +228,7 @@ int         parse_config_line(t_main *main, char *line, int nline) {
     return 0;
 }
 
-int     parse_config_file(t_main *main, const char *file) {
+int         parse_config_file(t_main *main, const char *file) {
     FILE    *stream;
     size_t  size = 0;
     char    *line = NULL;
