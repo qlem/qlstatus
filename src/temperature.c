@@ -117,6 +117,7 @@ void            *get_temperature(void *data) {
         exit(EXIT_FAILURE);
     }
     module->value = compute_temp(files, rpath);
+    module->critical = module->value >= module->threshold ? 1 : 0;
     free(in_regex);
     free_files(files);
     free(rpath);

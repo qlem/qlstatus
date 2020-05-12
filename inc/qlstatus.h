@@ -45,6 +45,8 @@
 #define PERCENT(value, total) value * 100 / total
 #define CONFIG_FILE ".config/qlstatus/qlstatus.conf"
 #define HOME_PATTERN "^HOME=(/home/[a-zA-Z]+)$"
+#define SPWM_COLOR_START "+@fg="
+#define SPWM_COLOR_STOP "+@fg=0;"
 
 /* OUTPUT FORMAT
  * %U: cpu usage
@@ -61,6 +63,7 @@
 typedef enum        opt_type {
     OPT_STATE,
     OPT_LABEL,
+    OPT_CRITIC,
     OPT_OTHER
 }                   opt_type;
 
@@ -73,7 +76,7 @@ typedef struct      s_opt {
 }                   t_opt;
 
 // number of options per module
-#define GLOBAL_OPTS 2
+#define GLOBAL_OPTS 4
 #define BATTERY_OPTS 7
 #define CPU_OPTS 3
 #define TEMP_OPTS 5
@@ -83,20 +86,23 @@ typedef struct      s_opt {
 #define WIRELESS_OPTS 3
 
 // option patterns
-#define OPT_TEXT_PATTERN "^.{1,100}$"
-#define OPT_NUMBER_PATTERN "^[0-9]{1,4}$"
-#define OPT_BOOLEAN_PATTERN "^0$|^1$"
-#define OPT_PATH_PATTERN "^\\/.+([^/*]|\\/\\*)$"
-#define OPT_LABEL_PATTERN "^.{1,5}$"
-#define OPT_WL_LABEL_PATTERN "^.{1,15}:?$"
-#define OPT_FORMAT_PATTERN "^.+$"
-#define OPT_RATE_PATTERN "^[0-9]+s$|^[0-9]+ms$"
-#define OPT_BAT_NAME_PATTERN "^BAT[0-9]$"
-#define OPT_IN_TEMP_PATTERN "^([1-9])$|^([1-9]-[1-9])$"
+#define TEXT_PATTERN "^.{1,100}$"
+#define THRESHOLD_PATTERN "^[0-9]{1,3}$"
+#define BOOLEAN_PATTERN "^0$|^1$"
+#define PATH_PATTERN "^\\/.+([^/*]|\\/\\*)$"
+#define LABEL_PATTERN "^.{1,5}$"
+#define WL_LABEL_PATTERN "^.{1,15}:?$"
+#define FORMAT_PATTERN "^.+$"
+#define RATE_PATTERN "^[0-9]+s$|^[0-9]+ms$"
+#define BAT_NAME_PATTERN "^BAT[0-9]$"
+#define IN_TEMP_PATTERN "^([1-9])$|^([1-9]-[1-9])$"
+#define COLOR_IDX_PATTERN "^[0-9]$"
 
 // global options
 #define OPT_FORMAT "format"
 #define OPT_RATE "rate"
+#define OPT_SPWM_COLOR "enable_spectrwm_color"
+#define OPT_CRITIC_COLOR_IDX "critical_color_index"
 
 // battery options
 #define OPT_BAT_ENABLED "battery_enabled"
@@ -147,6 +153,8 @@ typedef struct      s_module {
     char            *label;
     long            value;
     char            *unit;
+    uint8_t         critical;
+    uint8_t         threshold;
     void            *data;
     t_opt           *opts;
     int             s_opts;
@@ -255,11 +263,14 @@ typedef struct          s_main {
     char                *format;
     char                *rate;
     t_opt               *opts;
+    uint8_t             spwm_color;
+    uint8_t             color_idx;
 }                       t_main;
 
 /* FUNCTIONS */
 size_t  v_strlen(const char *str);
 char    *v_strncpy(char *dest, const char *src, size_t n);
+char    *v_strsncpy(char *dest, const char *src, int start, size_t n);
 void    v_memset(void *ptr, uint8_t c, size_t size);
 long    to_int(const char *str);
 char	*to_str(long nb);

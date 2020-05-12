@@ -32,17 +32,20 @@ void        v_memset(void *ptr, uint8_t c, size_t size) {
     }
 }
 
+char        *v_strsncpy(char *dest, const char *src, int start, size_t n) {
+    size_t  i = start - 1;
+
+    while (++i < start + n) {
+        dest[i] = src[i - start];
+    }
+    return dest;
+}
+
 char        *v_strncpy(char *dest, const char *src, size_t n) {
     size_t  i = -1;
 
-    if (!dest || !src) {
-        return NULL;
-    }
-    while (++i < n && src[i]) {
+    while (++i < n) {
         dest[i] = src[i];
-    }
-    while (i < n) {
-        dest[i++] = 0;
     }
     return dest;
 }

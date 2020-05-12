@@ -33,6 +33,12 @@ int         check_global_opts(t_main *main, char **opt, int nline) {
             // set global rate
             } else if (strcmp(main->opts[i].key, OPT_RATE) == 0) {
                 main->rate = opt[1];
+            // set spectrwm color support
+            } else if (strcmp(main->opts[i].key, OPT_SPWM_COLOR) == 0) {
+                main->spwm_color = to_int(opt[1]);
+            // set spectrwm color index
+            } else if (strcmp(main->opts[i].key, OPT_CRITIC_COLOR_IDX) == 0) {
+                main->color_idx = to_int(opt[1]);
             }
             return 0;
         }
@@ -57,12 +63,15 @@ int             check_module_opts(t_module *modules, char **opt, int nline) {
                 }
                 opts[j].value = opt[1];
                 opts[j].to_free = 1;
-                // turn on / off module
+                // turn on/off module
                 if (opts[j].type == OPT_STATE) {
                     modules[i].enabled = to_int(opt[1]);
                 // set module label
                 } else if (opts[j].type == OPT_LABEL) {
-                    modules[i].label= opt[1];
+                    modules[i].label = opt[1];
+                // set critical threshold
+                } else if (opts[j].type == OPT_CRITIC) {
+                    modules[i].threshold = to_int(opt[1]);
                 }
                 return 0;
             }

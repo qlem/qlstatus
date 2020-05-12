@@ -19,26 +19,45 @@ char        *append_single_char(char *buffer, char c) {
     return buffer;
 }
 
-char        *append_module(t_module *module, char *buffer) {
-    char    *new = NULL;
+char        *get_module_buffer(t_main *main, t_module *module) {
+    char    *buffer = NULL;
     char    *value = NULL;
-    size_t  len = 0;
-    size_t  mlen = 0;
+    size_t  size = 0;
 
     value = to_str(module->value);
-    if (buffer) {
-        len = v_strlen(buffer);
-    }
-    mlen = v_strlen(module->label) + v_strlen(value) +
-                    v_strlen(module->unit) + 1;
-    new = alloc_buffer(sizeof(char) * (len + mlen + 2));
-    if (buffer) {
-        sprintf(new, "%s%s %s%s", buffer, module->label, value, module->unit);
-        free(buffer);
+    if (main->spwm_color && module->critical) {
+        size = v_strlen(module->label) + v_strlen(value) +
+               v_strlen(module->unit) + 17;
+        buffer = alloc_buffer(size);
+        sprintf(buffer, " %s%d;%s %s%s%s", SPWM_COLOR_START, main->color_idx,
+                module->label, value, module->unit, SPWM_COLOR_STOP);
     } else {
-        sprintf(new, "%s %s%s", module->label, value, module->unit);
+        size = v_strlen(module->label) + v_strlen(value) +
+               v_strlen(module->unit) + 2;
+        buffer = alloc_buffer(size);
+        sprintf(buffer, "%s %s%s", module->label, value, module->unit);
     }
     free(value);
+    return buffer;
+}
+
+char        *append_module(t_main *main, t_module *module, char *buffer) {
+    char    *new = NULL;
+    char    *module_b = NULL;
+    size_t  blen = 0;
+    size_t  mlen = 0;
+
+    module_b = get_module_buffer(main, module);
+    if (buffer == NULL) {
+        return module_b;
+    }
+    blen = v_strlen(buffer);
+    mlen = v_strlen(module_b);
+    new = alloc_buffer(sizeof(char) * (blen + mlen + 1));
+    v_strsncpy(new, buffer, 0, blen);
+    v_strsncpy(new, module_b, blen, mlen);
+    free(module_b);
+    free(buffer);
     return new;
 }
 
@@ -59,7 +78,7 @@ char        *format(t_main *main) {
             while (++j < NB_MODULES) {
                 if (main->modules[j].enabled &&
                     main->modules[j].fmtid == fmt[i]) {
-                    buffer = append_module(&main->modules[j], buffer);
+                    buffer = append_module(main, &main->modules[j], buffer);
                     break;
                 }
             }

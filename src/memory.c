@@ -73,5 +73,6 @@ void            *get_memory(void *data) {
     used = meminfo.total - meminfo.free - meminfo.buffers - meminfo.cached -
             meminfo.sreclaim;
     module->value = PERCENT(used, meminfo.total);
+    module->critical = module->value >= module->threshold ? 1 : 0;
     return NULL;
 }

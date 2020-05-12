@@ -134,64 +134,66 @@ int     main(int argc, char **argv, char **env) {
 
     // global options
     t_opt       opts_main[GLOBAL_OPTS] = {
-        {OPT_FORMAT, DEFAULT_FORMAT, OPT_FORMAT_PATTERN, OPT_OTHER, 0},
-        {OPT_RATE,   RATE,           OPT_RATE_PATTERN,   OPT_OTHER, 0}
+        {OPT_FORMAT, DEFAULT_FORMAT, FORMAT_PATTERN,    OPT_OTHER, 0},
+        {OPT_RATE,   RATE,           RATE_PATTERN,      OPT_OTHER, 0},
+        {OPT_SPWM_COLOR,       "0",  BOOLEAN_PATTERN,   OPT_OTHER, 0},
+        {OPT_CRITIC_COLOR_IDX, "1",  COLOR_IDX_PATTERN, OPT_OTHER, 0}
     };
 
     // battery options
     t_opt       opts_battery[BATTERY_OPTS] = {
-        {OPT_BAT_ENABLED, "1",                OPT_BOOLEAN_PATTERN,  OPT_STATE, 0},
-        {OPT_BAT_LB_UNK,  BATTERY_LABEL_UNK,  OPT_LABEL_PATTERN,    OPT_LABEL, 0},
-        {OPT_BAT_LB_FULL, BATTERY_LABEL_FULL, OPT_LABEL_PATTERN,    OPT_OTHER, 0},
-        {OPT_BAT_LB_CHR,  BATTERY_LABEL_CHR,  OPT_LABEL_PATTERN,    OPT_OTHER, 0},
-        {OPT_BAT_LB_DIS,  BATTERY_LABEL_DIS,  OPT_LABEL_PATTERN,    OPT_OTHER, 0},
-        {OPT_BAT_NAME,    BATTERY_NAME,       OPT_BAT_NAME_PATTERN, OPT_OTHER, 0},
-        {OPT_BAT_CRITIC,  "20",               OPT_NUMBER_PATTERN,   OPT_OTHER, 0}
+        {OPT_BAT_ENABLED, "1",                BOOLEAN_PATTERN,   OPT_STATE,  0},
+        {OPT_BAT_LB_UNK,  BATTERY_LABEL_UNK,  LABEL_PATTERN,     OPT_LABEL,  0},
+        {OPT_BAT_LB_FULL, BATTERY_LABEL_FULL, LABEL_PATTERN,     OPT_OTHER,  0},
+        {OPT_BAT_LB_CHR,  BATTERY_LABEL_CHR,  LABEL_PATTERN,     OPT_OTHER,  0},
+        {OPT_BAT_LB_DIS,  BATTERY_LABEL_DIS,  LABEL_PATTERN,     OPT_OTHER,  0},
+        {OPT_BAT_NAME,    BATTERY_NAME,       BAT_NAME_PATTERN,  OPT_OTHER,  0},
+        {OPT_BAT_CRITIC,  "20",               THRESHOLD_PATTERN, OPT_CRITIC, 0}
     };
 
     // cpu usage options
     t_opt       opts_cpu_usage[CPU_OPTS] = {
-        {OPT_CPU_ENABLED, "1",       OPT_BOOLEAN_PATTERN, OPT_STATE, 0},
-        {OPT_CPU_LABEL,   CPU_LABEL, OPT_LABEL_PATTERN,   OPT_LABEL, 0},
-        {OPT_CPU_CRITIC,  "80",      OPT_NUMBER_PATTERN,  OPT_OTHER, 0}
+        {OPT_CPU_ENABLED, "1",       BOOLEAN_PATTERN,   OPT_STATE,  0},
+        {OPT_CPU_LABEL,   CPU_LABEL, LABEL_PATTERN,     OPT_LABEL,  0},
+        {OPT_CPU_CRITIC,  "80",      THRESHOLD_PATTERN, OPT_CRITIC, 0}
     };
 
     // temperature options
     t_opt       opts_temperature[TEMP_OPTS] = {
-        {OPT_TEMP_ENABLED, "1",        OPT_BOOLEAN_PATTERN, OPT_STATE, 0},
-        {OPT_TEMP_LABEL,   TEMP_LABEL, OPT_LABEL_PATTERN,   OPT_LABEL, 0},
-        {OPT_TEMP_DIR,     TEMP_DIR,   OPT_PATH_PATTERN,    OPT_OTHER, 0},
-        {OPT_TEMP_INPUT,   "1",        OPT_IN_TEMP_PATTERN, OPT_OTHER, 0},
-        {OPT_TEMP_CRITIC,  "70",       OPT_NUMBER_PATTERN,  OPT_OTHER, 0}
+        {OPT_TEMP_ENABLED, "1",        BOOLEAN_PATTERN,   OPT_STATE,  0},
+        {OPT_TEMP_LABEL,   TEMP_LABEL, LABEL_PATTERN,     OPT_LABEL,  0},
+        {OPT_TEMP_DIR,     TEMP_DIR,   PATH_PATTERN,      OPT_OTHER,  0},
+        {OPT_TEMP_INPUT,   "1",        IN_TEMP_PATTERN,   OPT_OTHER,  0},
+        {OPT_TEMP_CRITIC,  "80",       THRESHOLD_PATTERN, OPT_CRITIC, 0}
     };
 
     // memory options
     t_opt       opts_memory[MEM_OPTS] = {
-        {OPT_MEM_ENABLED, "1",       OPT_BOOLEAN_PATTERN, OPT_STATE, 0},
-        {OPT_MEM_LABEL,   MEM_LABEL, OPT_LABEL_PATTERN,   OPT_LABEL, 0},
-        {OPT_MEM_CRITIC,  "80",      OPT_NUMBER_PATTERN,  OPT_OTHER, 0}
+        {OPT_MEM_ENABLED, "1",       BOOLEAN_PATTERN,   OPT_STATE,  0},
+        {OPT_MEM_LABEL,   MEM_LABEL, LABEL_PATTERN,     OPT_LABEL,  0},
+        {OPT_MEM_CRITIC,  "80",      THRESHOLD_PATTERN, OPT_CRITIC, 0}
     };
 
     // brightness options
     t_opt       opts_brightness[BRIGHTNESS_OPTS] = {
-        {OPT_BRG_ENABLED, "1",              OPT_BOOLEAN_PATTERN, OPT_STATE, 0},
-        {OPT_BRG_LABEL,   BRIGHTNESS_LABEL, OPT_LABEL_PATTERN,   OPT_LABEL, 0},
-        {OPT_BRG_DIR,     BRIGHTNESS_DIR,   OPT_PATH_PATTERN,    OPT_OTHER, 0}
+        {OPT_BRG_ENABLED, "1",              BOOLEAN_PATTERN, OPT_STATE, 0},
+        {OPT_BRG_LABEL,   BRIGHTNESS_LABEL, LABEL_PATTERN,   OPT_LABEL, 0},
+        {OPT_BRG_DIR,     BRIGHTNESS_DIR,   PATH_PATTERN,    OPT_OTHER, 0}
     };
 
     // volume options
     t_opt       opts_volume[VOLUME_OPTS] = {
-        {OPT_VOL_ENABLED,  "1",                OPT_BOOLEAN_PATTERN, OPT_STATE, 0},
-        {OPT_VOL_LABEL,    VOLUME_LABEL,       OPT_LABEL_PATTERN,   OPT_LABEL, 0},
-        {OPT_VOL_LB_MUTED, VOLUME_MUTED_LABEL, OPT_LABEL_PATTERN,   OPT_OTHER, 0},
-        {OPT_VOL_SINK,     PULSE_SINK_NAME,    OPT_TEXT_PATTERN,    OPT_OTHER, 0}
+        {OPT_VOL_ENABLED,  "1",                BOOLEAN_PATTERN, OPT_STATE, 0},
+        {OPT_VOL_LABEL,    VOLUME_LABEL,       LABEL_PATTERN,   OPT_LABEL, 0},
+        {OPT_VOL_LB_MUTED, VOLUME_MUTED_LABEL, LABEL_PATTERN,   OPT_OTHER, 0},
+        {OPT_VOL_SINK,     PULSE_SINK_NAME,    TEXT_PATTERN,    OPT_OTHER, 0}
     };
 
     // wireless options
     t_opt       opts_wireless[WIRELESS_OPTS] = {
-        {OPT_WLAN_ENABLED, "1",                OPT_BOOLEAN_PATTERN,  OPT_STATE, 0},
-        {OPT_WLAN_LB_UNK,  WIRELESS_UNK_LABEL, OPT_WL_LABEL_PATTERN, OPT_LABEL, 0},
-        {OPT_WLAN_IFACE,   WIRELESS_INTERFACE, OPT_TEXT_PATTERN,     OPT_OTHER, 0}
+        {OPT_WLAN_ENABLED, "1",                BOOLEAN_PATTERN,  OPT_STATE, 0},
+        {OPT_WLAN_LB_UNK,  WIRELESS_UNK_LABEL, WL_LABEL_PATTERN, OPT_LABEL, 0},
+        {OPT_WLAN_IFACE,   WIRELESS_INTERFACE, TEXT_PATTERN,     OPT_OTHER, 0}
     };
 
     // extra data for cpu usage module
@@ -206,14 +208,14 @@ int     main(int argc, char **argv, char **env) {
     pulse.connected = 0;
 
     // modules
-    t_module            modules[NB_MODULES] = {
-        {1, 'W', WIRELESS_UNK_LABEL, 0, "%", NULL, opts_wireless, WIRELESS_OPTS, get_wireless, wireless_free, 0},
-        {1, 'B', BATTERY_LABEL_UNK, 0, "%", NULL, opts_battery, BATTERY_OPTS, get_battery, NULL, 0},
-        {1, 'L', BRIGHTNESS_LABEL, 0, "%", NULL, opts_brightness, BRIGHTNESS_OPTS, get_brightness, NULL, 0},
-        {1, 'M', MEM_LABEL, 0, "%", NULL, opts_memory, MEM_OPTS, get_memory, NULL, 0},
-        {1, 'T', TEMP_LABEL, 0, "°", NULL, opts_temperature, TEMP_OPTS, get_temperature, NULL, 0},
-        {1, 'U', CPU_LABEL, 0, "%", &cpu, opts_cpu_usage, CPU_OPTS, get_cpu_usage, NULL, 0},
-        {1, 'V', VOLUME_LABEL, 0, "%", &pulse, opts_volume, VOLUME_OPTS, get_volume, volume_free, 0}
+    t_module    modules[NB_MODULES] = {
+        {1, 'W', WIRELESS_UNK_LABEL, 0, "%", 0, 0, NULL, opts_wireless, WIRELESS_OPTS, get_wireless, wireless_free, 0},
+        {1, 'B', BATTERY_LABEL_UNK, 0, "%", 0, 0, NULL, opts_battery, BATTERY_OPTS, get_battery, NULL, 0},
+        {1, 'L', BRIGHTNESS_LABEL, 0, "%", 0, 0, NULL, opts_brightness, BRIGHTNESS_OPTS, get_brightness, NULL, 0},
+        {1, 'M', MEM_LABEL, 0, "%", 0, 0, NULL, opts_memory, MEM_OPTS, get_memory, NULL, 0},
+        {1, 'T', TEMP_LABEL, 0, "°", 0, 0, NULL, opts_temperature, TEMP_OPTS, get_temperature, NULL, 0},
+        {1, 'U', CPU_LABEL, 0, "%", 0, 0, &cpu, opts_cpu_usage, CPU_OPTS, get_cpu_usage, NULL, 0},
+        {1, 'V', VOLUME_LABEL, 0, "%", 0, 0, &pulse, opts_volume, VOLUME_OPTS, get_volume, volume_free, 0}
     };
 
     // vars declaration

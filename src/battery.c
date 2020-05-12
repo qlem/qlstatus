@@ -6,7 +6,7 @@
 
 #include "qlstatus.h"
 
-char        *resolve_power_file(const char *dir, const char *pw_name, 
+char        *resolve_power_file(const char *dir, const char *pw_name,
                                 const char *file) {
     char    *path = NULL;
 
@@ -17,17 +17,21 @@ char        *resolve_power_file(const char *dir, const char *pw_name,
 
 void        set_battery_label(t_module *module, t_power *power) {
     if (strcmp(power->status, BATTERY_STATUS_DIS) == 0) {
-        module->label = get_option_value(module->opts, OPT_BAT_LB_DIS, 
+        module->label = get_option_value(module->opts, OPT_BAT_LB_DIS,
                                          BATTERY_OPTS);
+        module->critical = module->value <= module->threshold ? 1 : 0;
     } else if (strcmp(power->status, BATTERY_STATUS_CHR) == 0) {
-        module->label = get_option_value(module->opts, OPT_BAT_LB_CHR, 
+        module->label = get_option_value(module->opts, OPT_BAT_LB_CHR,
                                          BATTERY_OPTS);
+        module->critical = 0;
     } else if (strcmp(power->status, BATTERY_STATUS_FULL) == 0) {
-        module->label = get_option_value(module->opts, OPT_BAT_LB_FULL, 
+        module->label = get_option_value(module->opts, OPT_BAT_LB_FULL,
                                          BATTERY_OPTS);
+        module->critical = 0;
     } else {
-        module->label = get_option_value(module->opts, OPT_BAT_LB_UNK, 
+        module->label = get_option_value(module->opts, OPT_BAT_LB_UNK,
                                          BATTERY_OPTS);
+        module->critical = module->value <= module->threshold ? 1 : 0;
     }
 }
 
@@ -94,8 +98,8 @@ void            *get_battery(void *data) {
         free(file);
         exit(EXIT_FAILURE);
     }
-    set_battery_label(module, &power);
     module->value = PERCENT(power.current, power.max);
+    set_battery_label(module, &power);
     free(power.status);
     free(file);
     return NULL;

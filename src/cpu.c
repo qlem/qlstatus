@@ -85,6 +85,7 @@ void            *get_cpu_usage(void *data) {
     }
     stats = parse_cpu_stats(rstats);
     module->value = compute_cpu_usage(cpu, stats);
+    module->critical = module->value >= module->threshold ? 1 : 0;
     free(rstats);
     free(stats);
     return NULL;
