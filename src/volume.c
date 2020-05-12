@@ -46,7 +46,7 @@ void            context_state_cb(pa_context *context, void *data) {
     }
 }
 
-void    pulse_connect(t_module *module) {
+void                    pulse_connect(t_module *module) {
     t_pulse             *pulse = module->data;
     pa_mainloop_api     *mloop_api;
 
@@ -55,7 +55,7 @@ void    pulse_connect(t_module *module) {
     pulse->context = pa_context_new(mloop_api, PULSE_APP_NAME);
     pa_context_set_state_callback(pulse->context, context_state_cb, module);
     pa_context_connect(pulse->context, NULL, PA_CONTEXT_NOFAIL |
-            PA_CONTEXT_NOAUTOSPAWN, NULL);
+                       PA_CONTEXT_NOAUTOSPAWN, NULL);
     pa_threaded_mainloop_start(pulse->mainloop);
     while (pulse->connected == 0) {
         pa_threaded_mainloop_lock(pulse->mainloop);
@@ -64,7 +64,7 @@ void    pulse_connect(t_module *module) {
     }
 }
 
-void        *get_volume(void *data) {
+void                    *get_volume(void *data) {
     t_module            *module = data;
     t_pulse             *pulse = module->data;
     char                *sink = NULL;
@@ -78,7 +78,7 @@ void        *get_volume(void *data) {
     sink = get_option_value(module->opts, OPT_VOL_SINK, VOLUME_OPTS);
     pa_threaded_mainloop_lock(pulse->mainloop);
     op = pa_context_get_sink_info_by_name(pulse->context, sink, &sink_info_cb,
-                                     module);
+                                          module);
     while (pa_operation_get_state(op) == PA_OPERATION_RUNNING) {
         pa_threaded_mainloop_wait(pulse->mainloop);
     }

@@ -30,7 +30,7 @@ char        *append_module(t_module *module, char *buffer) {
         len = v_strlen(buffer);
     }
     mlen = v_strlen(module->label) + v_strlen(value) +
-                v_strlen(module->unit) + 1;
+                    v_strlen(module->unit) + 1;
     new = alloc_buffer(sizeof(char) * (len + mlen + 2));
     if (buffer) {
         sprintf(new, "%s%s %s%s", buffer, module->label, value, module->unit);

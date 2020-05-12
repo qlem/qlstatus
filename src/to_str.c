@@ -7,11 +7,11 @@
 # include "qlstatus.h"
 
 typedef struct      s_info {
-    int     length;
-    int     tens;
-} t_info;
+    int             length;
+    int             tens;
+}                   t_info;
 
-char    *nbr_eq_zero() {
+char        *nbr_eq_zero() {
     char    *str = NULL;
 
     str = alloc_buffer(2);
@@ -31,7 +31,7 @@ void        compute_tens(long nb, t_info *info) {
     }
 }
 
-char    *to_str(long nb) {
+char        *to_str(long nb) {
     char    *str = NULL;
     t_info  info;
     long    tmp;

@@ -18,16 +18,16 @@ char        *resolve_power_file(const char *dir, const char *pw_name,
 void        set_battery_label(t_module *module, t_power *power) {
     if (strcmp(power->status, BATTERY_STATUS_DIS) == 0) {
         module->label = get_option_value(module->opts, OPT_BAT_LB_DIS, 
-                            BATTERY_OPTS);
+                                         BATTERY_OPTS);
     } else if (strcmp(power->status, BATTERY_STATUS_CHR) == 0) {
         module->label = get_option_value(module->opts, OPT_BAT_LB_CHR, 
-                            BATTERY_OPTS);
+                                         BATTERY_OPTS);
     } else if (strcmp(power->status, BATTERY_STATUS_FULL) == 0) {
         module->label = get_option_value(module->opts, OPT_BAT_LB_FULL, 
-                            BATTERY_OPTS);
+                                         BATTERY_OPTS);
     } else {
         module->label = get_option_value(module->opts, OPT_BAT_LB_UNK, 
-                            BATTERY_OPTS);
+                                         BATTERY_OPTS);
     }
 }
 

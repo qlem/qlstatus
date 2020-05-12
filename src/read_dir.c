@@ -6,7 +6,7 @@
 
 #include "qlstatus.h"
 
-void    free_files(char **files) {
+void        free_files(char **files) {
     int     i = -1;
 
     while (files[++i][0]) {

@@ -6,7 +6,7 @@
 
 #include "qlstatus.h"
 
-char    *get_option_value(t_opt *opts, const char *key, int size) {
+char        *get_option_value(t_opt *opts, const char *key, int size) {
     int     i = -1;
 
     while (++i < size) {
@@ -17,14 +17,14 @@ char    *get_option_value(t_opt *opts, const char *key, int size) {
     return NULL;
 }
 
-size_t  v_strlen(const char *str) {
-    size_t     i = -1;
+size_t      v_strlen(const char *str) {
+    size_t  i = -1;
 
     while (str[++i]) {}
     return i;
 }
 
-void    v_memset(void *ptr, uint8_t c, size_t size) {
+void        v_memset(void *ptr, uint8_t c, size_t size) {
     size_t  i = -1;
 
     while (++i < size) {
@@ -32,7 +32,7 @@ void    v_memset(void *ptr, uint8_t c, size_t size) {
     }
 }
 
-char    *v_strncpy(char *dest, const char *src, size_t n) {
+char        *v_strncpy(char *dest, const char *src, size_t n) {
     size_t  i = -1;
 
     if (!dest || !src) {
@@ -47,7 +47,7 @@ char    *v_strncpy(char *dest, const char *src, size_t n) {
     return dest;
 }
 
-int     putstr(const char *str) {
+int         putstr(const char *str) {
     size_t  size = v_strlen(str);
 
     if (write(1, str, size) == -1) {
@@ -57,7 +57,7 @@ int     putstr(const char *str) {
     return size;
 }
 
-char    *alloc_buffer(size_t size) {
+char        *alloc_buffer(size_t size) {
     char    *buffer;
 
     if ((buffer = malloc(sizeof(char) * size)) == NULL) {
@@ -68,7 +68,7 @@ char    *alloc_buffer(size_t size) {
     return buffer;
 }
 
-void    *alloc_ptr(size_t size) {
+void        *alloc_ptr(size_t size) {
     void    *ptr;
 
     if ((ptr = malloc(size)) == NULL) {
@@ -78,7 +78,7 @@ void    *alloc_ptr(size_t size) {
     return ptr;
 }
 
-long    to_int(const char *str) {
+long        to_int(const char *str) {
     long    nb = 0;
 
     nb = strtol(str, NULL, BASE);

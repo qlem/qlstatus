@@ -6,7 +6,7 @@
 
 #include "qlstatus.h"
 
-long    compute_cpu_usage(t_cpu *cpu, const long *stats) {
+long        compute_cpu_usage(t_cpu *cpu, const long *stats) {
     long    idle = 0;
     long    total = 0;
     long    usage = 0;

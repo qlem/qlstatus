@@ -6,7 +6,7 @@
 
 #include "qlstatus.h"
 
-char    *resolve_asterisk(char *path) {
+char                *resolve_asterisk(const char *path) {
     char            *parent;
     char            *resolved = NULL;
     char            **files;
@@ -29,7 +29,7 @@ char    *resolve_asterisk(char *path) {
     return resolved;
 }
 
-bool    has_asterisk(char *path) {
+bool        has_asterisk(const char *path) {
     size_t  length;
 
     length = v_strlen(path);
@@ -66,7 +66,7 @@ char        *resolve_temp_input_regex(const char *input) {
     return regex;
 }
 
-long    compute_temp(char **files, char *parent) {
+long            compute_temp(char **files, const char *parent) {
     char        *path;
     char        *buffer;
     long        temp = 0;

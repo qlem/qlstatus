@@ -62,7 +62,7 @@ static int              nl_station_cb(struct nl_msg *msg, void *data) {
         return NL_SKIP;
     }
     if (nla_parse_nested(s_info, NL80211_STA_INFO_MAX,
-                         tb[NL80211_ATTR_STA_INFO], stats_policy) < 0) {
+        tb[NL80211_ATTR_STA_INFO], stats_policy) < 0) {
         return NL_SKIP;
     }
     if (s_info[NL80211_STA_INFO_SIGNAL] != NULL) {
@@ -118,7 +118,7 @@ static int              nl_scan_cb(struct nl_msg *msg, void *data) {
         return NL_SKIP;
     }
     if (nla_parse_nested(bss, NL80211_BSS_MAX, tb[NL80211_ATTR_BSS],
-                         bss_policy) < 0) {
+        bss_policy) < 0) {
         return NL_SKIP;
     }
     if (bss[NL80211_BSS_STATUS] == NULL) {
@@ -126,7 +126,7 @@ static int              nl_scan_cb(struct nl_msg *msg, void *data) {
     }
     status = nla_get_u32(bss[NL80211_BSS_STATUS]);
     if (status != NL80211_BSS_STATUS_ASSOCIATED && status !=
-                                        NL80211_BSS_STATUS_IBSS_JOINED) {
+        NL80211_BSS_STATUS_IBSS_JOINED) {
         return NL_SKIP;
     }
     if (bss[NL80211_BSS_BSSID] == NULL) {

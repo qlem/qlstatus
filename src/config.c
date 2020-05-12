@@ -52,7 +52,7 @@ int             check_module_opts(t_module *modules, char **opt, int nline) {
             if (strcmp(opt[0], opts[j].key) == 0) {
                 if (!match_pattern(opts[j].p_value, opt[1])) {
                     printf("Invalid option value at line %d: %s\n",
-                                                            nline, opt[0]);
+                           nline, opt[0]);
                     return -1;
                 }
                 opts[j].value = opt[1];
@@ -188,7 +188,7 @@ int         parse_config_line(t_main *main, char *line, int nline) {
     // check if key and value exist
     if (!opt[0] || !opt[1]) {
         printf("Invalid option at line %d: %s\n", nline,
-                                                opt[0] ? opt[0] : opt[1]);
+               opt[0] ? opt[0] : opt[1]);
         free(line);
         free_opt(opt);
         return -1;

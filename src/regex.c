@@ -52,7 +52,7 @@ char        **multiple_subs(const char *regex, const char *str, int nmatch) {
     return match;
 }
 
-char    *substring(const char *regex, const char *str) {
+char                *substring(const char *regex, const char *str) {
     regex_t         preg;
     regmatch_t      pmatch[2];
     char            *buffer = NULL;
@@ -75,8 +75,8 @@ char    *substring(const char *regex, const char *str) {
     return buffer;
 }
 
-bool        match_pattern(const char *regex, const char *str) {
-    regex_t         preg;
+bool            match_pattern(const char *regex, const char *str) {
+    regex_t     preg;
 
     compile_regex(regex, &preg);
     if (regexec(&preg, str, 0, NULL, 0) == 0) {
