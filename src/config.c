@@ -50,11 +50,11 @@ int         check_global_opts(t_main *main, char **opt, int nline) {
             } else if (strcmp(main->opts[i].key, OPT_RATE) == 0) {
                 main->rate = opt[1];
             // enable/disable spectrwm color support
-            } else if (strcmp(main->opts[i].key, OPT_SPWM_COLOR) == 0) {
-                main->spwm_color = ((long *)main->opts[i].value)[0];
+            } else if (strcmp(main->opts[i].key, OPT_SPWM_COLORS) == 0) {
+                main->spwm_colors = ((long *)main->opts[i].value)[0];
             // set spectrwm color index
-            } else if (strcmp(main->opts[i].key, OPT_COLOR_IDX) == 0) {
-                main->color_idx = ((long *)main->opts[i].value)[0];
+            } else if (strcmp(main->opts[i].key, OPT_C_COLOR_IDX) == 0) {
+                main->critical_color_idx = ((long *)main->opts[i].value)[0];
             }
             // logging
             print_option(&main->opts[i]);

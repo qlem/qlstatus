@@ -15,17 +15,17 @@ Light, modular, eazy to use, eazy to maintain.. No Memory Leaks !
 - average temperature of inputs in degree Celsius
 - used memory in percent
 - current audio volume in percent
-- visual warning when critical threshold is reached for battery, cpu usage, temperature and used memory (coming soon)
+- handle critical threshold
 
 ## Configuration
 You should override the default value of some options by editing `~/.config/qlstatus/qlstatus.conf`.  
 Each option has `key = value` form. For the detailed list of available options, see the [wiki](https://github.com/qlem/qlstatus/wiki/Options).
 
 ### Output format
-The modules are displayed with the form `label value[unit]`. 
-You can change the order and the whitespaces between them by overriding the value of the `format` option, e.g. `%U  %M  %B`.
+Each module is displayed with the form `label value[unit]`. 
+You can change the order and the whitespaces between them by overriding the the value of the `format` option, e.g. `%U  %M  %B`.
 
-Each module is represented by a character id escaped by the symbol `%`:
+Use the following escape sequences to add the desired modules:
 - `%U` CPU
 - `%T` temperature
 - `%M` memory
@@ -34,7 +34,11 @@ Each module is represented by a character id escaped by the symbol `%`:
 - `%B` battery
 - `%W` wireless
 
-Make sur that the modules present in the format string are enabled.
+Make sur that the modules present in the format string are **enabled**.
+
+### Critical threshold
+For modules that have a critical threshold (battery, cpu usage, temperature and memory), you can enable the support of the spectrwm colors `enable_spectrwm_colors = 1` 
+then set the index of the desired spectrwm foreground color `critical_color_index = n` to use when the module value reach the critical threshold.
 
 ## Dependencies
 - libc

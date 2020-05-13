@@ -107,8 +107,8 @@ typedef struct      s_opt {
 // global options
 #define OPT_FORMAT "format"
 #define OPT_RATE "rate"
-#define OPT_SPWM_COLOR "enable_spectrwm_color"
-#define OPT_COLOR_IDX "critical_color_index"
+#define OPT_SPWM_COLORS "enable_spectrwm_colors"
+#define OPT_C_COLOR_IDX "critical_color_index"
 
 // battery options
 #define OPT_BAT_ENABLED "battery_enabled"
@@ -269,8 +269,8 @@ typedef struct          s_main {
     t_module            *modules;
     char                *format;
     char                *rate;
-    uint8_t             spwm_color;
-    uint8_t             color_idx;
+    uint8_t             spwm_colors;
+    uint8_t             critical_color_idx;
     t_opt               *opts;
 }                       t_main;
 

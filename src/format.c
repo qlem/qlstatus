@@ -25,12 +25,13 @@ char        *get_module_buffer(t_main *main, t_module *module) {
     size_t  size = 0;
 
     value = to_str(module->value);
-    if (main->spwm_color && module->critical) {
+    if (main->spwm_colors && module->critical) {
         size = v_strlen(module->label) + v_strlen(value) +
                v_strlen(module->unit) + 17;
         buffer = alloc_buffer(size);
-        sprintf(buffer, " %s%d;%s %s%s%s", SPWM_COLOR_START, main->color_idx,
-                module->label, value, module->unit, SPWM_COLOR_STOP);
+        sprintf(buffer, " %s%d;%s %s%s%s", SPWM_COLOR_START,
+                main->critical_color_idx, module->label, value,
+                module->unit, SPWM_COLOR_STOP);
     } else {
         size = v_strlen(module->label) + v_strlen(value) +
                v_strlen(module->unit) + 2;
@@ -68,7 +69,7 @@ char        *format(t_main *main) {
     int     j;
 
     if (!fmt || !fmt[0]) {
-        printf("Format cannot be null\n");
+        printf("Format error: format cannot be null\n");
         exit(EXIT_FAILURE);
     }
     while (fmt[++i]) {
@@ -83,7 +84,7 @@ char        *format(t_main *main) {
                 }
             }
             if (j == NB_MODULES) {
-                printf("Format error\n");
+                printf("Format error: escape sequence unknown\n");
                 exit(EXIT_FAILURE);
             }
         } else {

@@ -133,13 +133,13 @@ int     main(int argc, char **argv, char **env) {
     (void)argv;
 
     // global options
-    int     spwm_color = 0;
-    int     color_idx = 1;
+    int     spwm_colors = 0;
+    int     c_color_idx = 1;
     t_opt   opts_global[GLOBAL_OPTS] = {
-        {OPT_FORMAT,     DEFAULT_FORMAT, FORMAT_PATTERN,    STRING, OTHER, 0},
-        {OPT_RATE,       RATE,           RATE_PATTERN,      STRING, OTHER, 0},
-        {OPT_SPWM_COLOR, &spwm_color,    BOOLEAN_PATTERN,   NUMBER, OTHER, 0},
-        {OPT_COLOR_IDX,  &color_idx,     COLOR_IDX_PATTERN, NUMBER, OTHER, 0}
+        {OPT_FORMAT,      DEFAULT_FORMAT, FORMAT_PATTERN,    STRING, OTHER, 0},
+        {OPT_RATE,        RATE,           RATE_PATTERN,      STRING, OTHER, 0},
+        {OPT_SPWM_COLORS, &spwm_colors,   BOOLEAN_PATTERN,   NUMBER, OTHER, 0},
+        {OPT_C_COLOR_IDX, &c_color_idx,   COLOR_IDX_PATTERN, NUMBER, OTHER, 0}
     };
 
     // battery options
@@ -255,8 +255,8 @@ int     main(int argc, char **argv, char **env) {
     main.opts = opts_global;
     main.format = DEFAULT_FORMAT;
     main.rate = RATE;
-    main.spwm_color = 0;
-    main.color_idx = 1;
+    main.spwm_colors = 0;
+    main.critical_color_idx = 1;
 
     // resolve/load config file
     if ((config = resolve_config_file(env))) {
