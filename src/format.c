@@ -84,7 +84,7 @@ char        *format(t_main *main) {
                 }
             }
             if (j == NB_MODULES) {
-                printf("Format error: escape sequence unknown\n");
+                printf("Format error: bad format\n");
                 exit(EXIT_FAILURE);
             }
         } else {
