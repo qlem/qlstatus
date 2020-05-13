@@ -16,33 +16,35 @@ char        *resolve_power_file(const char *dir, const char *pw_name,
 }
 
 void        set_battery_label(t_module *module, t_power *power) {
-    if (strcmp(power->status, BATTERY_STATUS_DIS) == 0) {
-        module->label = get_option_value(module->opts, OPT_BAT_LB_DIS,
-                                         BATTERY_OPTS);
+    if (strcmp(power->status, BAT_STATUS_DIS) == 0) {
+        module->label = get_opt_string_value(module->opts, OPT_BAT_LB_DIS,
+                                             BATTERY_OPTS);
         module->critical = module->value <= module->threshold ? 1 : 0;
-    } else if (strcmp(power->status, BATTERY_STATUS_CHR) == 0) {
-        module->label = get_option_value(module->opts, OPT_BAT_LB_CHR,
-                                         BATTERY_OPTS);
+    } else if (strcmp(power->status, BAT_STATUS_CHR) == 0) {
+        module->label = get_opt_string_value(module->opts, OPT_BAT_LB_CHR,
+                                             BATTERY_OPTS);
         module->critical = 0;
-    } else if (strcmp(power->status, BATTERY_STATUS_FULL) == 0) {
-        module->label = get_option_value(module->opts, OPT_BAT_LB_FULL,
-                                         BATTERY_OPTS);
+    } else if (strcmp(power->status, BAT_STATUS_FULL) == 0) {
+        module->label = get_opt_string_value(module->opts, OPT_BAT_LB_FULL,
+                                             BATTERY_OPTS);
         module->critical = 0;
     } else {
-        module->label = get_option_value(module->opts, OPT_BAT_LB_UNK,
-                                         BATTERY_OPTS);
+        module->label = get_opt_string_value(module->opts, OPT_BAT_LB_UNK,
+                                             BATTERY_OPTS);
         module->critical = module->value <= module->threshold ? 1 : 0;
     }
 }
 
-void        parse_power_line(t_power *power, const char *line) {
+void        parse_power_line(t_power *power, const char *line,
+                             uint8_t full_design) {
     char    *status = NULL;
     char    *current = NULL;
     char    *max = NULL;
 
     if ((status = substring(PW_STATUS_PATTERN, line))) {
         power->status = status;
-    } else if ((max = substring(PW_MAX_PATTERN, line))) {
+    } else if ((full_design && (max = substring(PW_MAX_FD_PATTERN, line))) ||
+               (!full_design && (max = substring(PW_MAX_PATTERN, line)))) {
         power->max = to_int(max);
         free(max);
     } else if ((current = substring(PW_CURRENT_PATTERN, line))) {
@@ -51,7 +53,8 @@ void        parse_power_line(t_power *power, const char *line) {
     }
 }
 
-int         parse_power_file(t_power *power, const char *file) {
+int         parse_power_file(t_power *power, const char *file,
+                             uint8_t full_design) {
     FILE    *stream;
     size_t  size = 0;
     char    *line = NULL;
@@ -64,7 +67,7 @@ int         parse_power_file(t_power *power, const char *file) {
         if (line[sline - 1] == '\n') {
             line[sline - 1] = 0;
         }
-        parse_power_line(power, line);
+        parse_power_line(power, line, full_design);
         free(line);
         line = NULL;
         size = 0;
@@ -87,13 +90,16 @@ void            *get_battery(void *data) {
     t_power     power;
     char        *file = NULL;
     char        *bat = NULL;
+    uint8_t     full_design;
 
     power.max = -1;
     power.current = -1;
     power.status = NULL;
-    bat = get_option_value(module->opts, OPT_BAT_NAME, BATTERY_OPTS);
+    bat = get_opt_string_value(module->opts, OPT_BAT_NAME, BATTERY_OPTS);
+    full_design = get_opt_number_value(module->opts, OPT_BAT_FULL_DESIGN,
+                                       BATTERY_OPTS);
     file = resolve_power_file(POWER_DIR, bat, POWER_FILE);
-    if (parse_power_file(&power, file) == -1) {
+    if (parse_power_file(&power, file, full_design) == -1) {
         printf("Cannot compute battery percent\n");
         free(file);
         exit(EXIT_FAILURE);

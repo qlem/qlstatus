@@ -21,11 +21,19 @@ int         check_global_opts(t_main *main, char **opt, int nline) {
 
     while (++i < GLOBAL_OPTS) {
         if (strcmp(opt[0], main->opts[i].key) == 0) {
-            if (!match_pattern(main->opts[i].p_value, opt[1])) {
-                printf("Invalid option value at line %d: %s\n", nline, opt[0]);
+            // check if value match pattern
+            if (!match_pattern(main->opts[i].pattern, opt[1])) {
+                printf("Invalid value at line %d: %s\n", nline, opt[0]);
                 return -1;
             }
-            main->opts[i].value = opt[1];
+            // set option value
+            if (main->opts[i].type == NUMBER) {
+                main->opts[i].value = alloc_ptr(sizeof(long));
+                ((long *)main->opts[i].value)[0] = to_int(opt[1]);
+                free(opt[1]);
+            } else {
+                main->opts[i].value = opt[1];
+            }
             main->opts[i].to_free = 1;
             // set global format
             if (strcmp(main->opts[i].key, OPT_FORMAT) == 0) {
@@ -33,12 +41,12 @@ int         check_global_opts(t_main *main, char **opt, int nline) {
             // set global rate
             } else if (strcmp(main->opts[i].key, OPT_RATE) == 0) {
                 main->rate = opt[1];
-            // set spectrwm color support
+            // enable/disable spectrwm color support
             } else if (strcmp(main->opts[i].key, OPT_SPWM_COLOR) == 0) {
-                main->spwm_color = to_int(opt[1]);
+                main->spwm_color = ((long *)main->opts[i].value)[0];
             // set spectrwm color index
-            } else if (strcmp(main->opts[i].key, OPT_CRITIC_COLOR_IDX) == 0) {
-                main->color_idx = to_int(opt[1]);
+            } else if (strcmp(main->opts[i].key, OPT_COLOR_IDX) == 0) {
+                main->color_idx = ((long *)main->opts[i].value)[0];
             }
             return 0;
         }
@@ -56,22 +64,29 @@ int             check_module_opts(t_module *modules, char **opt, int nline) {
         opts = modules[i].opts;
         while (++j < modules[i].s_opts) {
             if (strcmp(opt[0], opts[j].key) == 0) {
-                if (!match_pattern(opts[j].p_value, opt[1])) {
-                    printf("Invalid option value at line %d: %s\n",
-                           nline, opt[0]);
+                // check if value match pattern
+                if (!match_pattern(opts[j].pattern, opt[1])) {
+                    printf("Invalid value at line %d: %s\n", nline, opt[0]);
                     return -1;
                 }
-                opts[j].value = opt[1];
+                // set option value
+                if (opts[j].type == NUMBER) {
+                    opts[j].value = alloc_ptr(sizeof(long));
+                    ((long *)opts[j].value)[0] = to_int(opt[1]);
+                    free(opt[1]);
+                } else {
+                    opts[j].value = opt[1];
+                }
                 opts[j].to_free = 1;
-                // turn on/off module
-                if (opts[j].type == OPT_STATE) {
-                    modules[i].enabled = to_int(opt[1]);
+                // enable/disable module
+                if (opts[j].category == STATE) {
+                    modules[i].enabled = ((long *)opts[j].value)[0];
                 // set module label
-                } else if (opts[j].type == OPT_LABEL) {
+                } else if (opts[j].category == LABEL) {
                     modules[i].label = opt[1];
-                // set critical threshold
-                } else if (opts[j].type == OPT_CRITIC) {
-                    modules[i].threshold = to_int(opt[1]);
+                // set module critical threshold
+                } else if (opts[j].category == CRITIC) {
+                    modules[i].threshold = ((long *)opts[j].value)[0];
                 }
                 return 0;
             }
@@ -145,9 +160,9 @@ char        **parse_opt(char *line) {
     opt[0] = NULL;
     opt[1] = NULL;
     size = v_strlen(line);
-    if (size == 1 && line[0] == '=') {
+    if (size == 1) {
         opt[0] = alloc_buffer(2);
-        opt[0][0] = '=';
+        opt[0][0] = line[0];
         return opt;
     }
     while (line[++i] && line[i] != '=') {}
@@ -221,14 +236,13 @@ int         parse_config_line(t_main *main, char *line, int nline) {
 
     // check if the option exist
     if (mcode == 1 && gcode == 1) {
-        printf("Unknown option at line %d: %s\n", nline, opt[0]);
+        printf("Invalid option at line %d: %s\n", nline, opt[0]);
         free(line);
         free_opt(opt);
         return -1;
     }
 
-    // debug
-    printf("Set option [%s] to [%s]\n", opt[0], opt[1]);
+    // TODO logging
 
     // free
     free(line);

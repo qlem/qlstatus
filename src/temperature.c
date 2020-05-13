@@ -99,14 +99,14 @@ void            *get_temperature(void *data) {
     char        *in_regex;
     char        **files;
 
-    path = get_option_value(module->opts, OPT_TEMP_DIR, TEMP_OPTS);
+    path = get_opt_string_value(module->opts, OPT_TEMP_DIR, TEMP_OPTS);
     if (has_asterisk(path)) {
         rpath = resolve_asterisk(path);
     } else {
         rpath = alloc_buffer(v_strlen(path) + 1);
         v_strncpy(rpath, path, v_strlen(path));
     }
-    in = get_option_value(module->opts, OPT_TEMP_INPUT, TEMP_OPTS);
+    in = get_opt_string_value(module->opts, OPT_TEMP_INPUT, TEMP_OPTS);
     in_regex = resolve_temp_input_regex(in);
     files = read_dir(rpath, in_regex);
     if (!files[0][0]) {

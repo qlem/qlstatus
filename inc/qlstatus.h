@@ -61,23 +61,29 @@
 
 /* OPTIONS */
 typedef enum        opt_type {
-    OPT_STATE,
-    OPT_LABEL,
-    OPT_CRITIC,
-    OPT_OTHER
+    STRING,
+    NUMBER
 }                   opt_type;
+
+typedef enum        opt_category {
+    STATE,
+    LABEL,
+    CRITIC,
+    OTHER
+}                   opt_category;
 
 typedef struct      s_opt {
     char            *key;
-    char            *value;
-    char            *p_value;
+    void            *value;
+    char            *pattern;
     opt_type        type;
+    opt_category    category;
     uint8_t         to_free;
 }                   t_opt;
 
 // number of options per module
 #define GLOBAL_OPTS 4
-#define BATTERY_OPTS 7
+#define BATTERY_OPTS 8
 #define CPU_OPTS 3
 #define TEMP_OPTS 5
 #define MEM_OPTS 3
@@ -102,7 +108,7 @@ typedef struct      s_opt {
 #define OPT_FORMAT "format"
 #define OPT_RATE "rate"
 #define OPT_SPWM_COLOR "enable_spectrwm_color"
-#define OPT_CRITIC_COLOR_IDX "critical_color_index"
+#define OPT_COLOR_IDX "critical_color_index"
 
 // battery options
 #define OPT_BAT_ENABLED "battery_enabled"
@@ -112,6 +118,7 @@ typedef struct      s_opt {
 #define OPT_BAT_LB_DIS "battery_label_discharging"
 #define OPT_BAT_LB_UNK "battery_label_unknown"
 #define OPT_BAT_CRITIC "battery_critical"
+#define OPT_BAT_FULL_DESIGN "battery_full_design"
 
 // usage cpu options
 #define OPT_CPU_ENABLED "cpu_usage_enabled"
@@ -168,16 +175,16 @@ typedef struct      s_module {
 #define POWER_DIR "/sys/class/power_supply"
 #define POWER_FILE "uevent"
 #define PW_STATUS_PATTERN "^POWER_SUPPLY_STATUS=(Discharging|Charging|Full|Unknown)$"
-#define PW_MAX_PATTERN "^POWER_SUPPLY_ENERGY_FULL_DESIGN=([0-9]+)$"
+#define PW_MAX_FD_PATTERN "^POWER_SUPPLY_ENERGY_FULL_DESIGN=([0-9]+)$"
+#define PW_MAX_PATTERN "^POWER_SUPPLY_ENERGY_FULL=([0-9]+)$"
 #define PW_CURRENT_PATTERN "^POWER_SUPPLY_ENERGY_NOW=([0-9]+)$"
-#define BATTERY_STATUS_FULL "Full"
-#define BATTERY_STATUS_CHR "Charging"
-#define BATTERY_STATUS_DIS "Discharging"
-#define BATTERY_STATUS_UNK "Unknown"
-#define BATTERY_LABEL_FULL "full"
-#define BATTERY_LABEL_CHR "chr"
-#define BATTERY_LABEL_DIS "bat"
-#define BATTERY_LABEL_UNK "unk"
+#define BAT_STATUS_FULL "Full"
+#define BAT_STATUS_CHR "Charging"
+#define BAT_STATUS_DIS "Discharging"
+#define BAT_LABEL_FULL "full"
+#define BAT_LABEL_CHR "chr"
+#define BAT_LABEL_DIS "bat"
+#define BAT_LABEL_UNK "unk"
 
 typedef struct      s_power {
     char            *status;
@@ -275,7 +282,8 @@ void    v_memset(void *ptr, uint8_t c, size_t size);
 long    to_int(const char *str);
 char	*to_str(long nb);
 int     putstr(const char *str);
-char    *get_option_value(t_opt *opts, const char *key, int size);
+char    *get_opt_string_value(t_opt *opts, const char *key, int size);
+long    get_opt_number_value(t_opt *opts, const char *key, int size);
 
 // format
 char    *format(t_main *main);

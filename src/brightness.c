@@ -22,7 +22,7 @@ void            *get_brightness(void *data) {
     long        current = 0;
     long        max = 0;
 
-    dir = get_option_value(module->opts, OPT_BRG_DIR, BRIGHTNESS_OPTS);
+    dir = get_opt_string_value(module->opts, OPT_BRG_DIR, BRIGHTNESS_OPTS);
     path = resolve_brightness_file(dir, BRIGHTNESS_CURRENT);
     buffer = read_file(path);
     current = to_int(buffer);

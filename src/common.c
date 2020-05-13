@@ -6,7 +6,18 @@
 
 #include "qlstatus.h"
 
-char        *get_option_value(t_opt *opts, const char *key, int size) {
+long        get_opt_number_value(t_opt *opts, const char *key, int size) {
+    int     i = -1;
+
+    while (++i < size) {
+        if (strcmp(opts[i].key, key) == 0) {
+            return ((long *)opts[i].value)[0];
+        }
+    }
+    return -1;
+}
+
+char        *get_opt_string_value(t_opt *opts, const char *key, int size) {
     int     i = -1;
 
     while (++i < size) {

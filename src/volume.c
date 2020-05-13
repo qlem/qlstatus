@@ -26,11 +26,11 @@ void        sink_info_cb(pa_context *context, const pa_sink_info *info,
         volume_avg = pa_cvolume_avg(&info->volume);
         module->value = PERCENT(volume_avg, PA_VOLUME_NORM);
         if (info->mute) {
-            module->label = get_option_value(module->opts, OPT_VOL_LB_MUTED,
-                                             VOLUME_OPTS);
+            module->label = get_opt_string_value(module->opts, OPT_VOL_LB_MUTED,
+                                                 VOLUME_OPTS);
         } else {
-            module->label = get_option_value(module->opts, OPT_VOL_LABEL,
-                                             VOLUME_OPTS);
+            module->label = get_opt_string_value(module->opts, OPT_VOL_LABEL,
+                                                 VOLUME_OPTS);
         }
     }
     pa_threaded_mainloop_signal(pulse->mainloop, 0);
@@ -75,7 +75,7 @@ void                    *get_volume(void *data) {
         pulse_connect(module);
         pthread_exit(NULL);
     }
-    sink = get_option_value(module->opts, OPT_VOL_SINK, VOLUME_OPTS);
+    sink = get_opt_string_value(module->opts, OPT_VOL_SINK, VOLUME_OPTS);
     pa_threaded_mainloop_lock(pulse->mainloop);
     op = pa_context_get_sink_info_by_name(pulse->context, sink, &sink_info_cb,
                                           module);

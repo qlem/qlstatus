@@ -10,7 +10,7 @@ void            wireless_free(void *data) {
     t_module    *module = data;
     char        *unk = NULL;
 
-    unk = get_option_value(module->opts, OPT_WLAN_LB_UNK, module->s_opts);
+    unk = get_opt_string_value(module->opts, OPT_WLAN_LB_UNK, module->s_opts);
     if (strcmp(unk, module->label) != 0) {
         free(module->label);
     }
@@ -218,7 +218,7 @@ static int      send_for_scan(t_wireless *wireless, struct nl_sock *socket) {
 void        set_wireless_label(t_module *module, t_wireless *wireless) {
     char    *unk;
 
-    unk = get_option_value(module->opts, OPT_WLAN_LB_UNK, module->s_opts);
+    unk = get_opt_string_value(module->opts, OPT_WLAN_LB_UNK, module->s_opts);
     if (strcmp(unk, module->label) != 0) {
         free(module->label);
     }
@@ -240,8 +240,8 @@ void                    *get_wireless(void *data) {
         exit(EXIT_FAILURE);
     }
     v_memset(&wireless, 0, sizeof(t_wireless));
-    wireless.ifname = get_option_value(module->opts, OPT_WLAN_IFACE,
-                                       WIRELESS_OPTS);
+    wireless.ifname = get_opt_string_value(module->opts, OPT_WLAN_IFACE,
+                                           WIRELESS_OPTS);
     if (send_for_scan(&wireless, socket) < 0 || send_for_station(&wireless,
         socket) < 0) {
         nl_socket_free(socket);
