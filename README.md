@@ -38,7 +38,7 @@ Make sur that the modules present in the format string are **enabled**.
 
 ### Critical thresholds
 For modules that have a critical threshold (battery, cpu usage, temperature and memory), you can enable the support of the spectrwm colors `enable_spectrwm_colors = 1` 
-then set the index of the desired spectrwm foreground color to use when the module value reach the critical threshold `critical_color_index = n`.
+and set the index of the desired spectrwm foreground color to use when the module value reach the critical threshold `critical_color_index = n`.
 
 ## Dependencies
 - libc
