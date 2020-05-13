@@ -22,8 +22,8 @@ You should override the default value of some options by editing `~/.config/qlst
 Each option has `key = value` form. For the detailed list of available options, see the [wiki](https://github.com/qlem/qlstatus/wiki/Options).
 
 ### Output format
-Each module is displayed with the form `label value[unit]`. 
-You can change the order and the whitespaces between them by overriding the the value of the `format` option, e.g. `%U  %M  %B`.
+Each module is displayed with the form `label value[unit]`. You can change the order and the whitespaces between them by overriding 
+the value of the `format` option, e.g. `%U  %M  %B`.
 
 Use the following escape sequences to add the desired modules:
 - `%U` CPU
