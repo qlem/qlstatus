@@ -15,7 +15,7 @@ Light, modular, eazy to use, eazy to maintain.. No Memory Leaks !
 - average temperature of inputs in degree Celsius
 - used memory in percent
 - current audio volume in percent
-- handle critical thresholds
+- critical thresholds warning
 
 ## Configuration
 You should override the default value of some options by editing `~/.config/qlstatus/qlstatus.conf`.  
