@@ -136,10 +136,11 @@ int     main(int argc, char **argv, char **env) {
     int     spwm_color = 0;
     int     color_idx = 1;
     t_opt   opts_global[GLOBAL_OPTS] = {
-        {OPT_FORMAT, DEFAULT_FORMAT, FORMAT_PATTERN, STRING, OTHER, 0},
-        {OPT_RATE, RATE, RATE_PATTERN, STRING, OTHER, 0},
-        {OPT_SPWM_COLOR, &spwm_color, BOOLEAN_PATTERN, NUMBER, OTHER, 0},
-        {OPT_COLOR_IDX, &color_idx, COLOR_IDX_PATTERN, NUMBER, OTHER, 0}};
+        {OPT_FORMAT,     DEFAULT_FORMAT, FORMAT_PATTERN,    STRING, OTHER, 0},
+        {OPT_RATE,       RATE,           RATE_PATTERN,      STRING, OTHER, 0},
+        {OPT_SPWM_COLOR, &spwm_color,    BOOLEAN_PATTERN,   NUMBER, OTHER, 0},
+        {OPT_COLOR_IDX,  &color_idx,     COLOR_IDX_PATTERN, NUMBER, OTHER, 0}
+    };
 
     // battery options
     int     bat_enabled = 1;
@@ -229,7 +230,7 @@ int     main(int argc, char **argv, char **env) {
         {1, 'M', MEM_LABEL,          0, "%", 0, 0, NULL,   opts_memory,      MEM_OPTS,        get_memory,      NULL,       0},
         {1, 'T', TEMP_LABEL,         0, "°", 0, 0, NULL,   opts_temperature, TEMP_OPTS,       get_temperature, NULL,       0},
         {1, 'U', CPU_LABEL,          0, "%", 0, 0, &cpu,   opts_cpu_usage,   CPU_OPTS,        get_cpu_usage,   NULL,       0},
-        {1, 'V', VOLUME_LABEL,       0, "%", 0, 0, &pulse, opts_volume,      VOLUME_OPTS,     get_volume, volume_free,     0}
+        {1, 'V', VOLUME_LABEL,       0, "%", 0, 0, &pulse, opts_volume,      VOLUME_OPTS,     get_volume,     volume_free, 0}
     };
 
     // vars declaration
@@ -265,6 +266,8 @@ int     main(int argc, char **argv, char **env) {
         parse_config_file(&main, config);
         free(config);
     }
+
+    // resolve refresh rate
     resolve_rate(&main, &rate);
 
     // main loop

@@ -16,6 +16,14 @@ void    free_opt(char **opt) {
     free(opt);
 }
 
+void        print_option(t_opt *opt) {
+    if (opt->type == NUMBER) {
+        printf("Set option [%s] to [%d]\n", opt->key, ((int *)opt->value)[0]);
+    } else {
+        printf("Set option [%s] to [%s]\n", opt->key, (char *)opt->value);
+    }
+}
+
 int         check_global_opts(t_main *main, char **opt, int nline) {
     int     i = -1;
 
@@ -48,6 +56,8 @@ int         check_global_opts(t_main *main, char **opt, int nline) {
             } else if (strcmp(main->opts[i].key, OPT_COLOR_IDX) == 0) {
                 main->color_idx = ((long *)main->opts[i].value)[0];
             }
+            // logging
+            print_option(&main->opts[i]);
             return 0;
         }
     }
@@ -88,6 +98,8 @@ int             check_module_opts(t_module *modules, char **opt, int nline) {
                 } else if (opts[j].category == CRITIC) {
                     modules[i].threshold = ((long *)opts[j].value)[0];
                 }
+                // logging
+                print_option(&opts[j]);
                 return 0;
             }
         }
@@ -241,8 +253,6 @@ int         parse_config_line(t_main *main, char *line, int nline) {
         free_opt(opt);
         return -1;
     }
-
-    // TODO logging
 
     // free
     free(line);

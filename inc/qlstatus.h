@@ -269,9 +269,9 @@ typedef struct          s_main {
     t_module            *modules;
     char                *format;
     char                *rate;
-    t_opt               *opts;
     uint8_t             spwm_color;
     uint8_t             color_idx;
+    t_opt               *opts;
 }                       t_main;
 
 /* FUNCTIONS */
