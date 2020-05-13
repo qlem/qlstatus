@@ -213,14 +213,11 @@ int     main(int argc, char **argv, char **env) {
 
     // extra data for cpu usage module
     t_cpu   cpu;
-    cpu.prev_idle = 0;
-    cpu.prev_total = 0;
+    v_memset(&cpu, 0, sizeof(t_cpu));
 
     // extra data for volume module
     t_pulse     pulse;
-    pulse.mainloop = NULL;
-    pulse.context = NULL;
-    pulse.connected = 0;
+    v_memset(&pulse, 0, sizeof(t_pulse));
 
     // modules
     t_module    modules[NB_MODULES] = {
