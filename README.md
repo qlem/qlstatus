@@ -23,7 +23,7 @@ Each option has `key = value` form. For the detailed list of available options, 
 
 ### Output format
 Each module is displayed with the form `label value[unit]`. You can change the order and the whitespaces between them by overriding 
-the value of the `format` option, e.g. `%U  %M  %B`.
+the value of the `format` option, e.g. `format = %U  %M  %B`.
 
 Use the following escape sequences to add the desired modules:
 - `%U` CPU
