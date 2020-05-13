@@ -146,7 +146,7 @@ int     main(int argc, char **argv, char **env) {
     int     bat_enabled = 1;
     int     bat_threshold = 20;
     int     bat_full_design = 1;
-    t_opt       opts_battery[BATTERY_OPTS] = {
+    t_opt   opts_battery[BATTERY_OPTS] = {
         {OPT_BAT_ENABLED, &bat_enabled,   BOOLEAN_PATTERN,   NUMBER, STATE,  0},
         {OPT_BAT_LB_UNK,  BAT_LABEL_UNK,  LABEL_PATTERN,     STRING, LABEL,  0},
         {OPT_BAT_LB_FULL, BAT_LABEL_FULL, LABEL_PATTERN,     STRING, OTHER,  0},
@@ -160,7 +160,7 @@ int     main(int argc, char **argv, char **env) {
     // cpu usage options
     int     cpu_enabled = 1;
     int     cpu_threshold = 80;
-    t_opt opts_cpu_usage[CPU_OPTS] = {
+    t_opt   opts_cpu_usage[CPU_OPTS] = {
         {OPT_CPU_ENABLED, &cpu_enabled,   BOOLEAN_PATTERN,   NUMBER, STATE,  0},
         {OPT_CPU_LABEL,   CPU_LABEL,      LABEL_PATTERN,     STRING, LABEL,  0},
         {OPT_CPU_CRITIC,  &cpu_threshold, THRESHOLD_PATTERN, NUMBER, CRITIC, 0}
@@ -169,7 +169,7 @@ int     main(int argc, char **argv, char **env) {
     // temperature options
     int     temp_enabled = 1;
     int     temp_threshold = 80;
-    t_opt       opts_temperature[TEMP_OPTS] = {
+    t_opt   opts_temperature[TEMP_OPTS] = {
         {OPT_TEMP_ENABLED, &temp_enabled,   BOOLEAN_PATTERN,   NUMBER, STATE,  0},
         {OPT_TEMP_LABEL,   TEMP_LABEL,      LABEL_PATTERN,     STRING, LABEL,  0},
         {OPT_TEMP_DIR,     TEMP_DIR,        PATH_PATTERN,      STRING, OTHER,  0},
@@ -180,7 +180,7 @@ int     main(int argc, char **argv, char **env) {
     // memory options
     int     mem_enabled = 1;
     int     mem_threshold = 80;
-    t_opt       opts_memory[MEM_OPTS] = {
+    t_opt   opts_memory[MEM_OPTS] = {
         {OPT_MEM_ENABLED, &mem_enabled,   BOOLEAN_PATTERN,   NUMBER, STATE,  0},
         {OPT_MEM_LABEL,   MEM_LABEL,      LABEL_PATTERN,     STRING, LABEL,  0},
         {OPT_MEM_CRITIC,  &mem_threshold, THRESHOLD_PATTERN, NUMBER, CRITIC, 0}
@@ -188,7 +188,7 @@ int     main(int argc, char **argv, char **env) {
 
     // brightness options
     int     brg_enabled = 1;
-    t_opt       opts_brightness[BRIGHTNESS_OPTS] = {
+    t_opt   opts_brightness[BRIGHTNESS_OPTS] = {
         {OPT_BRG_ENABLED, &brg_enabled,     BOOLEAN_PATTERN, NUMBER, STATE, 0},
         {OPT_BRG_LABEL,   BRIGHTNESS_LABEL, LABEL_PATTERN,   STRING, LABEL, 0},
         {OPT_BRG_DIR,     BRIGHTNESS_DIR,   PATH_PATTERN,    STRING, OTHER, 0}
@@ -196,7 +196,7 @@ int     main(int argc, char **argv, char **env) {
 
     // volume options
     int     volume_enabled = 1;
-    t_opt       opts_volume[VOLUME_OPTS] = {
+    t_opt   opts_volume[VOLUME_OPTS] = {
         {OPT_VOL_ENABLED,  &volume_enabled,    BOOLEAN_PATTERN, NUMBER, STATE, 0},
         {OPT_VOL_LABEL,    VOLUME_LABEL,       LABEL_PATTERN,   STRING, LABEL, 0},
         {OPT_VOL_LB_MUTED, VOLUME_MUTED_LABEL, LABEL_PATTERN,   STRING, OTHER, 0},
@@ -205,7 +205,7 @@ int     main(int argc, char **argv, char **env) {
 
     // wireless options
     int     wireless_enabled = 1;
-    t_opt       opts_wireless[WIRELESS_OPTS] = {
+    t_opt   opts_wireless[WIRELESS_OPTS] = {
         {OPT_WLAN_ENABLED, &wireless_enabled,  BOOLEAN_PATTERN,  NUMBER, STATE, 0},
         {OPT_WLAN_LB_UNK,  WIRELESS_UNK_LABEL, WL_LABEL_PATTERN, STRING, LABEL, 0},
         {OPT_WLAN_IFACE,   WIRELESS_INTERFACE, TEXT_PATTERN,     STRING, OTHER, 0}
