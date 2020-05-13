@@ -15,7 +15,7 @@ Light, modular, eazy to use, eazy to maintain.. No Memory Leaks !
 - average temperature of inputs in degree Celsius
 - used memory in percent
 - current audio volume in percent
-- handle critical threshold
+- handle critical thresholds
 
 ## Configuration
 You should override the default value of some options by editing `~/.config/qlstatus/qlstatus.conf`.  
@@ -36,9 +36,9 @@ Use the following escape sequences to add the desired modules:
 
 Make sur that the modules present in the format string are **enabled**.
 
-### Critical threshold
+### Critical thresholds
 For modules that have a critical threshold (battery, cpu usage, temperature and memory), you can enable the support of the spectrwm colors `enable_spectrwm_colors = 1` 
-then set the index of the desired spectrwm foreground color `critical_color_index = n` to use when the module value reach the critical threshold.
+then set the index of the desired spectrwm foreground color to use when the module value reach the critical threshold `critical_color_index = n`.
 
 ## Dependencies
 - libc
