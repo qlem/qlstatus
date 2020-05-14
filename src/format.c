@@ -68,10 +68,6 @@ char        *format(t_main *main) {
     int     i = -1;
     int     j;
 
-    if (!fmt || !fmt[0]) {
-        printf("Format error: format cannot be null\n");
-        exit(EXIT_FAILURE);
-    }
     while (fmt[++i]) {
         if (fmt[i] == '%') {
             ++i;

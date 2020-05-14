@@ -44,7 +44,7 @@
 #define REM_NSEC(nsec) nsec % (long)1e9
 #define PERCENT(value, total) value * 100 / total
 #define CONFIG_FILE ".config/qlstatus/qlstatus.conf"
-#define HOME_PATTERN "^HOME=(/home/[a-zA-Z]+)$"
+#define HOME_PATTERN "^HOME=(.+)$"
 #define SPWM_COLOR_START "+@fg="
 #define SPWM_COLOR_STOP "+@fg=0;"
 
@@ -68,7 +68,7 @@ typedef enum        opt_type {
 typedef enum        opt_category {
     STATE,
     LABEL,
-    CRITIC,
+    CRITICAL,
     OTHER
 }                   opt_category;
 
@@ -76,8 +76,8 @@ typedef struct      s_opt {
     char            *key;
     void            *value;
     char            *pattern;
-    opt_type        type;
     opt_category    category;
+    opt_type        type;
     uint8_t         to_free;
 }                   t_opt;
 
@@ -95,10 +95,9 @@ typedef struct      s_opt {
 #define TEXT_PATTERN "^.{1,100}$"
 #define THRESHOLD_PATTERN "^[0-9]{1,3}$"
 #define BOOLEAN_PATTERN "^0$|^1$"
-#define PATH_PATTERN "^\\/.+([^/*]|\\/\\*)$"
+#define PATH_PATTERN "^\\/$|^\\/([^\n\r\t /]+\\/?)+$"
 #define LABEL_PATTERN "^.{1,5}$"
-#define WL_LABEL_PATTERN "^.{1,15}:?$"
-#define FORMAT_PATTERN "^.+$"
+#define WL_LABEL_PATTERN "^.{1,15}$"
 #define RATE_PATTERN "^[0-9]+s$|^[0-9]+ms$"
 #define BAT_NAME_PATTERN "^BAT[0-9]$"
 #define IN_TEMP_PATTERN "^([1-9])$|^([1-9]-[1-9])$"
@@ -117,25 +116,25 @@ typedef struct      s_opt {
 #define OPT_BAT_LB_CHR "battery_label_charging"
 #define OPT_BAT_LB_DIS "battery_label_discharging"
 #define OPT_BAT_LB_UNK "battery_label_unknown"
-#define OPT_BAT_CRITIC "battery_critical"
+#define OPT_BAT_CRITICAL "battery_critical"
 #define OPT_BAT_FULL_DESIGN "battery_full_design"
 
 // usage cpu options
 #define OPT_CPU_ENABLED "cpu_usage_enabled"
 #define OPT_CPU_LABEL "cpu_usage_label"
-#define OPT_CPU_CRITIC "cpu_usage_critical"
+#define OPT_CPU_CRITICAL "cpu_usage_critical"
 
 // temperature
 #define OPT_TEMP_ENABLED "temperature_enabled"
 #define OPT_TEMP_LABEL "temperature_label"
 #define OPT_TEMP_DIR "temperature_dir"
 #define OPT_TEMP_INPUT "temperature_input"
-#define OPT_TEMP_CRITIC "temperature_critical"
+#define OPT_TEMP_CRITICAL "temperature_critical"
 
 // memory options
 #define OPT_MEM_ENABLED "memory_enabled"
 #define OPT_MEM_LABEL "memory_label"
-#define OPT_MEM_CRITIC "memory_critical"
+#define OPT_MEM_CRITICAL "memory_critical"
 
 // brightness options
 #define OPT_BRG_ENABLED "brightness_enabled"

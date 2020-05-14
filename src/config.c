@@ -49,10 +49,10 @@ int         check_global_opts(t_main *main, char **opt, int nline) {
             // set global rate
             } else if (strcmp(main->opts[i].key, OPT_RATE) == 0) {
                 main->rate = opt[1];
-            // enable/disable spectrwm color support
+            // enable/disable spectrwm colors support
             } else if (strcmp(main->opts[i].key, OPT_SPWM_COLORS) == 0) {
                 main->spwm_colors = ((long *)main->opts[i].value)[0];
-            // set spectrwm color index
+            // set critical color index
             } else if (strcmp(main->opts[i].key, OPT_C_COLOR_IDX) == 0) {
                 main->critical_color_idx = ((long *)main->opts[i].value)[0];
             }
@@ -95,7 +95,7 @@ int             check_module_opts(t_module *modules, char **opt, int nline) {
                 } else if (opts[j].category == LABEL) {
                     modules[i].label = opt[1];
                 // set module critical threshold
-                } else if (opts[j].category == CRITIC) {
+                } else if (opts[j].category == CRITICAL) {
                     modules[i].threshold = ((long *)opts[j].value)[0];
                 }
                 // logging
@@ -200,7 +200,7 @@ int         parse_config_line(t_main *main, char *line, int nline) {
     int     gcode;
     int     mcode;
 
-    // skip blank line and comment
+    // skip blank lines and comments
     if (line[0] == 0) {
         free(line);
         return 0;
@@ -214,11 +214,11 @@ int         parse_config_line(t_main *main, char *line, int nline) {
         return 0;
     }
 
-    // remove in line comment
+    // remove in line comments
     line = remove_in_line_comment(line);
     line = trim(line);
 
-    // parse non empty line to retrieve key and value
+    // retrieve key and value
     opt = parse_opt(line);
 
     // check if key and value exist
