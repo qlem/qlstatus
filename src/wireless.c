@@ -10,8 +10,8 @@ void            wireless_free(void *data) {
     t_module    *module = data;
     char        *unk = NULL;
 
-    unk = get_opt_string_value(module->opts, OPT_WLAN_LB_UNK, module->s_opts);
-    if (strcmp(unk, module->label) != 0) {
+    unk = get_opt_string_value(module->opts, OPT_WLAN_LB_UNK, module->nopts);
+    if (strcmp(module->label, unk) != 0) {
         free(module->label);
     }
 }
@@ -84,7 +84,7 @@ void            resolve_essid(t_wireless *wireless, struct nlattr *attr) {
     find_ssid(bss_ies, bss_ies_len, &ssid, &ssid_len);
     if (ssid && ssid_len) {
         wireless->flags |= WIRELESS_FLAG_HAS_ESSID;
-        if (ssid_len > WIRELESS_ESSID_MAX_SIZE) {
+        if (ssid_len >= WIRELESS_ESSID_MAX_SIZE) {
             wireless->essid = alloc_buffer(WIRELESS_ESSID_MAX_SIZE + 1);
             v_strncpy(wireless->essid, (char *)ssid, WIRELESS_ESSID_MAX_SIZE);
             wireless->essid[WIRELESS_ESSID_MAX_SIZE - 1] = ':';
@@ -216,10 +216,10 @@ static int      send_for_scan(t_wireless *wireless, struct nl_sock *socket) {
 }
 
 void        set_wireless_label(t_module *module, t_wireless *wireless) {
-    char    *unk;
+    char    *unk = NULL;
 
-    unk = get_opt_string_value(module->opts, OPT_WLAN_LB_UNK, module->s_opts);
-    if (strcmp(unk, module->label) != 0) {
+    unk = get_opt_string_value(module->opts, OPT_WLAN_LB_UNK, module->nopts);
+    if (strcmp(module->label, unk) != 0) {
         free(module->label);
     }
     if (wireless->flags & WIRELESS_FLAG_HAS_ESSID) {

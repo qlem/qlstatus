@@ -72,7 +72,7 @@ int             check_module_opts(t_module *modules, char **opt, int nline) {
     while (++i < NB_MODULES) {
         j = -1;
         opts = modules[i].opts;
-        while (++j < modules[i].s_opts) {
+        while (++j < modules[i].nopts) {
             if (strcmp(opt[0], opts[j].key) == 0) {
                 // check if value match pattern
                 if (!match_pattern(opts[j].pattern, opt[1])) {

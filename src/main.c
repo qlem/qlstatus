@@ -102,7 +102,7 @@ void        free_resources(t_main *main) {
             main->modules[i].mfree(&main->modules[i]);
         }
         // free module option values
-        while (++j < main->modules[i].s_opts) {
+        while (++j < main->modules[i].nopts) {
             if (main->modules[i].opts[j].to_free) {
                 free(main->modules[i].opts[j].value);
             }

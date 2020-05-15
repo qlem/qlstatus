@@ -97,7 +97,7 @@ typedef struct      s_opt {
 #define BOOLEAN_PATTERN "^0$|^1$"
 #define PATH_PATTERN "^\\/$|^\\/([^\n\r\t /]+\\/?)+$"
 #define LABEL_PATTERN "^.{1,5}$"
-#define WL_LABEL_PATTERN "^.{1,15}$"
+#define WL_LABEL_PATTERN "^.{1,16}$"
 #define RATE_PATTERN "^[0-9]+s$|^[0-9]+ms$"
 #define BAT_NAME_PATTERN "^BAT[0-9]$"
 #define IN_TEMP_PATTERN "^([1-9])$|^([1-9]-[1-9])$"
@@ -163,7 +163,7 @@ typedef struct      s_module {
     uint8_t         threshold;
     void            *data;
     t_opt           *opts;
-    int             s_opts;
+    int             nopts;
     void            *(*routine)(void *);
     void            (*mfree)(void *);
     pthread_t       thread;
