@@ -16,9 +16,13 @@ void        free_files(char **files) {
     free(files);
 }
 
-char    **add_file(char **files, size_t *size, const char *file,
-                   const char *regex) {
-    if (regex && !match_pattern(regex, file)) {
+char        **add_file(char **files, size_t *size, const char *file,
+                       const char *regex, const char *dir) {
+    size_t  sfile;
+    size_t  sdir;
+
+    if (strcmp(file, ".") == 0 || strcmp(file, "..") == 0 ||
+        (regex && !match_pattern(regex, file))) {
         return files;
     }
     free(files[*size - 1]);
@@ -26,8 +30,16 @@ char    **add_file(char **files, size_t *size, const char *file,
         printf("Call to realloc() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
-    files[*size - 2] = alloc_buffer(v_strlen(file) + 1);
-    v_strncpy(files[*size - 2], file, v_strlen(file));
+    sfile = v_strlen(file);
+    sdir = v_strlen(dir);
+    if (dir[sdir - 1] == '/') {
+        files[*size - 2] = alloc_buffer(sdir + sfile + 1);
+        v_strncpy(files[*size - 2], dir, sdir);
+        v_strsncpy(files[*size - 2], file, sdir, sfile);
+    } else {
+        files[*size - 2] = alloc_buffer(sfile + sdir + 2);
+        sprintf(files[*size - 2], "%s/%s", dir, file);
+    }
     files[*size - 1] = alloc_buffer(1);
     return files;
 }
@@ -45,7 +57,7 @@ char                **read_dir(const char *path, const char *regex) {
     files = alloc_ptr(sizeof(char *));
     files[0] = alloc_buffer(1);
     while ((s_dir = readdir(dir)) != NULL) {
-        files = add_file(files, &size, s_dir->d_name, regex);
+        files = add_file(files, &size, s_dir->d_name, regex, path);
     }
     if (errno) {
         printf("Cannot read dir %s: %s\n", path, strerror(errno));

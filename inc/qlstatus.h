@@ -82,14 +82,14 @@ typedef struct      s_opt {
 }                   t_opt;
 
 // number of options per module
-#define GLOBAL_OPTS 4
-#define BATTERY_OPTS 8
-#define CPU_OPTS 3
-#define TEMP_OPTS 5
-#define MEM_OPTS 3
-#define BRIGHTNESS_OPTS 3
-#define VOLUME_OPTS 4
-#define WIRELESS_OPTS 3
+#define GLOBAL_NOPTS 4
+#define BAT_NOPTS 8
+#define CPU_NOPTS 3
+#define TEMP_NOPTS 5
+#define MEM_NOPTS 3
+#define BRG_NOPTS 3
+#define VOL_NOPTS 4
+#define WLAN_NOPTS 3
 
 // option patterns
 #define TEXT_PATTERN "^.{1,100}$"
@@ -97,7 +97,7 @@ typedef struct      s_opt {
 #define BOOLEAN_PATTERN "^0$|^1$"
 #define PATH_PATTERN "^\\/$|^\\/([^\n\r\t /]+\\/?)+$"
 #define LABEL_PATTERN "^.{1,5}$"
-#define WL_LABEL_PATTERN "^.{1,16}$"
+#define WL_LABEL_PATTERN "^.{1,15}$"
 #define RATE_PATTERN "^[0-9]+s$|^[0-9]+ms$"
 #define BAT_NAME_PATTERN "^BAT[0-9]$"
 #define IN_TEMP_PATTERN "^([1-9])$|^([1-9]-[1-9])$"
@@ -164,9 +164,10 @@ typedef struct      s_module {
     void            *data;
     t_opt           *opts;
     int             nopts;
-    void            *(*routine)(void *);
-    void            (*mfree)(void *);
     pthread_t       thread;
+    void            *(*routine)(void *);
+    void            (*init)(void *);
+    void            (*mfree)(void *);
 }                   t_module;
 
 // battery
@@ -186,16 +187,27 @@ typedef struct      s_module {
 #define BAT_LABEL_UNK "unk"
 
 typedef struct      s_power {
+    char            *file;
+    char            *lb_chr;
+    char            *lb_dis;
+    char            *lb_unk;
+    char            *lb_full;
+    uint8_t         full_design;
     char            *status;
     long            current;
     long            max;
 }                   t_power;
 
 // brightness
-#define BRIGHTNESS_DIR "/sys/class/backlight/intel_backlight"
-#define BRIGHTNESS_CURRENT "actual_brightness"
-#define BRIGHTNESS_MAX "max_brightness"
-#define BRIGHTNESS_LABEL "brg"
+#define BRG_DIR "/sys/class/backlight/intel_backlight"
+#define BRG_CURRENT "actual_brightness"
+#define BRG_MAX "max_brightness"
+#define BRG_LABEL "brg"
+
+typedef struct      s_brg {
+    char            *current_file;
+    char            *max_file;
+}                   t_brg;
 
 // usage cpu
 #define PROC_STAT "/proc/stat"
@@ -213,26 +225,32 @@ typedef struct      s_cpu {
 #define TEMP_LABEL "temp"
 #define TEMP_ROUND_THRESHOLD 500
 
+typedef struct      s_temp {
+    char            **inputs;
+}                   t_temp;
+
 // wireless
 #define NL80211 "nl80211"
 #define WLAN_EID_SSID 0
-#define WIRELESS_INTERFACE "wlan0"
-#define WIRELESS_FLAG_HAS_ESSID (1 << 0)
-#define WIRELESS_FLAG_HAS_SIGNAL (1 << 1)
-#define WIRELESS_ESSID_MAX_SIZE 16
-#define WIRELESS_UNK_LABEL "SSID unk:"
+#define WLAN_INTERFACE "wlan0"
+#define WLAN_FLAG_HAS_ESSID (1 << 0)
+#define WLAN_FLAG_HAS_SIGNAL (1 << 1)
+#define WLAN_ESSID_MAX_SIZE 16
+#define WLAN_UNK_LABEL "SSID unk:"
 #define NOISE_FLOOR_DBM (-90)
 #define SIGNAL_MAX_DBM (-20)
 
-typedef struct      s_wireless {
+typedef struct      s_wlan {
+    struct nl_sock  *socket;
     unsigned int    flags;
     unsigned int    ifindex;
     char            *ifname;
     int             nl80211_id;
     uint8_t         bssid[ETH_ALEN];
     char            *essid;
+    char            *lb_unk;
     int             signal;
-}                   t_wireless;
+}                   t_wlan;
 
 // memory
 #define PROC_MEMINFO "/proc/meminfo"
@@ -251,13 +269,16 @@ typedef struct  s_meminfo {
     long        sreclaim;
 }               t_meminfo;
 
-// volume
+// volume audio
 #define PULSE_SINK_NAME "alsa_output.pci-0000_00_1f.3.analog-stereo"
 #define PULSE_APP_NAME "qlstatus"
 #define VOLUME_LABEL "vol"
 #define VOLUME_MUTED_LABEL "mut"
 
 typedef struct              s_pulse {
+    char                    *sink;
+    char                    *label;
+    char                    *lb_mute;
     pa_threaded_mainloop    *mainloop;
     pa_context              *context;
     uint8_t                 connected;
@@ -281,8 +302,6 @@ void    v_memset(void *ptr, uint8_t c, size_t size);
 long    to_int(const char *str);
 char	*to_str(long nb);
 int     putstr(const char *str);
-char    *get_opt_string_value(t_opt *opts, const char *key, int size);
-long    get_opt_number_value(t_opt *opts, const char *key, int size);
 
 // format
 char    *format(t_main *main);
@@ -303,20 +322,34 @@ void    free_files(char **files);
 char    **read_dir(const char *path, const char *regex);
 char    *read_file(const char *file);
 
-// init modules
+// config file
 int     parse_config_file(t_main *main, const char *file);
 
-// module routines
-void    *get_battery(void *data);
-void    *get_volume(void *data);
-void    *get_brightness(void *data);
-void    *get_cpu_usage(void *data);
-void    *get_temperature(void *data);
-void    *get_wireless(void *data);
-void    *get_memory(void *data);
+// routines
+void    *run_battery(void *data);
+void    *run_cpu_usage(void *data);
+void    *run_memory(void *data);
+void    *run_temperature(void *data);
+void    *run_brightness(void *data);
+void    *run_wireless(void *data);
+void    *run_volume(void *data);
+
+// init modules
+void    init_battery(void *data);
+void    init_cpu_usage(void *data);
+void    init_memory(void *data);
+void    init_temperature(void *data);
+void    init_brightness(void *data);
+void    init_wireless(void *data);
+void    init_volume(void *data);
 
 // free modules
-void    volume_free(void *data);
-void    wireless_free(void *data);
+void    free_battery(void *data);
+void    free_cpu_usage(void *data);
+void    free_memory(void *data);
+void    free_temperature(void *data);
+void    free_brightness(void *data);
+void    free_wireless(void *data);
+void    free_volume(void *data);
 
 #endif /* !QLSTATUS_H_ */

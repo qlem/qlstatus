@@ -88,7 +88,7 @@ void        free_resources(t_main *main) {
     int     j;
 
     // free global option values
-    while (++i < GLOBAL_OPTS) {
+    while (++i < GLOBAL_NOPTS) {
         if (main->opts[i].to_free) {
             free(main->opts[i].value);
         }
@@ -98,7 +98,7 @@ void        free_resources(t_main *main) {
     while (++i < NB_MODULES) {
         j = -1;
         // free module extra data
-        if (main->modules[i].enabled && main->modules[i].mfree) {
+        if (main->modules[i].enabled) {
             main->modules[i].mfree(&main->modules[i]);
         }
         // free module option values
@@ -135,7 +135,7 @@ int     main(int argc, char **argv, char **env) {
     // global options
     int         spwm_colors = 0;
     int         c_color_idx = 1;
-    t_opt       opts_global[GLOBAL_OPTS] = {
+    t_opt       opts_global[GLOBAL_NOPTS] = {
         {OPT_FORMAT,      DEFAULT_FORMAT, TEXT_PATTERN,      OTHER, STRING, 0},
         {OPT_RATE,        RATE,           RATE_PATTERN,      OTHER, STRING, 0},
         {OPT_SPWM_COLORS, &spwm_colors,   BOOLEAN_PATTERN,   OTHER, NUMBER, 0},
@@ -146,7 +146,7 @@ int     main(int argc, char **argv, char **env) {
     int         bat_enabled = 1;
     int         bat_threshold = 20;
     int         bat_full_design = 1;
-    t_opt       opts_battery[BATTERY_OPTS] = {
+    t_opt       opts_bat[BAT_NOPTS] = {
         {OPT_BAT_ENABLED,     &bat_enabled,     BOOLEAN_PATTERN,   STATE,    NUMBER, 0},
         {OPT_BAT_LB_UNK,      BAT_LABEL_UNK,    LABEL_PATTERN,     LABEL,    STRING, 0},
         {OPT_BAT_LB_FULL,     BAT_LABEL_FULL,   LABEL_PATTERN,     OTHER,    STRING, 0},
@@ -160,7 +160,7 @@ int     main(int argc, char **argv, char **env) {
     // cpu usage options
     int         cpu_enabled = 1;
     int         cpu_threshold = 80;
-    t_opt       opts_cpu_usage[CPU_OPTS] = {
+    t_opt       opts_cpu[CPU_NOPTS] = {
         {OPT_CPU_ENABLED,  &cpu_enabled,   BOOLEAN_PATTERN,   STATE,    NUMBER, 0},
         {OPT_CPU_LABEL,    CPU_LABEL,      LABEL_PATTERN,     LABEL,    STRING, 0},
         {OPT_CPU_CRITICAL, &cpu_threshold, THRESHOLD_PATTERN, CRITICAL, NUMBER, 0}
@@ -169,7 +169,7 @@ int     main(int argc, char **argv, char **env) {
     // temperature options
     int         temp_enabled = 1;
     int         temp_threshold = 80;
-    t_opt       opts_temperature[TEMP_OPTS] = {
+    t_opt       opts_temp[TEMP_NOPTS] = {
         {OPT_TEMP_ENABLED,  &temp_enabled,   BOOLEAN_PATTERN,   STATE,    NUMBER, 0},
         {OPT_TEMP_LABEL,    TEMP_LABEL,      LABEL_PATTERN,     LABEL,    STRING, 0},
         {OPT_TEMP_DIR,      TEMP_DIR,        PATH_PATTERN,      OTHER,    STRING, 0},
@@ -180,7 +180,7 @@ int     main(int argc, char **argv, char **env) {
     // memory options
     int         mem_enabled = 1;
     int         mem_threshold = 80;
-    t_opt       opts_memory[MEM_OPTS] = {
+    t_opt       opts_mem[MEM_NOPTS] = {
         {OPT_MEM_ENABLED,  &mem_enabled,   BOOLEAN_PATTERN,   STATE,    NUMBER, 0},
         {OPT_MEM_LABEL,    MEM_LABEL,      LABEL_PATTERN,     LABEL,    STRING, 0},
         {OPT_MEM_CRITICAL, &mem_threshold, THRESHOLD_PATTERN, CRITICAL, NUMBER, 0}
@@ -188,15 +188,15 @@ int     main(int argc, char **argv, char **env) {
 
     // brightness options
     int         brg_enabled = 1;
-    t_opt       opts_brightness[BRIGHTNESS_OPTS] = {
-        {OPT_BRG_ENABLED, &brg_enabled,     BOOLEAN_PATTERN, STATE, NUMBER, 0},
-        {OPT_BRG_LABEL,   BRIGHTNESS_LABEL, LABEL_PATTERN,   LABEL, STRING, 0},
-        {OPT_BRG_DIR,     BRIGHTNESS_DIR,   PATH_PATTERN,    OTHER, STRING, 0}
+    t_opt       opts_brg[BRG_NOPTS] = {
+        {OPT_BRG_ENABLED, &brg_enabled, BOOLEAN_PATTERN, STATE, NUMBER, 0},
+        {OPT_BRG_LABEL,   BRG_LABEL,    LABEL_PATTERN,   LABEL, STRING, 0},
+        {OPT_BRG_DIR,     BRG_DIR,      PATH_PATTERN,    OTHER, STRING, 0}
     };
 
     // volume options
     int         volume_enabled = 1;
-    t_opt       opts_volume[VOLUME_OPTS] = {
+    t_opt       opts_vol[VOL_NOPTS] = {
         {OPT_VOL_ENABLED,  &volume_enabled,    BOOLEAN_PATTERN, STATE, NUMBER, 0},
         {OPT_VOL_LABEL,    VOLUME_LABEL,       LABEL_PATTERN,   LABEL, STRING, 0},
         {OPT_VOL_LB_MUTED, VOLUME_MUTED_LABEL, LABEL_PATTERN,   OTHER, STRING, 0},
@@ -204,30 +204,46 @@ int     main(int argc, char **argv, char **env) {
     };
 
     // wireless options
-    int         wireless_enabled = 1;
-    t_opt       opts_wireless[WIRELESS_OPTS] = {
-        {OPT_WLAN_ENABLED, &wireless_enabled,  BOOLEAN_PATTERN,  STATE, NUMBER, 0},
-        {OPT_WLAN_LB_UNK,  WIRELESS_UNK_LABEL, WL_LABEL_PATTERN, LABEL, STRING, 0},
-        {OPT_WLAN_IFACE,   WIRELESS_INTERFACE, TEXT_PATTERN,     OTHER, STRING, 0}
+    int         wlan_enabled = 1;
+    t_opt       opts_wlan[WLAN_NOPTS] = {
+        {OPT_WLAN_ENABLED, &wlan_enabled,  BOOLEAN_PATTERN,  STATE, NUMBER, 0},
+        {OPT_WLAN_LB_UNK,  WLAN_UNK_LABEL, WL_LABEL_PATTERN, OTHER, STRING, 0},
+        {OPT_WLAN_IFACE,   WLAN_INTERFACE, TEXT_PATTERN,     OTHER, STRING, 0}
     };
 
-    // extra data for cpu usage module
+    // battery data
+    t_power     power;
+    v_memset(&power, 0, sizeof(t_power));
+
+    // cpu data
     t_cpu   cpu;
     v_memset(&cpu, 0, sizeof(t_cpu));
 
-    // extra data for volume module
+    // temp data
+    t_temp      temp;
+    v_memset(&temp, 0, sizeof(t_temp));
+
+    // brightness data
+    t_brg       brg;
+    v_memset(&brg, 0, sizeof(t_brg));
+
+    // volume data
     t_pulse     pulse;
     v_memset(&pulse, 0, sizeof(t_pulse));
 
+    // wireless data
+    t_wlan      wlan;
+    v_memset(&wlan, 0, sizeof(t_wlan));
+
     // modules
-    t_module    modules[NB_MODULES] = {
-        {1, 'W', WIRELESS_UNK_LABEL, 0, "%", 0, 0, NULL,   opts_wireless,    WIRELESS_OPTS,   get_wireless, wireless_free, 0},
-        {1, 'B', BAT_LABEL_UNK,      0, "%", 0, 0, NULL,   opts_battery,     BATTERY_OPTS,    get_battery,     NULL,       0},
-        {1, 'L', BRIGHTNESS_LABEL,   0, "%", 0, 0, NULL,   opts_brightness,  BRIGHTNESS_OPTS, get_brightness,  NULL,       0},
-        {1, 'M', MEM_LABEL,          0, "%", 0, 0, NULL,   opts_memory,      MEM_OPTS,        get_memory,      NULL,       0},
-        {1, 'T', TEMP_LABEL,         0, "°", 0, 0, NULL,   opts_temperature, TEMP_OPTS,       get_temperature, NULL,       0},
-        {1, 'U', CPU_LABEL,          0, "%", 0, 0, &cpu,   opts_cpu_usage,   CPU_OPTS,        get_cpu_usage,   NULL,       0},
-        {1, 'V', VOLUME_LABEL,       0, "%", 0, 0, &pulse, opts_volume,      VOLUME_OPTS,     get_volume,     volume_free, 0}
+    t_module modules[NB_MODULES] = {
+        {1, 'V', VOLUME_LABEL,   0, "%", 0, 0, &pulse, opts_vol,  VOL_NOPTS,  0, run_volume,      init_volume,      free_volume},
+        {1, 'W', WLAN_UNK_LABEL, 0, "%", 0, 0, &wlan,  opts_wlan, WLAN_NOPTS, 0, run_wireless,    init_wireless,    free_wireless},
+        {1, 'T', TEMP_LABEL,     0, "°", 0, 0, &temp,  opts_temp, TEMP_NOPTS, 0, run_temperature, init_temperature, free_temperature},
+        {1, 'B', BAT_LABEL_UNK,  0, "%", 0, 0, &power, opts_bat,  BAT_NOPTS,  0, run_battery,     init_battery,     free_battery},
+        {1, 'L', BRG_LABEL,      0, "%", 0, 0, &brg,   opts_brg,  BRG_NOPTS,  0, run_brightness,  init_brightness,  free_brightness},
+        {1, 'M', MEM_LABEL,      0, "%", 0, 0, NULL,   opts_mem,  MEM_NOPTS,  0, run_memory,      init_memory,      free_memory},
+        {1, 'U', CPU_LABEL,      0, "%", 0, 0, &cpu,   opts_cpu,  CPU_NOPTS,  0, run_cpu_usage,   init_cpu_usage,   free_cpu_usage}
     };
 
     // vars declaration
@@ -241,7 +257,7 @@ int     main(int argc, char **argv, char **env) {
     char                *config;
     char                *buffer;
     int                 err = 0;
-    int                 i;
+    int                 i = -1;
 
     // init signal handler
     v_memset(&act, 0, sizeof(struct sigaction));
@@ -266,6 +282,13 @@ int     main(int argc, char **argv, char **env) {
 
     // resolve refresh rate
     resolve_rate(&main, &rate);
+
+    // init modules
+    while (++i < NB_MODULES) {
+        if (main.modules[i].enabled) {
+            main.modules[i].init(&main.modules[i]);
+        }
+    }
 
     // main loop
     while (1) {

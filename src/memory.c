@@ -6,6 +6,10 @@
 
 #include "qlstatus.h"
 
+void        free_memory(void *data) {
+    (void)data;
+}
+
 void        parse_mem_stat(t_meminfo *meminfo, char *rstat) {
     char    *stat;
 
@@ -56,7 +60,7 @@ int         parse_mem_file(t_meminfo *meminfo) {
     return -1;
 }
 
-void            *get_memory(void *data) {
+void            *run_memory(void *data) {
     t_module    *module = data;
     t_meminfo   meminfo;
     long        used;
@@ -75,4 +79,8 @@ void            *get_memory(void *data) {
     module->value = PERCENT(used, meminfo.total);
     module->critical = module->value >= module->threshold ? 1 : 0;
     return NULL;
+}
+
+void        init_memory(void *data) {
+    (void)data;
 }

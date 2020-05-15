@@ -6,14 +6,15 @@
 
 #include "qlstatus.h"
 
-void            wireless_free(void *data) {
+void            free_wireless(void *data) {
     t_module    *module = data;
-    char        *unk = NULL;
+    t_wlan      *wlan = module->data;
 
-    unk = get_opt_string_value(module->opts, OPT_WLAN_LB_UNK, module->nopts);
-    if (strcmp(module->label, unk) != 0) {
-        free(module->label);
+    nl_socket_free(wlan->socket);
+    if (wlan->essid) {
+        free(wlan->essid);
     }
+    free(wlan->lb_unk);
 }
 
 // Based on NetworkManager/src/platform/wifi/wifi-utils-nl80211.c
@@ -46,14 +47,14 @@ static void     find_ssid(uint8_t *ies, uint32_t ies_len, uint8_t **ssid,
 }
 
 static int              nl_station_cb(struct nl_msg *msg, void *data) {
-    int                 signal = 0;
-    t_wireless          *wireless = data;
+    t_wlan              *wlan = data;
     struct nlattr       *tb[NL80211_ATTR_MAX + 1];
     struct genlmsghdr   *gnlh = nlmsg_data(nlmsg_hdr(msg));
     struct nlattr       *attr = genlmsg_attrdata(gnlh, 0);
     int                 attrlen = genlmsg_attrlen(gnlh, 0);
     struct nlattr       *s_info[NL80211_STA_INFO_MAX + 1];
     static struct       nla_policy stats_policy[NL80211_STA_INFO_MAX + 1];
+    int                 signal = 0;
 
     if (nla_parse(tb, NL80211_ATTR_MAX, attr, attrlen, NULL) < 0) {
         return NL_SKIP;
@@ -66,39 +67,39 @@ static int              nl_station_cb(struct nl_msg *msg, void *data) {
         return NL_SKIP;
     }
     if (s_info[NL80211_STA_INFO_SIGNAL] != NULL) {
-        wireless->flags |= WIRELESS_FLAG_HAS_SIGNAL;
+        wlan->flags |= WLAN_FLAG_HAS_SIGNAL;
         signal = (int8_t)nla_get_u8(s_info[NL80211_STA_INFO_SIGNAL]);
-        wireless->signal = nl80211_xbm_to_percent(signal, 1);
+        wlan->signal = nl80211_xbm_to_percent(signal, 1);
     }
     return NL_SKIP;
 }
 
-void            resolve_essid(t_wireless *wireless, struct nlattr *attr) {
-    uint8_t             *ssid;
-    uint32_t            ssid_len;
-    uint8_t             *bss_ies;
-    uint32_t            bss_ies_len;
+void            resolve_essid(t_wlan *wlan, struct nlattr *attr) {
+    uint8_t     *ssid;
+    uint32_t    ssid_len;
+    uint8_t     *bss_ies;
+    uint32_t    bss_ies_len;
 
     bss_ies = nla_data(attr);
     bss_ies_len = nla_len(attr);
     find_ssid(bss_ies, bss_ies_len, &ssid, &ssid_len);
     if (ssid && ssid_len) {
-        wireless->flags |= WIRELESS_FLAG_HAS_ESSID;
-        if (ssid_len >= WIRELESS_ESSID_MAX_SIZE) {
-            wireless->essid = alloc_buffer(WIRELESS_ESSID_MAX_SIZE + 1);
-            v_strncpy(wireless->essid, (char *)ssid, WIRELESS_ESSID_MAX_SIZE);
-            wireless->essid[WIRELESS_ESSID_MAX_SIZE - 1] = ':';
-            wireless->essid[WIRELESS_ESSID_MAX_SIZE - 2] = '.';
+        wlan->flags |= WLAN_FLAG_HAS_ESSID;
+        if (ssid_len >= WLAN_ESSID_MAX_SIZE) {
+            wlan->essid = alloc_buffer(WLAN_ESSID_MAX_SIZE + 1);
+            v_strncpy(wlan->essid, (char *)ssid, WLAN_ESSID_MAX_SIZE);
+            wlan->essid[WLAN_ESSID_MAX_SIZE - 1] = ':';
+            wlan->essid[WLAN_ESSID_MAX_SIZE - 2] = '.';
         } else {
-            wireless->essid = alloc_buffer(ssid_len + 2);
-            v_strncpy(wireless->essid, (char *)ssid, ssid_len);
-            wireless->essid[ssid_len] = ':';
+            wlan->essid = alloc_buffer(ssid_len + 2);
+            v_strncpy(wlan->essid, (char *)ssid, ssid_len);
+            wlan->essid[ssid_len] = ':';
         }
     }
 }
 
 static int              nl_scan_cb(struct nl_msg *msg, void *data) {
-    t_wireless          *wireless = data;
+    t_wlan              *wlan = data;
     uint32_t            status;
     struct genlmsghdr   *gnlh = nlmsg_data(nlmsg_hdr(msg));
     struct nlattr       *attr = genlmsg_attrdata(gnlh, 0);
@@ -133,18 +134,18 @@ static int              nl_scan_cb(struct nl_msg *msg, void *data) {
         return NL_SKIP;
     }
 
-    memcpy(wireless->bssid, nla_data(bss[NL80211_BSS_BSSID]), ETH_ALEN);
+    memcpy(wlan->bssid, nla_data(bss[NL80211_BSS_BSSID]), ETH_ALEN);
     if (bss[NL80211_BSS_INFORMATION_ELEMENTS]) {
-        resolve_essid(wireless, bss[NL80211_BSS_INFORMATION_ELEMENTS]);
+        resolve_essid(wlan, bss[NL80211_BSS_INFORMATION_ELEMENTS]);
     }
     return NL_SKIP;
 }
 
-static int      send_for_station(t_wireless *wireless, struct nl_sock *socket) {
+static int          send_for_station(t_wlan *wlan) {
     struct nl_msg   *msg;
 
-    if (nl_socket_modify_cb(socket, NL_CB_VALID, NL_CB_CUSTOM, nl_station_cb,
-        wireless) < 0) {
+    if (nl_socket_modify_cb(wlan->socket, NL_CB_VALID, NL_CB_CUSTOM,
+        nl_station_cb, wlan) < 0) {
         printf("Call to nl_socket_modify_cb() failed\n");
         return -NLE_RANGE;
     }
@@ -152,23 +153,23 @@ static int      send_for_station(t_wireless *wireless, struct nl_sock *socket) {
         printf("Call to nlmsg_alloc() failed\n");
         return -1;
     }
-    if (genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, wireless->nl80211_id, 0,
+    if (genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, wlan->nl80211_id, 0,
         NLM_F_DUMP, NL80211_CMD_GET_STATION, 0) == NULL) {
         printf("Call to genlmsg_put() failed\n");
         nlmsg_free(msg);
         return -1;
     }
-    if (nla_put_u32(msg, NL80211_ATTR_IFINDEX, wireless->ifindex) < 0) {
+    if (nla_put_u32(msg, NL80211_ATTR_IFINDEX, wlan->ifindex) < 0) {
         printf("Call to nla_put_u32() failed\n");
         nlmsg_free(msg);
         return -NLE_NOMEM;
     }
-    if (nla_put(msg, NL80211_ATTR_MAC, 6, wireless->bssid) < 0) {
+    if (nla_put(msg, NL80211_ATTR_MAC, 6, wlan->bssid) < 0) {
         printf("Call to nla_put() failed\n");
         nlmsg_free(msg);
         return -NLE_NOMEM;
     }
-    if (nl_send_sync(socket, msg) < 0) {
+    if (nl_send_sync(wlan->socket, msg) < 0) {
         printf("Call to nl_send_sync() failed\n");
         nlmsg_free(msg);
         return -1;
@@ -176,38 +177,30 @@ static int      send_for_station(t_wireless *wireless, struct nl_sock *socket) {
     return 0;
 }
 
-static int      send_for_scan(t_wireless *wireless, struct nl_sock *socket) {
-    struct nl_msg       *msg;
+static int          send_for_scan(t_wlan *wlan) {
+    struct nl_msg   *msg;
 
-    if (nl_socket_modify_cb(socket, NL_CB_VALID, NL_CB_CUSTOM, nl_scan_cb,
-        wireless) < 0) {
+    if (nl_socket_modify_cb(wlan->socket, NL_CB_VALID, NL_CB_CUSTOM,
+        nl_scan_cb, wlan) < 0) {
         printf("Call to nl_socket_modify_cb() failed\n");
         return -NLE_RANGE;
-    }
-    if ((wireless->nl80211_id = genl_ctrl_resolve(socket, NL80211)) < 0) {
-        printf("Call to genl_ctrl_resolve() failed\n");
-        return -NLE_OBJ_NOTFOUND;
-    }
-    if ((wireless->ifindex = if_nametoindex(wireless->ifname)) == 0) {
-        printf("Call to if_nametoindex() failed: %s\n", strerror(errno));
-        return -1;
     }
     if ((msg = nlmsg_alloc()) == NULL) {
         printf("Call to nlmsg_alloc() failed\n");
         return -1;
     }
-    if (!genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, wireless->nl80211_id, 0,
+    if (!genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, wlan->nl80211_id, 0,
         NLM_F_DUMP, NL80211_CMD_GET_SCAN, 0)) {
         printf("Call to genlmsg_put() failed\n");
         nlmsg_free(msg);
         return -1;
     }
-    if (nla_put_u32(msg, NL80211_ATTR_IFINDEX, wireless->ifindex) < 0) {
+    if (nla_put_u32(msg, NL80211_ATTR_IFINDEX, wlan->ifindex) < 0) {
         printf("Call to nla_put_u32() failed\n");
         nlmsg_free(msg);
         return -NLE_NOMEM;
     }
-    if (nl_send_sync(socket, msg) < 0) {
+    if (nl_send_sync(wlan->socket, msg) < 0) {
         printf("Call to nl_send_sync() failed\n");
         nlmsg_free(msg);
         return -1;
@@ -215,44 +208,74 @@ static int      send_for_scan(t_wireless *wireless, struct nl_sock *socket) {
     return 0;
 }
 
-void        set_wireless_label(t_module *module, t_wireless *wireless) {
-    char    *unk = NULL;
-
-    unk = get_opt_string_value(module->opts, OPT_WLAN_LB_UNK, module->nopts);
-    if (strcmp(module->label, unk) != 0) {
-        free(module->label);
+static void     reset_data(t_wlan *wlan) {
+    wlan->flags = 0;
+    v_memset(wlan->bssid, 0, ETH_ALEN);
+    if (wlan->essid) {
+        free(wlan->essid);
+        wlan->essid = NULL;
     }
-    if (wireless->flags & WIRELESS_FLAG_HAS_ESSID) {
-        module->label = wireless->essid;
-    } else {
-        module->label = unk;
-    }
+    wlan->signal = 0;
 }
 
-void                    *get_wireless(void *data) {
-    t_module            *module = data;
-    t_wireless          wireless;
-    struct nl_sock      *socket;
+void            *run_wireless(void *data) {
+    t_module    *module = data;
+    t_wlan      *wlan = module->data;
 
-    socket = nl_socket_alloc();
-    if (genl_connect(socket) < 0) {
-        printf("Call to genl_connect() failed\n");
+    reset_data(wlan);
+    if (send_for_scan(wlan) < 0 || send_for_station(wlan) < 0) {
+        nl_socket_free(wlan->socket);
         exit(EXIT_FAILURE);
     }
-    v_memset(&wireless, 0, sizeof(t_wireless));
-    wireless.ifname = get_opt_string_value(module->opts, OPT_WLAN_IFACE,
-                                           WIRELESS_OPTS);
-    if (send_for_scan(&wireless, socket) < 0 || send_for_station(&wireless,
-        socket) < 0) {
-        nl_socket_free(socket);
-        exit(EXIT_FAILURE);
-    }
-    if (wireless.flags & WIRELESS_FLAG_HAS_SIGNAL) {
-        module->value = wireless.signal;
+    if (wlan->flags & WLAN_FLAG_HAS_SIGNAL) {
+        module->value = wlan->signal;
     } else {
         module->value = 0;
     }
-    set_wireless_label(module, &wireless);
-    nl_socket_free(socket);
+    if (wlan->flags & WLAN_FLAG_HAS_ESSID) {
+        module->label = wlan->essid;
+    } else {
+        module->label = wlan->lb_unk;
+    }
     return NULL;
+}
+
+void            init_wireless(void *data) {
+    t_module    *module = data;
+    t_wlan      *wlan = module->data;
+    size_t      size = 0;
+    int         i = -1;
+
+    while (++i < WLAN_NOPTS) {
+        if (strcmp(module->opts[i].key, OPT_WLAN_LB_UNK) == 0) {
+            size = v_strlen(module->opts[i].value);
+            wlan->lb_unk = alloc_buffer(size + 2);
+            v_strncpy(wlan->lb_unk, module->opts[i].value, size);
+            wlan->lb_unk[size] = ':';
+        } else if (strcmp(module->opts[i].key, OPT_WLAN_IFACE) == 0) {
+            wlan->ifname = module->opts[i].value;
+        }
+    }
+    module->label = wlan->lb_unk;
+    wlan->socket = nl_socket_alloc();
+    if (wlan->socket == NULL) {
+        printf("Unable to alloc memory for netlink socket\n");
+        exit(EXIT_FAILURE);
+    }
+    if (genl_connect(wlan->socket) < 0) {
+        printf("Call to genl_connect() failed\n");
+        nl_socket_free(wlan->socket);
+        exit(EXIT_FAILURE);
+    }
+    if ((wlan->nl80211_id = genl_ctrl_resolve(wlan->socket, NL80211)) < 0) {
+        printf("Call to genl_ctrl_resolve() failed\n");
+        nl_socket_free(wlan->socket);
+        exit(EXIT_FAILURE);
+    }
+    if ((wlan->ifindex = if_nametoindex(wlan->ifname)) == 0) {
+        printf("Unable to resolve wireless interface %s: %s\n", wlan->ifname,
+               strerror(errno));
+        nl_socket_free(wlan->socket);
+        exit(EXIT_FAILURE);
+    }
 }

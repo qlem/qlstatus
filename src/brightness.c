@@ -6,6 +6,14 @@
 
 #include "qlstatus.h"
 
+void            free_brightness(void *data) {
+    t_module    *module = data;
+    t_brg       *brg = module->data;
+
+    free(brg->current_file);
+    free(brg->max_file);
+}
+
 char        *resolve_brightness_file(const char *dir, const char *file) {
     char    *path = NULL;
 
@@ -14,25 +22,34 @@ char        *resolve_brightness_file(const char *dir, const char *file) {
     return path;
 }
 
-void            *get_brightness(void *data) {
+void            *run_brightness(void *data) {
     t_module    *module = data;
+    t_brg       *brg = module->data;
     char        *buffer = NULL;
-    char        *path = NULL;
-    char        *dir = NULL;
     long        current = 0;
     long        max = 0;
 
-    dir = get_opt_string_value(module->opts, OPT_BRG_DIR, BRIGHTNESS_OPTS);
-    path = resolve_brightness_file(dir, BRIGHTNESS_CURRENT);
-    buffer = read_file(path);
+    buffer = read_file(brg->current_file);
     current = to_int(buffer);
-    free(path);
     free(buffer);
-    path = resolve_brightness_file(dir, BRIGHTNESS_MAX);
-    buffer = read_file(path);
+    buffer = read_file(brg->max_file);
     max = to_int(buffer);
-    free(path);
     free(buffer);
     module->value = PERCENT(current, max);
     return NULL;
+}
+
+void            init_brightness(void *data) {
+    t_module    *module = data;
+    t_brg       *brg = module->data;
+    char        *dir = NULL;
+    int         i = -1;
+
+    while (++i < BRG_NOPTS) {
+        if (strcmp(module->opts[i].key, OPT_BRG_DIR) == 0) {
+            dir = module->opts[i].value;
+        }
+    }
+    brg->current_file = resolve_brightness_file(dir, BRG_CURRENT);
+    brg->max_file = resolve_brightness_file(dir, BRG_MAX);
 }

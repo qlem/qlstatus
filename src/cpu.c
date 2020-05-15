@@ -6,6 +6,10 @@
 
 #include "qlstatus.h"
 
+void        free_cpu_usage(void *data) {
+    (void)data;
+}
+
 long        compute_cpu_usage(t_cpu *cpu, const long *stats) {
     long    idle = 0;
     long    total = 0;
@@ -73,7 +77,7 @@ char        *parse_cpu_file() {
     return stats;
 }
 
-void            *get_cpu_usage(void *data) {
+void            *run_cpu_usage(void *data) {
     t_module    *module = data;
     t_cpu       *cpu = module->data;
     char        *rstats;
@@ -89,4 +93,8 @@ void            *get_cpu_usage(void *data) {
     free(rstats);
     free(stats);
     return NULL;
+}
+
+void        init_cpu_usage(void *data) {
+    (void)data;
 }

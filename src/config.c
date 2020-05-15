@@ -27,7 +27,7 @@ void        print_option(t_opt *opt) {
 int         check_global_opts(t_main *main, char **opt, int nline) {
     int     i = -1;
 
-    while (++i < GLOBAL_OPTS) {
+    while (++i < GLOBAL_NOPTS) {
         if (strcmp(opt[0], main->opts[i].key) == 0) {
             // check if value match pattern
             if (!match_pattern(main->opts[i].pattern, opt[1])) {

@@ -6,27 +6,11 @@
 
 #include "qlstatus.h"
 
-char                *resolve_asterisk(const char *path) {
-    char            *parent;
-    char            *resolved = NULL;
-    char            **files;
-    size_t          length;
-    int             i = -1;
+void            free_temperature(void *data) {
+    t_module    *module = data;
+    t_temp      *temp = module->data;
 
-    length = v_strlen(path);
-    parent = alloc_buffer(length - 1);
-    v_strncpy(parent, path, length - 2);
-    files = read_dir(parent, NULL);
-    while (files[++i][0]) {
-        if (strcmp(files[i], ".") != 0 && strcmp(files[i], "..") != 0) {
-            resolved = alloc_buffer(length + v_strlen(files[i]) + 2);
-            sprintf(resolved, "%s/%s", parent, files[i]);
-            break;
-        }
-    }
-    free_files(files);
-    free(parent);
-    return resolved;
+    free_files(temp->inputs);
 }
 
 bool        has_asterisk(const char *path) {
@@ -37,6 +21,35 @@ bool        has_asterisk(const char *path) {
         return true;
     }
     return false;
+}
+
+char        *resolve_temp_dir(const char *path) {
+    char    *parent = NULL;
+    char    **files = NULL;
+    char    *resolved = NULL;
+    size_t  size = 0;
+
+    size = v_strlen(path);
+    if (!has_asterisk(path)) {
+        resolved = alloc_buffer(size + 1);
+        v_strncpy(resolved, path, size);
+        return resolved;
+    }
+    parent = alloc_buffer(size);
+    v_strncpy(parent, path, size - 1);
+    files = read_dir(parent, NULL);
+    if (!files[0][0]) {
+        printf("Cannot resolve temp directory: no dir found in %s\n", parent);
+        free_files(files);
+        free(parent);
+        exit(EXIT_FAILURE);
+    }
+    size = v_strlen(files[0]);
+    resolved = alloc_buffer(size + 1);
+    v_strncpy(resolved, files[0], size);
+    free_files(files);
+    free(parent);
+    return resolved;
 }
 
 char        *resolve_temp_input_regex(const char *input) {
@@ -66,60 +79,57 @@ char        *resolve_temp_input_regex(const char *input) {
     return regex;
 }
 
-long            compute_temp(char **files, const char *parent) {
-    char        *path;
-    char        *buffer;
-    long        temp = 0;
-    long        sum = 0;
-    long        rem = 0;
-    int         i = -1;
+long        compute_temp(char **files) {
+    char    *buffer;
+    long    temp = 0;
+    long    sum = 0;
+    long    rem = 0;
+    int     i = -1;
 
     while (files[++i][0]) {
-        path = alloc_buffer(v_strlen(parent) + v_strlen(files[i]) + 2);
-        sprintf(path, "%s/%s", parent, files[i]);
-        buffer = read_file(path);
+        buffer = read_file(files[i]);
         sum += to_int(buffer);
-        free(path);
         free(buffer);
     }
     temp = sum / i;
     rem = temp % 1000;
     temp = temp / 1000;
     if (rem >= TEMP_ROUND_THRESHOLD) {
-       temp += 1;
+        temp += 1;
     }
     return temp;
 }
 
-void            *get_temperature(void *data) {
+void            *run_temperature(void *data) {
     t_module    *module = data;
-    char        *path;
-    char        *rpath;
-    char        *in;
-    char        *in_regex;
-    char        **files;
+    t_temp      *temp = module->data;
 
-    path = get_opt_string_value(module->opts, OPT_TEMP_DIR, TEMP_OPTS);
-    if (has_asterisk(path)) {
-        rpath = resolve_asterisk(path);
-    } else {
-        rpath = alloc_buffer(v_strlen(path) + 1);
-        v_strncpy(rpath, path, v_strlen(path));
+    module->value = compute_temp(temp->inputs);
+    module->critical = module->value >= module->threshold ? 1 : 0;
+    return NULL;
+}
+
+void            init_temperature(void *data) {
+    t_module    *module = data;
+    t_temp      *temp = module->data;
+    char        *dir = NULL;
+    char        *in_regex = NULL;
+    int         i = -1;
+
+    while (++i < TEMP_NOPTS) {
+        if (strcmp(module->opts[i].key, OPT_TEMP_DIR) == 0)  {
+            dir = resolve_temp_dir(module->opts[i].value);
+        } else if (strcmp(module->opts[i].key, OPT_TEMP_INPUT) == 0) {
+            in_regex = resolve_temp_input_regex(module->opts[i].value);
+        }
     }
-    in = get_opt_string_value(module->opts, OPT_TEMP_INPUT, TEMP_OPTS);
-    in_regex = resolve_temp_input_regex(in);
-    files = read_dir(rpath, in_regex);
-    if (!files[0][0]) {
-        printf("Cannot compute temp, no input files found in %s\n", rpath);
-        free(in_regex);
-        free_files(files);
-        free(rpath);
+    temp->inputs = read_dir(dir, in_regex);
+    free(in_regex);
+    if (!temp->inputs[0][0]) {
+        printf("Cannot compute temp, no input files found in %s\n", dir);
+        free_files(temp->inputs);
+        free(dir);
         exit(EXIT_FAILURE);
     }
-    module->value = compute_temp(files, rpath);
-    module->critical = module->value >= module->threshold ? 1 : 0;
-    free(in_regex);
-    free_files(files);
-    free(rpath);
-    return NULL;
+    free(dir);
 }
