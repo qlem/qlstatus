@@ -236,7 +236,7 @@ typedef struct      s_temp {
 #define WLAN_FLAG_HAS_ESSID (1 << 0)
 #define WLAN_FLAG_HAS_SIGNAL (1 << 1)
 #define WLAN_ESSID_MAX_SIZE 16
-#define WLAN_UNK_LABEL "SSID unk:"
+#define WLAN_UNK_LABEL "SSID unk"
 #define NOISE_FLOOR_DBM (-90)
 #define SIGNAL_MAX_DBM (-20)
 
