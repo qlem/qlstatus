@@ -50,7 +50,7 @@
 
 /* OUTPUT FORMAT
  * %U: cpu usage
- * %T: cpu temp
+ * %T: temp average
  * %M: memory usage
  * %L: brightness level
  * %V: current volume
