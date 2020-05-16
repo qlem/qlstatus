@@ -56,6 +56,7 @@ int         parse_mem_file(t_meminfo *meminfo) {
         close_stream(stream, PROC_MEMINFO);
         exit(EXIT_FAILURE);
     }
+    free(line);
     close_stream(stream, PROC_MEMINFO);
     return -1;
 }

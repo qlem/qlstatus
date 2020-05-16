@@ -60,7 +60,7 @@ char                **read_dir(const char *path, const char *regex) {
         files = add_file(files, &size, s_dir->d_name, regex, path);
     }
     if (errno) {
-        printf("Cannot read dir %s: %s\n", path, strerror(errno));
+        printf("Error readding dir %s: %s\n", path, strerror(errno));
         exit(EXIT_FAILURE);
     }
     if (closedir(dir) == -1) {

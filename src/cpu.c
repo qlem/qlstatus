@@ -57,16 +57,19 @@ char        *parse_cpu_file() {
     char    *line = NULL;
     size_t  sline;
     char    *stats = NULL;
+    ssize_t nb = 0;
 
     stream = open_stream(PROC_STAT);
-    if (getline(&line, &size, stream) == -1) {
+    nb = getline(&line, &size, stream);
+    if (nb == -1) {
         if (errno) {
             printf("Error reading file %s: %s\n", PROC_STAT, strerror(errno));
-        } else {
-            printf("Cannot compute cpu usage: file %s is empty\n", PROC_STAT);
+            close_stream(stream, PROC_STAT);
+            exit(EXIT_FAILURE);
         }
+        free(line);
         close_stream(stream, PROC_STAT);
-        exit(EXIT_FAILURE);
+        return NULL;
     }
     sline = v_strlen(line);
     if (line[sline - 1] == '\n') {

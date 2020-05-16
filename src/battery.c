@@ -84,6 +84,7 @@ int         parse_power_file(t_power *power) {
         close_stream(stream, power->file);
         exit(EXIT_FAILURE);
     }
+    free(line);
     close_stream(stream, power->file);
     return -1;
 }
