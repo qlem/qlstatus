@@ -39,7 +39,7 @@ char        *resolve_temp_dir(const char *path) {
     v_strncpy(parent, path, size - 1);
     files = read_dir(parent, NULL);
     if (!files[0][0]) {
-        printf("Cannot resolve temp directory: no dir found in %s\n", parent);
+        printf("Cannot resolve temp directory %s\n", path);
         free_files(files);
         free(parent);
         exit(EXIT_FAILURE);

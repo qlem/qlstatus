@@ -47,7 +47,8 @@ long        *parse_cpu_stats(char *line) {
         stat = to_int(token);
         stats[i++] = stat;
     }
-    return stats;
+    free(stats);
+    return NULL;
 }
 
 char        *parse_cpu_file() {
@@ -87,7 +88,11 @@ void            *run_cpu_usage(void *data) {
         printf("Cannot compute cpu usage\n");
         exit(EXIT_FAILURE);
     }
-    stats = parse_cpu_stats(rstats);
+    if ((stats = parse_cpu_stats(rstats)) == NULL) {
+        printf("Cannot compute cpu usage\n");
+        free(rstats);
+        exit(EXIT_FAILURE);
+    }
     module->value = compute_cpu_usage(cpu, stats);
     module->critical = module->value >= module->threshold ? 1 : 0;
     free(rstats);
