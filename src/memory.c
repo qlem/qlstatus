@@ -71,7 +71,7 @@ void            *run_memory(void *data) {
     meminfo.cached = -1;
     meminfo.sreclaim = -1;
     if (parse_mem_file(&meminfo) == -1) {
-        printf("Cannot compute memory usage\n");
+        printf("Cannot compute memory usage: missing statistics\n");
         exit(EXIT_FAILURE);
     }
     used = meminfo.total - meminfo.free - meminfo.buffers - meminfo.cached -

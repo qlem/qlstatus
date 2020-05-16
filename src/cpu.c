@@ -85,11 +85,11 @@ void            *run_cpu_usage(void *data) {
     long        *stats;
 
     if ((rstats = parse_cpu_file()) == NULL) {
-        printf("Cannot compute cpu usage\n");
+        printf("Cannot compute cpu usage: missing statistics\n");
         exit(EXIT_FAILURE);
     }
     if ((stats = parse_cpu_stats(rstats)) == NULL) {
-        printf("Cannot compute cpu usage\n");
+        printf("Cannot compute cpu usage: missing statistics\n");
         free(rstats);
         exit(EXIT_FAILURE);
     }

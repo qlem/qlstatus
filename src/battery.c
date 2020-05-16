@@ -96,7 +96,7 @@ void            *run_battery(void *data) {
     power->current = -1;
     power->status = NULL;
     if (parse_power_file(power) == -1) {
-        printf("Cannot compute battery percent\n");
+        printf("Cannot compute battery percent: missing statistics\n");
         exit(EXIT_FAILURE);
     }
     module->value = PERCENT(power->current, power->max);
