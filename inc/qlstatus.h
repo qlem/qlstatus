@@ -248,7 +248,7 @@ typedef struct      s_wlan {
     char            *ifname;
     int             nl80211_id;
     uint8_t         bssid[ETH_ALEN];
-    char            *essid;
+    char            essid[WLAN_ESSID_MAX_SIZE];
     char            *lb_unk;
     int             signal;
 }                   t_wlan;
