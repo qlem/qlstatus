@@ -30,8 +30,6 @@ static uint32_t     nl80211_xbm_to_percent(int32_t xbm, int32_t divisor) {
 // Based on NetworkManager/src/platform/wifi/wifi-utils-nl80211.c
 static void     find_ssid(uint8_t *ies, uint32_t ies_len, uint8_t **ssid,
                           uint32_t *ssid_len) {
-    *ssid = NULL;
-    *ssid_len = 0;
     while (ies_len > 2 && ies[0] != WLAN_EID_SSID) {
         ies_len -= ies[1] + 2;
         ies += ies[1] + 2;
@@ -72,7 +70,7 @@ static int              nl_station_cb(struct nl_msg *msg, void *data) {
 }
 
 void            resolve_essid(t_wlan *wlan, struct nlattr *attr) {
-    uint8_t     *ssid = 0;
+    uint8_t     *ssid = NULL;
     uint32_t    ssid_len = 0;
     uint8_t     *bss_ies = nla_data(attr);
     uint32_t    bss_ies_len = nla_len(attr);
