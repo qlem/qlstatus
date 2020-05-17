@@ -216,6 +216,7 @@ typedef struct      s_brg {
 #define CPU_STATS_SIZE 8
 
 typedef struct      s_cpu {
+    long            stats[CPU_STATS_SIZE];
     long            prev_idle;
     long            prev_total;
 }                   t_cpu;

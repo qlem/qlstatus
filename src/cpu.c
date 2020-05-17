@@ -10,7 +10,7 @@ void        free_cpu_usage(void *data) {
     (void)data;
 }
 
-long        compute_cpu_usage(t_cpu *cpu, const long *stats) {
+long        compute_cpu_usage(t_cpu *cpu) {
     long    idle = 0;
     long    total = 0;
     long    usage = 0;
@@ -19,9 +19,9 @@ long        compute_cpu_usage(t_cpu *cpu, const long *stats) {
     int     i = -1;
 
     while (++i < CPU_STATS_SIZE) {
-        total += stats[i];
+        total += cpu->stats[i];
         if (i == 3 || i == 4) {
-            idle += stats[i];
+            idle += cpu->stats[i];
         }
     }
     diff_idle = idle - cpu->prev_idle;
@@ -32,23 +32,18 @@ long        compute_cpu_usage(t_cpu *cpu, const long *stats) {
     return usage;
 }
 
-long        *parse_cpu_stats(char *line) {
-    long    *stats = NULL;
+int         parse_cpu_stats(t_cpu *cpu, char *line) {
     char    *token;
-    long    stat;
     int     i = 0;
 
-    stats = alloc_ptr(sizeof(long) * CPU_STATS_SIZE);
     while ((token = strtok(line, " "))) {
         line = NULL;
         if (i > CPU_STATS_SIZE - 1) {
-            return stats;
+            return 0;
         }
-        stat = to_int(token);
-        stats[i++] = stat;
+        cpu->stats[i++] = to_int(token);
     }
-    free(stats);
-    return NULL;
+    return -1;
 }
 
 char        *parse_cpu_file() {
@@ -85,21 +80,19 @@ void            *run_cpu_usage(void *data) {
     t_module    *module = data;
     t_cpu       *cpu = module->data;
     char        *rstats;
-    long        *stats;
 
     if ((rstats = parse_cpu_file()) == NULL) {
         printf("Cannot compute cpu usage: missing statistics\n");
         exit(EXIT_FAILURE);
     }
-    if ((stats = parse_cpu_stats(rstats)) == NULL) {
+    if (parse_cpu_stats(cpu, rstats) == -1) {
         printf("Cannot compute cpu usage: missing statistics\n");
         free(rstats);
         exit(EXIT_FAILURE);
     }
-    module->value = compute_cpu_usage(cpu, stats);
+    module->value = compute_cpu_usage(cpu);
     module->critical = module->value >= module->threshold ? 1 : 0;
     free(rstats);
-    free(stats);
     return NULL;
 }
 
