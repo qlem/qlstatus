@@ -52,32 +52,6 @@ int             resolve_rate(t_main *main, struct timespec *tp) {
     return 0;
 }
 
-int                     create_thread(t_module *module) {
-    pthread_attr_t      attr;
-    int                 err = 0;
-
-    if ((err = pthread_attr_init(&attr)) != 0) {
-        printf("Call to pthread_attr_init() failed: %s\n", strerror(err));
-        exit(EXIT_FAILURE);
-    }
-    if ((err = pthread_attr_setdetachstate(&attr,
-        PTHREAD_CREATE_JOINABLE)) != 0) {
-        printf("Call to pthread_attr_setdetachstate() failed: %s\n",
-               strerror(err));
-        exit(EXIT_FAILURE);
-    }
-    if ((err = pthread_create(&module->thread, &attr, module->routine,
-        module)) != 0) {
-        printf("Call to pthread_create() failed: %s\n", strerror(err));
-        exit(EXIT_FAILURE);
-    }
-    if ((err = pthread_attr_destroy(&attr) != 0)) {
-        printf("Call to pthread_attr_destroy() failed: %s\n", strerror(err));
-        exit(EXIT_FAILURE);
-    }
-    return 0;
-}
-
 void    signal_handler(int signum) {
     (void)signum;
     running = 0;
@@ -291,14 +265,7 @@ int     main(int argc, char **argv, char **env) {
     }
 
     // main loop
-    while (1) {
-
-        // free resources on exit
-        if (!running) {
-            printf("Exiting ql-status\n");
-            free_resources(&main);
-            return 0;
-        }
+    while (running) {
 
         // store start time
         if (clock_gettime(CLOCK_REALTIME, &start) == -1) {
@@ -310,7 +277,12 @@ int     main(int argc, char **argv, char **env) {
         i = -1;
         while (++i < NB_MODULES) {
             if (main.modules[i].enabled) {
-                create_thread(&main.modules[i]);
+                if ((err = pthread_create(&main.modules[i].thread, NULL,
+                    main.modules[i].routine, &main.modules[i])) != 0) {
+                    printf("Call to pthread_create() failed: %s\n",
+                           strerror(err));
+                    exit(EXIT_FAILURE);
+                }
             }
         }
 
@@ -347,5 +319,9 @@ int     main(int argc, char **argv, char **env) {
             }
         }
     }
+
+    // free resources on exit
+    printf("Exiting ql-status\n");
+    free_resources(&main);
     return 0;
 }
