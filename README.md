@@ -24,7 +24,7 @@ Light, modular, eazy to use, eazy to maintain.. No Memory Leaks !
 - [Netlink Protocol Library Suite](https://www.infradead.org/~tgr/libnl/) (libnl3)
 
 ## Install from Arch User Repository (AUR)
-Link: [qlstatus](https://aur.archlinux.org/packages/qlstatus/)
+Link: [qlstatus](https://aur.archlinux.org/packages/qlstatus/) 
 Once installed, copy the default configuration file into your config directory:
 ```
 mkdir -p ~/.config/qlstatus
@@ -41,7 +41,7 @@ cp build/qlstatus ~/bin
 ```
 
 ## Configuration
-You should override the default value of some options by editing `~/.config/qlstatus/qlstatus.conf`.  
+You should override the default value of some options by editing `~/.config/qlstatus/qlstatus.conf`. 
 Each option has `key = value` form. For the detailed list of available options, see the [wiki](https://github.com/qlem/qlstatus/wiki/Options).
 
 ### Output format
@@ -60,7 +60,7 @@ Use the following escape sequences to add the desired modules:
 Make sur that the modules present in the format string are **enabled**.
 
 ### Critical thresholds
-For modules that have a critical threshold (battery, cpu usage, temperature and memory), you can enable the support of the spectrwm colors `enable_spectrwm_colors = 1` 
+For modules that have a critical threshold (battery, cpu usage, temperature and memory), you can enable the support of the spectrwm colors `enable_spectrwm_colors = 1`
 and set the index of the desired spectrwm foreground color to use when the module value reach the critical threshold `critical_color_index = n`.
 
 ## License
