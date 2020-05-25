@@ -96,7 +96,7 @@ int             check_module_opts(t_module *modules, char **opt, int nline) {
                     modules[i].label = opt[1];
                 // set module critical threshold
                 } else if (opts[j].category == CRITICAL) {
-                    modules[i].threshold = ((long *)opts[j].value)[0];
+                    modules[i].threshold = ((int *)opts[j].value)[0];
                 }
                 // logging
                 print_option(&opts[j]);
