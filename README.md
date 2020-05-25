@@ -24,7 +24,7 @@ Light, modular, eazy to use, eazy to maintain.. No Memory Leaks !
 - [Netlink Protocol Library Suite](https://www.infradead.org/~tgr/libnl/) (libnl3)
 
 ## Install from Arch User Repository (AUR)
-Link: [qlstatus](https://aur.archlinux.org/packages/qlstatus/) 
+Link: [qlstatus package](https://aur.archlinux.org/packages/qlstatus/)  
 Once installed, copy the default configuration file into your config directory:
 ```
 mkdir -p ~/.config/qlstatus
@@ -41,7 +41,7 @@ cp build/qlstatus ~/bin
 ```
 
 ## Configuration
-You should override the default value of some options by editing `~/.config/qlstatus/qlstatus.conf`. 
+You should override the default value of some options by editing `~/.config/qlstatus/qlstatus.conf`.  
 Each option has `key = value` form. For the detailed list of available options, see the [wiki](https://github.com/qlem/qlstatus/wiki/Options).
 
 ### Output format
