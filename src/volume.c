@@ -99,7 +99,7 @@ void            init_volume(void *data) {
         printf("Call to pthread_create() failed: %s\n", strerror(err));
         exit(EXIT_FAILURE);
     }
-    if ((err = pthread_join(thread, NULL))) {
+    if ((err = pthread_join(thread, NULL)) != 0) {
         printf("Call to pthread_join() failed: %s\n", strerror(err));
         exit(EXIT_FAILURE);
     }

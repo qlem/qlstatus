@@ -160,7 +160,7 @@ typedef struct      s_module {
     long            value;
     char            *unit;
     uint8_t         critical;
-    uint8_t         threshold;
+    int             threshold;
     void            *data;
     t_opt           *opts;
     int             nopts;

@@ -290,7 +290,7 @@ int     main(int argc, char **argv, char **env) {
         i = -1;
         while (++i < NB_MODULES) {
             if (main.modules[i].enabled) {
-                if ((err = pthread_join(main.modules[i].thread, NULL))) {
+                if ((err = pthread_join(main.modules[i].thread, NULL)) != 0) {
                     printf("Call to pthread_join() failed: %s\n",
                            strerror(err));
                     exit(EXIT_FAILURE);
