@@ -120,6 +120,7 @@ int     main(int argc, char **argv, char **env) {
     int         bat_enabled = 1;
     int         bat_threshold = 20;
     int         bat_full_design = 1;
+    int         bat_notify = 1;
     t_opt       opts_bat[BAT_NOPTS] = {
         {OPT_BAT_ENABLED,     &bat_enabled,     BOOLEAN_PATTERN,   STATE,    NUMBER, 0},
         {OPT_BAT_LB_UNK,      BAT_LABEL_UNK,    LABEL_PATTERN,     LABEL,    STRING, 0},
@@ -128,7 +129,11 @@ int     main(int argc, char **argv, char **env) {
         {OPT_BAT_LB_DIS,      BAT_LABEL_DIS,    LABEL_PATTERN,     OTHER,    STRING, 0},
         {OPT_BAT_NAME,        BATTERY_NAME,     BAT_NAME_PATTERN,  OTHER,    STRING, 0},
         {OPT_BAT_CRITICAL,    &bat_threshold,   THRESHOLD_PATTERN, CRITICAL, NUMBER, 0},
-        {OPT_BAT_FULL_DESIGN, &bat_full_design, BOOLEAN_PATTERN,   OTHER,    NUMBER, 0}
+        {OPT_BAT_FULL_DESIGN, &bat_full_design, BOOLEAN_PATTERN,   OTHER,    NUMBER, 0},
+        {OPT_BAT_NOTIFY,      &bat_notify,      BOOLEAN_PATTERN,   OTHER,    NUMBER, 0},
+        {OPT_BAT_NOTIFY_ICON_FULL,    NULL,     TEXT_PATTERN,      OTHER,    STRING, 0},
+        {OPT_BAT_NOTIFY_ICON_PLUGGED, NULL,     TEXT_PATTERN,      OTHER,    STRING, 0},
+        {OPT_BAT_NOTIFY_ICON_LOW,     NULL,     TEXT_PATTERN,      OTHER,    STRING, 0}
     };
 
     // cpu usage options

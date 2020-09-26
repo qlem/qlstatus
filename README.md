@@ -10,6 +10,7 @@ Light, modular, eazy to use, eazy to maintain.. No Memory Leaks !
 ## Features
 - current ESSID with signal quality in percent
 - battery status with remaining percent
+- power notifications
 - brightness level in percent
 - CPU usage in percent
 - average temperature of inputs in degree Celsius
@@ -20,6 +21,7 @@ Light, modular, eazy to use, eazy to maintain.. No Memory Leaks !
 ## Dependencies
 - libc
 - POSIX threads (libpthread)
+- libnotify
 - PulseAudio Library (libpulse)
 - [Netlink Protocol Library Suite](https://www.infradead.org/~tgr/libnl/) (libnl3)
 
@@ -62,6 +64,16 @@ Make sur that the modules present in the format string are **enabled**.
 ### Critical thresholds
 For modules that have a critical threshold (battery, cpu usage, temperature and memory), you can enable the support of the spectrwm colors `enable_spectrwm_colors = 1`
 and set the index of the desired spectrwm foreground color to use when the module value reach the critical threshold `critical_color_index = n`.
+
+### Power notifications
+By default notifications related to the battery are enabled. Change the value of the option `battery_notifications` to enable or disable power notifications.
+
+Three notifications can be send:
+- when the battery is fully charged
+- when the AC adpater is plugged
+- when the battery reach the critical threshold
+
+You can choose a desired icon for each of these notifications through the options `battery_notify_icon_full`, `battery_notify_icon_plugged` and `battery_notify_icon_low`. These options accept an icon name.
 
 ## License
 MIT

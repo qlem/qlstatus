@@ -5,6 +5,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_FLAGS "-W -Wall -Wextra -Werror")
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBNOTIFY REQUIRED libnotify)
+pkg_check_modules(LIBNL REQUIRED libnl-3.0 libnl-genl-3.0)
+
 add_executable(qlstatus
     src/main.c
     src/config.c
@@ -20,7 +24,8 @@ add_executable(qlstatus
     src/read_file.c
     src/read_dir.c
     src/common.c
-    src/regex.c)
+    src/regex.c
+    src/notify.c)
 
-target_include_directories(qlstatus PRIVATE inc /usr/include/libnl3)
-target_link_libraries(qlstatus -lpthread -lnl-3 -lnl-genl-3 -lpulse)
+target_include_directories(qlstatus PRIVATE inc ${LIBNL_INCLUDE_DIRS} ${LIBNOTIFY_INCLUDE_DIRS})
+target_link_libraries(qlstatus -lpthread -lpulse ${LIBNL_LINK_LIBRARIES} ${LIBNOTIFY_LINK_LIBRARIES})

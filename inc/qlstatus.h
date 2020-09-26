@@ -35,6 +35,8 @@
 #include <pulse/introspect.h>
 #include <pulse/volume.h>
 
+#include <libnotify/notify.h>
+
 /* GLOBAL */
 #define BASE 10
 #define RATE "1s"
@@ -83,7 +85,7 @@ typedef struct      s_opt {
 
 // number of options per module
 #define GLOBAL_NOPTS 4
-#define BAT_NOPTS 8
+#define BAT_NOPTS 12
 #define CPU_NOPTS 3
 #define TEMP_NOPTS 5
 #define MEM_NOPTS 3
@@ -118,6 +120,10 @@ typedef struct      s_opt {
 #define OPT_BAT_LB_UNK "battery_label_unknown"
 #define OPT_BAT_CRITICAL "battery_critical"
 #define OPT_BAT_FULL_DESIGN "battery_full_design"
+#define OPT_BAT_NOTIFY "battery_notifications"
+#define OPT_BAT_NOTIFY_ICON_FULL "battery_notify_icon_full"
+#define OPT_BAT_NOTIFY_ICON_PLUGGED "battery_notify_icon_plugged"
+#define OPT_BAT_NOTIFY_ICON_LOW "battery_notify_icon_low"
 
 // usage cpu options
 #define OPT_CPU_ENABLED "cpu_usage_enabled"
@@ -185,6 +191,17 @@ typedef struct      s_module {
 #define BAT_LABEL_CHR "chr"
 #define BAT_LABEL_DIS "bat"
 #define BAT_LABEL_UNK "unk"
+#define BAT_NOTIFY_FULL "Battery fully charged"
+#define BAT_NOTIFY_PLUGGED "AC adapter plugged"
+#define BAT_NOTIFY_LOW "Battery is low"
+
+typedef enum        pw_status {
+    PW_FULL,
+    PW_CHARGING,
+    PW_DISCHARGING,
+    PW_CRITICAL,
+    PW_UNKNOWN
+}                   pw_status;
 
 typedef struct      s_power {
     char            *file;
@@ -193,9 +210,15 @@ typedef struct      s_power {
     char            *lb_unk;
     char            *lb_full;
     uint8_t         full_design;
-    char            *status;
+    uint8_t         notify;
+    char            *raw_status;
+    pw_status       status;
+    pw_status       last_status;
     long            current;
     long            max;
+    char            *ic_full;
+    char            *ic_plugged;
+    char            *ic_low;
 }                   t_power;
 
 // brightness
@@ -325,6 +348,10 @@ char    *read_file(const char *file);
 
 // config file
 int     parse_config_file(t_main *main, const char *file);
+
+// notify
+int     notify(const char *summary, const char *body, const char *icon,
+               NotifyUrgency urgency); 
 
 // routines
 void    *run_battery(void *data);
