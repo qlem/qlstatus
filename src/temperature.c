@@ -104,8 +104,10 @@ void            *run_temperature(void *data) {
     t_module    *module = data;
     t_temp      *temp = module->data;
 
-    module->value = compute_temp(temp->inputs);
-    module->critical = module->value >= module->threshold ? 1 : 0;
+    // TODO critical threshold
+    v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
+    set_generic_module_buffer(module, compute_temp(temp->inputs),
+                              temp->label, "°");
     return NULL;
 }
 
@@ -121,6 +123,8 @@ void            init_temperature(void *data) {
             dir = resolve_temp_dir(module->opts[i].value);
         } else if (strcmp(module->opts[i].key, OPT_TEMP_INPUT) == 0) {
             in_regex = resolve_temp_input_regex(module->opts[i].value);
+        } else if (strcmp(module->opts[i].key, OPT_TEMP_LABEL) == 0) {
+            temp->label = module->opts[i].value;
         }
     }
     temp->inputs = read_dir(dir, in_regex);

@@ -89,14 +89,8 @@ int             check_module_opts(t_module *modules, char **opt, int nline) {
                 }
                 opts[j].to_free = 1;
                 // enable/disable module
-                if (opts[j].category == STATE) {
+                if (opts[j].is_state) {
                     modules[i].enabled = ((long *)opts[j].value)[0];
-                // set module label
-                } else if (opts[j].category == LABEL) {
-                    modules[i].label = opt[1];
-                // set module critical threshold
-                } else if (opts[j].category == CRITICAL) {
-                    modules[i].threshold = ((int *)opts[j].value)[0];
                 }
                 // logging
                 print_option(&opts[j]);
@@ -265,7 +259,7 @@ int         parse_config_file(t_main *main, const char *file) {
     FILE    *stream;
     size_t  size = 0;
     char    *line = NULL;
-    size_t  sline = 0;
+    size_t  sline;
     ssize_t nb;
     int     i = 0;
 

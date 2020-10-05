@@ -24,11 +24,13 @@ void        sink_info_cb(pa_context *context, const pa_sink_info *info,
     (void)context;
     if (eol == 0) {
         volume_avg = pa_cvolume_avg(&info->volume);
-        module->value = PERCENT(volume_avg, PA_VOLUME_NORM);
+        v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
         if (info->mute) {
-            module->label = pulse->lb_mute;
+            set_generic_module_buffer(module, PERCENT(volume_avg,
+                                      PA_VOLUME_NORM), pulse->lb_mute, "%");
         } else {
-            module->label = pulse->label;
+            set_generic_module_buffer(module, PERCENT(volume_avg,
+                                      PA_VOLUME_NORM), pulse->label, "%");
         }
     }
     pa_threaded_mainloop_signal(pulse->mainloop, 0);
@@ -83,8 +85,8 @@ void            init_volume(void *data) {
     t_module    *module = data;
     t_pulse     *pulse = module->data;
     pthread_t   thread = 0;
-    int         err = 0;
     int         i = -1;
+    int         err;
 
     while (++i < VOL_NOPTS) {
         if (strcmp(module->opts[i].key, OPT_VOL_LABEL) == 0) {

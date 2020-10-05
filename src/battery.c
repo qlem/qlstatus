@@ -22,23 +22,24 @@ char        *resolve_power_file(const char *dir, const char *pw_name,
     return path;
 }
 
-void        set_battery_status(t_module *module, t_power *power) {
+void        to_buffer(t_module *module, t_power *power) {
+    int     value;
+
+    v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
+    value = PERCENT(power->current, power->max);
     if (strcmp(power->raw_status, BAT_STATUS_DIS) == 0) {
-        module->label = power->lb_dis;
-        module->critical = module->value <= module->threshold ? 1 : 0;
-        power->status = module->critical ? PW_CRITICAL : PW_DISCHARGING;
+        set_generic_module_buffer(module, value, power->lb_dis, "%");
+        power->status = value <= power->cthreshold ?
+                                        PW_CRITICAL : PW_DISCHARGING;
     } else if (strcmp(power->raw_status, BAT_STATUS_CHR) == 0) {
-        module->critical = 0;
-        module->label = power->lb_chr;
+        set_generic_module_buffer(module, value, power->lb_chr, "%");
         power->status = PW_CHARGING;
     } else if (strcmp(power->raw_status, BAT_STATUS_FULL) == 0) {
-        module->critical = 0;
-        module->label = power->lb_full;
+        set_generic_module_buffer(module, value, power->lb_full, "%");
         power->status = PW_FULL;
     } else {
-        module->label = power->lb_unk;
-        module->critical = module->value <= module->threshold ? 1 : 0;
-        power->status = module->critical ? PW_CRITICAL : PW_UNKNOWN;
+        set_generic_module_buffer(module, value, power->lb_unk, "%");
+        power->status = value <= power->cthreshold ? PW_CRITICAL : PW_UNKNOWN;
     }
     free(power->raw_status);
 }
@@ -98,11 +99,11 @@ void            power_notify(t_power *power) {
         switch (power->status) {
             case PW_FULL:
                 notify("Power", BAT_NOTIFY_FULL, power->ic_full,
-                                                        NOTIFY_URGENCY_LOW);
+                                                        NOTIFY_URGENCY_NORMAL);
                 break;
             case PW_CHARGING:
                 notify("Power", BAT_NOTIFY_PLUGGED, power->ic_plugged,
-                                                        NOTIFY_URGENCY_LOW);
+                                                        NOTIFY_URGENCY_NORMAL);
                 break;
             case PW_CRITICAL:
                 notify("Power", BAT_NOTIFY_LOW, power->ic_low,
@@ -126,8 +127,7 @@ void            *run_battery(void *data) {
         printf("Cannot compute battery percent: missing statistics\n");
         exit(EXIT_FAILURE);
     }
-    module->value = PERCENT(power->current, power->max);
-    set_battery_status(module, power);
+    to_buffer(module, power);
     if (power->notify) {
         power_notify(power);
     }
@@ -155,6 +155,8 @@ void            init_battery(void *data) {
             power->lb_unk = module->opts[i].value;
         } else if (strcmp(module->opts[i].key, OPT_BAT_FULL_DESIGN) == 0) {
             power->full_design = ((int *)module->opts[i].value)[0];
+        } else if (strcmp(module->opts[i].key, OPT_BAT_CRITICAL) == 0) {
+            power->cthreshold = ((int *)module->opts[i].value)[0];
         } else if (strcmp(module->opts[i].key, OPT_BAT_NOTIFY) == 0) {
             power->notify = ((int *)module->opts[i].value)[0];
         } else if (strcmp(module->opts[i].key, OPT_BAT_NOTIFY_ICON_LOW) == 0) {

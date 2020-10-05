@@ -26,8 +26,8 @@ void            *run_brightness(void *data) {
     t_module    *module = data;
     t_brg       *brg = module->data;
     char        *buffer = NULL;
-    long        current = 0;
-    long        max = 0;
+    long        current;
+    long        max;
 
     buffer = read_file(brg->current_file);
     current = to_int(buffer);
@@ -35,7 +35,8 @@ void            *run_brightness(void *data) {
     buffer = read_file(brg->max_file);
     max = to_int(buffer);
     free(buffer);
-    module->value = PERCENT(current, max);
+    v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
+    set_generic_module_buffer(module, PERCENT(current, max), brg->label, "%");
     return NULL;
 }
 
@@ -48,6 +49,8 @@ void            init_brightness(void *data) {
     while (++i < BRG_NOPTS) {
         if (strcmp(module->opts[i].key, OPT_BRG_DIR) == 0) {
             dir = module->opts[i].value;
+        } else if (strcmp(module->opts[i].key, OPT_BRG_LABEL) == 0) {
+            brg->label = module->opts[i].value;
         }
     }
     brg->current_file = resolve_brightness_file(dir, BRG_CURRENT);

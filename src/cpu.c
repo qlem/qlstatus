@@ -13,9 +13,9 @@ void        free_cpu_usage(void *data) {
 long        compute_cpu_usage(t_cpu *cpu) {
     long    idle = 0;
     long    total = 0;
-    long    usage = 0;
-    long    diff_idle = 0;
-    long    diff_total = 0;
+    long    usage;
+    long    diff_idle;
+    long    diff_total;
     int     i = -1;
 
     while (++i < CPU_STATS_SIZE) {
@@ -52,7 +52,7 @@ char        *parse_cpu_file() {
     char    *line = NULL;
     size_t  sline;
     char    *stats = NULL;
-    ssize_t nb = 0;
+    ssize_t nb;
 
     stream = open_stream(PROC_STAT);
     nb = getline(&line, &size, stream);
@@ -90,12 +90,21 @@ void            *run_cpu_usage(void *data) {
         free(rstats);
         exit(EXIT_FAILURE);
     }
-    module->value = compute_cpu_usage(cpu);
-    module->critical = module->value >= module->threshold ? 1 : 0;
+    // TODO critical threshold
+    v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
+    set_generic_module_buffer(module, compute_cpu_usage(cpu), cpu->label, "%");
     free(rstats);
     return NULL;
 }
 
-void        init_cpu_usage(void *data) {
-    (void)data;
+void            init_cpu_usage(void *data) {
+    t_module    *module = data;
+    t_cpu       *cpu = module->data;
+    int         i = -1;
+
+    while (++i < CPU_NOPTS) {
+        if (strcmp(module->opts[i].key, OPT_CPU_LABEL) == 0) {
+            cpu->label = module->opts[i].value;
+        }
+    }
 }

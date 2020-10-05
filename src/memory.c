@@ -63,25 +63,35 @@ int         parse_mem_file(t_meminfo *meminfo) {
 
 void            *run_memory(void *data) {
     t_module    *module = data;
-    t_meminfo   meminfo;
+    t_meminfo   *meminfo = module->data;
     long        used;
 
-    meminfo.total = -1;
-    meminfo.free = -1;
-    meminfo.buffers = -1;
-    meminfo.cached = -1;
-    meminfo.sreclaim = -1;
-    if (parse_mem_file(&meminfo) == -1) {
+    meminfo->total = -1;
+    meminfo->free = -1;
+    meminfo->buffers = -1;
+    meminfo->cached = -1;
+    meminfo->sreclaim = -1;
+    if (parse_mem_file(meminfo) == -1) {
         printf("Cannot compute memory usage: missing statistics\n");
         exit(EXIT_FAILURE);
     }
-    used = meminfo.total - meminfo.free - meminfo.buffers - meminfo.cached -
-            meminfo.sreclaim;
-    module->value = PERCENT(used, meminfo.total);
-    module->critical = module->value >= module->threshold ? 1 : 0;
+    used = meminfo->total - meminfo->free - meminfo->buffers - meminfo->cached -
+            meminfo->sreclaim;
+    // TODO critical threshold
+    v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
+    set_generic_module_buffer(module, PERCENT(used, meminfo->total),
+                              meminfo->label, "%");
     return NULL;
 }
 
-void        init_memory(void *data) {
-    (void)data;
+void            init_memory(void *data) {
+    t_module    *module = data;
+    t_meminfo   *meminfo = module->data;
+    int         i = -1;
+
+    while (++i < MEM_NOPTS) {
+        if (strcmp(module->opts[i].key, OPT_MEM_LABEL) == 0) {
+            meminfo->label = module->opts[i].value;
+        }
+    }
 }

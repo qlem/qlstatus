@@ -11,7 +11,6 @@ void            free_wireless(void *data) {
     t_wlan      *wlan = module->data;
 
     nl_socket_free(wlan->socket);
-    free(wlan->lb_unk);
 }
 
 // Based on NetworkManager/src/platform/wifi/wifi-utils-nl80211.c
@@ -80,11 +79,9 @@ void            resolve_essid(t_wlan *wlan, struct nlattr *attr) {
         wlan->flags |= WLAN_FLAG_HAS_ESSID;
         if (ssid_len >= WLAN_ESSID_MAX_SIZE) {
             v_strncpy(wlan->essid, (char *)ssid, WLAN_ESSID_MAX_SIZE);
-            wlan->essid[WLAN_ESSID_MAX_SIZE - 1] = ':';
-            wlan->essid[WLAN_ESSID_MAX_SIZE - 2] = '.';
+            wlan->essid[WLAN_ESSID_MAX_SIZE - 1] = '.';
         } else {
             v_strncpy(wlan->essid, (char *)ssid, ssid_len);
-            wlan->essid[ssid_len] = ':';
         }
     }
 }
@@ -199,53 +196,56 @@ static int          send_for_scan(t_wlan *wlan) {
     return 0;
 }
 
-static void     reset_data(t_wlan *wlan) {
-    wlan->flags = 0;
-    v_memset(wlan->bssid, 0, ETH_ALEN);
-    v_memset(wlan->essid, 0, WLAN_ESSID_MAX_SIZE);
-    wlan->signal = 0;
+void            set_buffer(t_module *module, t_wlan *wlan) {
+    char        *signal = NULL;
+    char        *label = NULL;
+
+    if (wlan->flags & WLAN_FLAG_HAS_SIGNAL) {
+        signal = to_str(wlan->signal);
+    } else {
+        signal = alloc_buffer(3);
+        v_strncpy(signal, "--", 2);
+    }
+    if (wlan->flags & WLAN_FLAG_HAS_ESSID) {
+        label = wlan->essid;
+    } else {
+        label = wlan->lb_unk;
+    }
+    // TODO check signal size
+    v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
+    sprintf(module->buffer, "%s: %s%%", label, signal);
+    free(signal);
 }
 
 void            *run_wireless(void *data) {
     t_module    *module = data;
     t_wlan      *wlan = module->data;
 
-    reset_data(wlan);
+    wlan->flags = 0;
+    wlan->signal = 0;
+    v_memset(wlan->bssid, 0, ETH_ALEN);
+    v_memset(wlan->essid, 0, WLAN_ESSID_MAX_SIZE);
     if (send_for_scan(wlan) < 0 || send_for_station(wlan) < 0) {
         nl_socket_free(wlan->socket);
         exit(EXIT_FAILURE);
     }
-    if (wlan->flags & WLAN_FLAG_HAS_SIGNAL) {
-        module->value = wlan->signal;
-    } else {
-        module->value = 0;
-    }
-    if (wlan->flags & WLAN_FLAG_HAS_ESSID) {
-        module->label = wlan->essid;
-    } else {
-        module->label = wlan->lb_unk;
-    }
+    set_buffer(module, wlan);
     return NULL;
 }
 
 void            init_wireless(void *data) {
     t_module    *module = data;
     t_wlan      *wlan = module->data;
-    size_t      size = 0;
     int         i = -1;
-    int         err = 0;
+    int         err;
 
     while (++i < WLAN_NOPTS) {
         if (strcmp(module->opts[i].key, OPT_WLAN_LB_UNK) == 0) {
-            size = v_strlen(module->opts[i].value);
-            wlan->lb_unk = alloc_buffer(size + 2);
-            v_strncpy(wlan->lb_unk, module->opts[i].value, size);
-            wlan->lb_unk[size] = ':';
+            wlan->lb_unk = module->opts[i].value;
         } else if (strcmp(module->opts[i].key, OPT_WLAN_IFACE) == 0) {
             wlan->ifname = module->opts[i].value;
         }
     }
-    module->label = wlan->lb_unk;
     wlan->socket = nl_socket_alloc();
     if (wlan->socket == NULL) {
         printf("Unable to allocate memory for netlink socket\n");

@@ -1,5 +1,5 @@
-# ql-status
-A small program that generates a stream of system statistics for the status bar of window managers like [spectrwm](https://github.com/conformal/spectrwm). Only for Linux based distributions, written in C.
+# ql-tatus
+A small program that generates a stream of system statistics for the status bar of window managers like [dwm](https://dwm.suckless.org/) or [spectrwm](https://github.com/conformal/spectrwm). Only for Linux based distributions, written in C.
 
 ---
 ![alt text](https://raw.githubusercontent.com/qlem/qlstatus/master/screenshot.png)
@@ -8,6 +8,7 @@ A small program that generates a stream of system statistics for the status bar 
 Light, modular, eazy to use, eazy to maintain.. No Memory Leaks !
 
 ## Features
+- date and time
 - current ESSID with signal quality in percent
 - battery status with remaining percent
 - power notifications
@@ -51,6 +52,7 @@ Each module is displayed with the form `label value[unit]`. You can change the o
 the value of the `format` option, e.g. `format = %U  %M  %B`.
 
 Use the following escape sequences to add the desired modules:
+- `%D` date and time
 - `%U` CPU
 - `%T` temperature
 - `%M` memory
@@ -73,7 +75,12 @@ Three notifications can be send:
 - when the AC adpater is plugged
 - when the battery reach the critical threshold
 
-You can choose a desired icon for each of these notifications through the options `battery_notify_icon_full`, `battery_notify_icon_plugged` and `battery_notify_icon_low`. These options accept an icon name.
+You can choose the desired notification icons through the options: 
+- `battery_notify_icon_full`
+- `battery_notify_icon_plugged`
+- `battery_notify_icon_low`
+
+These options accept an icon name.
 
 ## License
 MIT

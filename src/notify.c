@@ -1,6 +1,12 @@
+/*
+ * Copyright (c) 2020 Clément Dommerc <clement.dommerc@gmail.com>
+ * MIT License
+ *
+ */
+
 #include "qlstatus.h"
 
-int         notify(const char *summary, const char *body, const char *icon, 
+int         notify(const char *summary, const char *body, const char *icon,
                    NotifyUrgency urgency) {
     NotifyNotification  *notify = NULL;
     if (!notify_init("qlstatus")) {

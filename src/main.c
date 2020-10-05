@@ -109,11 +109,18 @@ int     main(int argc, char **argv, char **env) {
     // global options
     int         spwm_colors = 0;
     int         c_color_idx = 1;
-    t_opt       opts_global[GLOBAL_NOPTS] = {
-        {OPT_FORMAT,      DEFAULT_FORMAT, TEXT_PATTERN,      OTHER, STRING, 0},
-        {OPT_RATE,        RATE,           RATE_PATTERN,      OTHER, STRING, 0},
-        {OPT_SPWM_COLORS, &spwm_colors,   BOOLEAN_PATTERN,   OTHER, NUMBER, 0},
-        {OPT_C_COLOR_IDX, &c_color_idx,   COLOR_IDX_PATTERN, OTHER, NUMBER, 0}
+    t_opt       opts_global[] = {
+        {OPT_FORMAT,      DEFAULT_FORMAT, TEXT_PATTERN,      STRING, 0, 0},
+        {OPT_RATE,        RATE,           RATE_PATTERN,      STRING, 0, 0},
+        {OPT_SPWM_COLORS, &spwm_colors,   BOOLEAN_PATTERN,   NUMBER, 0, 0},
+        {OPT_C_COLOR_IDX, &c_color_idx,   COLOR_IDX_PATTERN, NUMBER, 0, 0}
+    };
+
+    // time options
+    int         time_enabled = 1;
+    t_opt       opts_time[] = {
+        {OPT_TIME_ENABLED, &time_enabled,       BOOLEAN_PATTERN, NUMBER, 1, 0},
+        {OPT_TIME_FORMAT,  TIME_DEFAULT_FORMAT, TEXT_PATTERN,    STRING, 0, 0}
     };
 
     // battery options
@@ -121,74 +128,78 @@ int     main(int argc, char **argv, char **env) {
     int         bat_threshold = 20;
     int         bat_full_design = 1;
     int         bat_notify = 1;
-    t_opt       opts_bat[BAT_NOPTS] = {
-        {OPT_BAT_ENABLED,     &bat_enabled,     BOOLEAN_PATTERN,   STATE,    NUMBER, 0},
-        {OPT_BAT_LB_UNK,      BAT_LABEL_UNK,    LABEL_PATTERN,     LABEL,    STRING, 0},
-        {OPT_BAT_LB_FULL,     BAT_LABEL_FULL,   LABEL_PATTERN,     OTHER,    STRING, 0},
-        {OPT_BAT_LB_CHR,      BAT_LABEL_CHR,    LABEL_PATTERN,     OTHER,    STRING, 0},
-        {OPT_BAT_LB_DIS,      BAT_LABEL_DIS,    LABEL_PATTERN,     OTHER,    STRING, 0},
-        {OPT_BAT_NAME,        BATTERY_NAME,     BAT_NAME_PATTERN,  OTHER,    STRING, 0},
-        {OPT_BAT_CRITICAL,    &bat_threshold,   THRESHOLD_PATTERN, CRITICAL, NUMBER, 0},
-        {OPT_BAT_FULL_DESIGN, &bat_full_design, BOOLEAN_PATTERN,   OTHER,    NUMBER, 0},
-        {OPT_BAT_NOTIFY,      &bat_notify,      BOOLEAN_PATTERN,   OTHER,    NUMBER, 0},
-        {OPT_BAT_NOTIFY_ICON_FULL,    NULL,     TEXT_PATTERN,      OTHER,    STRING, 0},
-        {OPT_BAT_NOTIFY_ICON_PLUGGED, NULL,     TEXT_PATTERN,      OTHER,    STRING, 0},
-        {OPT_BAT_NOTIFY_ICON_LOW,     NULL,     TEXT_PATTERN,      OTHER,    STRING, 0}
+    t_opt       opts_bat[] = {
+        {OPT_BAT_ENABLED,     &bat_enabled,     BOOLEAN_PATTERN,   NUMBER, 1, 0},
+        {OPT_BAT_LB_UNK,      BAT_LABEL_UNK,    LABEL_PATTERN,     STRING, 0, 0},
+        {OPT_BAT_LB_FULL,     BAT_LABEL_FULL,   LABEL_PATTERN,     STRING, 0, 0},
+        {OPT_BAT_LB_CHR,      BAT_LABEL_CHR,    LABEL_PATTERN,     STRING, 0, 0},
+        {OPT_BAT_LB_DIS,      BAT_LABEL_DIS,    LABEL_PATTERN,     STRING, 0, 0},
+        {OPT_BAT_NAME,        BATTERY_NAME,     BAT_NAME_PATTERN,  STRING, 0, 0},
+        {OPT_BAT_CRITICAL,    &bat_threshold,   THRESHOLD_PATTERN, NUMBER, 0, 0},
+        {OPT_BAT_FULL_DESIGN, &bat_full_design, BOOLEAN_PATTERN,   NUMBER, 0, 0},
+        {OPT_BAT_NOTIFY,      &bat_notify,      BOOLEAN_PATTERN,   NUMBER, 0, 0},
+        {OPT_BAT_NOTIFY_ICON_FULL,    NULL,     TEXT_PATTERN,      STRING, 0, 0},
+        {OPT_BAT_NOTIFY_ICON_PLUGGED, NULL,     TEXT_PATTERN,      STRING, 0, 0},
+        {OPT_BAT_NOTIFY_ICON_LOW,     NULL,     TEXT_PATTERN,      STRING, 0, 0}
     };
 
     // cpu usage options
     int         cpu_enabled = 1;
     int         cpu_threshold = 80;
-    t_opt       opts_cpu[CPU_NOPTS] = {
-        {OPT_CPU_ENABLED,  &cpu_enabled,   BOOLEAN_PATTERN,   STATE,    NUMBER, 0},
-        {OPT_CPU_LABEL,    CPU_LABEL,      LABEL_PATTERN,     LABEL,    STRING, 0},
-        {OPT_CPU_CRITICAL, &cpu_threshold, THRESHOLD_PATTERN, CRITICAL, NUMBER, 0}
+    t_opt       opts_cpu[] = {
+        {OPT_CPU_ENABLED,  &cpu_enabled,   BOOLEAN_PATTERN,   NUMBER, 1, 0},
+        {OPT_CPU_LABEL,    CPU_LABEL,      LABEL_PATTERN,     STRING, 0, 0},
+        {OPT_CPU_CRITICAL, &cpu_threshold, THRESHOLD_PATTERN, NUMBER, 0, 0}
     };
 
     // temperature options
     int         temp_enabled = 1;
     int         temp_threshold = 80;
-    t_opt       opts_temp[TEMP_NOPTS] = {
-        {OPT_TEMP_ENABLED,  &temp_enabled,   BOOLEAN_PATTERN,   STATE,    NUMBER, 0},
-        {OPT_TEMP_LABEL,    TEMP_LABEL,      LABEL_PATTERN,     LABEL,    STRING, 0},
-        {OPT_TEMP_DIR,      TEMP_DIR,        PATH_PATTERN,      OTHER,    STRING, 0},
-        {OPT_TEMP_INPUT,    "1",             IN_TEMP_PATTERN,   OTHER,    STRING, 0},
-        {OPT_TEMP_CRITICAL, &temp_threshold, THRESHOLD_PATTERN, CRITICAL, NUMBER, 0}
+    t_opt       opts_temp[] = {
+        {OPT_TEMP_ENABLED,  &temp_enabled,   BOOLEAN_PATTERN,   NUMBER, 1, 0},
+        {OPT_TEMP_LABEL,    TEMP_LABEL,      LABEL_PATTERN,     STRING, 0, 0},
+        {OPT_TEMP_DIR,      TEMP_DIR,        PATH_PATTERN,      STRING, 0, 0},
+        {OPT_TEMP_INPUT,    "1",             IN_TEMP_PATTERN,   STRING, 0, 0},
+        {OPT_TEMP_CRITICAL, &temp_threshold, THRESHOLD_PATTERN, NUMBER, 0, 0}
     };
 
     // memory options
     int         mem_enabled = 1;
     int         mem_threshold = 80;
-    t_opt       opts_mem[MEM_NOPTS] = {
-        {OPT_MEM_ENABLED,  &mem_enabled,   BOOLEAN_PATTERN,   STATE,    NUMBER, 0},
-        {OPT_MEM_LABEL,    MEM_LABEL,      LABEL_PATTERN,     LABEL,    STRING, 0},
-        {OPT_MEM_CRITICAL, &mem_threshold, THRESHOLD_PATTERN, CRITICAL, NUMBER, 0}
+    t_opt       opts_mem[] = {
+        {OPT_MEM_ENABLED,  &mem_enabled,   BOOLEAN_PATTERN,   NUMBER, 1, 0},
+        {OPT_MEM_LABEL,    MEM_LABEL,      LABEL_PATTERN,     STRING, 0, 0},
+        {OPT_MEM_CRITICAL, &mem_threshold, THRESHOLD_PATTERN, NUMBER, 0, 0}
     };
 
     // brightness options
     int         brg_enabled = 1;
-    t_opt       opts_brg[BRG_NOPTS] = {
-        {OPT_BRG_ENABLED, &brg_enabled, BOOLEAN_PATTERN, STATE, NUMBER, 0},
-        {OPT_BRG_LABEL,   BRG_LABEL,    LABEL_PATTERN,   LABEL, STRING, 0},
-        {OPT_BRG_DIR,     BRG_DIR,      PATH_PATTERN,    OTHER, STRING, 0}
+    t_opt       opts_brg[] = {
+        {OPT_BRG_ENABLED, &brg_enabled, BOOLEAN_PATTERN, NUMBER, 1, 0},
+        {OPT_BRG_LABEL,   BRG_LABEL,    LABEL_PATTERN,   STRING, 0, 0},
+        {OPT_BRG_DIR,     BRG_DIR,      PATH_PATTERN,    STRING, 0, 0}
     };
 
     // volume options
     int         volume_enabled = 1;
-    t_opt       opts_vol[VOL_NOPTS] = {
-        {OPT_VOL_ENABLED,  &volume_enabled,    BOOLEAN_PATTERN, STATE, NUMBER, 0},
-        {OPT_VOL_LABEL,    VOLUME_LABEL,       LABEL_PATTERN,   LABEL, STRING, 0},
-        {OPT_VOL_LB_MUTED, VOLUME_MUTED_LABEL, LABEL_PATTERN,   OTHER, STRING, 0},
-        {OPT_VOL_SINK,     PULSE_SINK_NAME,    TEXT_PATTERN,    OTHER, STRING, 0}
+    t_opt       opts_vol[] = {
+        {OPT_VOL_ENABLED,  &volume_enabled,    BOOLEAN_PATTERN, NUMBER, 1, 0},
+        {OPT_VOL_LABEL,    VOLUME_LABEL,       LABEL_PATTERN,   STRING, 0, 0},
+        {OPT_VOL_LB_MUTED, VOLUME_MUTED_LABEL, LABEL_PATTERN,   STRING, 0, 0},
+        {OPT_VOL_SINK,     PULSE_SINK_NAME,    TEXT_PATTERN,    STRING, 0, 0}
     };
 
     // wireless options
     int         wlan_enabled = 1;
-    t_opt       opts_wlan[WLAN_NOPTS] = {
-        {OPT_WLAN_ENABLED, &wlan_enabled,  BOOLEAN_PATTERN,  STATE, NUMBER, 0},
-        {OPT_WLAN_LB_UNK,  WLAN_UNK_LABEL, WL_LABEL_PATTERN, OTHER, STRING, 0},
-        {OPT_WLAN_IFACE,   WLAN_INTERFACE, TEXT_PATTERN,     OTHER, STRING, 0}
+    t_opt       opts_wlan[] = {
+        {OPT_WLAN_ENABLED, &wlan_enabled,  BOOLEAN_PATTERN,  NUMBER, 1, 0},
+        {OPT_WLAN_LB_UNK,  WLAN_UNK_LABEL, WL_LABEL_PATTERN, STRING, 0, 0},
+        {OPT_WLAN_IFACE,   WLAN_INTERFACE, TEXT_PATTERN,     STRING, 0, 0}
     };
+
+    // time
+    t_ctime     time;
+    v_memset(&time, 0, sizeof(t_ctime));
 
     // battery data
     t_power     power;
@@ -197,6 +208,10 @@ int     main(int argc, char **argv, char **env) {
     // cpu data
     t_cpu   cpu;
     v_memset(&cpu, 0, sizeof(t_cpu));
+
+    // mem data
+    t_meminfo   imem;
+    v_memset(&cpu, 0, sizeof(t_meminfo));
 
     // temp data
     t_temp      temp;
@@ -216,13 +231,14 @@ int     main(int argc, char **argv, char **env) {
 
     // modules
     t_module modules[NB_MODULES] = {
-        {1, 'V', VOLUME_LABEL,   0, "%", 0, 0, &pulse, opts_vol,  VOL_NOPTS,  0, run_volume,      init_volume,      free_volume},
-        {1, 'W', WLAN_UNK_LABEL, 0, "%", 0, 0, &wlan,  opts_wlan, WLAN_NOPTS, 0, run_wireless,    init_wireless,    free_wireless},
-        {1, 'T', TEMP_LABEL,     0, "°", 0, 0, &temp,  opts_temp, TEMP_NOPTS, 0, run_temperature, init_temperature, free_temperature},
-        {1, 'B', BAT_LABEL_UNK,  0, "%", 0, 0, &power, opts_bat,  BAT_NOPTS,  0, run_battery,     init_battery,     free_battery},
-        {1, 'L', BRG_LABEL,      0, "%", 0, 0, &brg,   opts_brg,  BRG_NOPTS,  0, run_brightness,  init_brightness,  free_brightness},
-        {1, 'M', MEM_LABEL,      0, "%", 0, 0, NULL,   opts_mem,  MEM_NOPTS,  0, run_memory,      init_memory,      free_memory},
-        {1, 'U', CPU_LABEL,      0, "%", 0, 0, &cpu,   opts_cpu,  CPU_NOPTS,  0, run_cpu_usage,   init_cpu_usage,   free_cpu_usage}
+        {1, 'V', {}, &pulse, opts_vol,  VOL_NOPTS,  0, run_volume,      init_volume,      free_volume},
+        {1, 'W', {}, &wlan,  opts_wlan, WLAN_NOPTS, 0, run_wireless,    init_wireless,    free_wireless},
+        {1, 'T', {}, &temp,  opts_temp, TEMP_NOPTS, 0, run_temperature, init_temperature, free_temperature},
+        {1, 'B', {}, &power, opts_bat,  BAT_NOPTS,  0, run_battery,     init_battery,     free_battery},
+        {1, 'L', {}, &brg,   opts_brg,  BRG_NOPTS,  0, run_brightness,  init_brightness,  free_brightness},
+        {1, 'M', {}, &imem,  opts_mem,  MEM_NOPTS,  0, run_memory,      init_memory,      free_memory},
+        {1, 'U', {}, &cpu,   opts_cpu,  CPU_NOPTS,  0, run_cpu_usage,   init_cpu_usage,   free_cpu_usage},
+        {1, 'D', {}, &time,  opts_time, TIME_NOPTS, 0, run_time,        init_time,        free_time}
     };
 
     // vars declaration

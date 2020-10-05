@@ -11,6 +11,7 @@ pkg_check_modules(LIBNL REQUIRED libnl-3.0 libnl-genl-3.0)
 
 add_executable(qlstatus
     src/main.c
+    src/time.c
     src/config.c
     src/battery.c
     src/brightness.c

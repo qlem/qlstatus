@@ -40,17 +40,19 @@
 /* GLOBAL */
 #define BASE 10
 #define RATE "1s"
-#define NB_MODULES 7
+#define NB_MODULES 8
 #define NSEC 999999999
 #define NSEC_TO_SEC(nsec) nsec / (long)1e9
 #define REM_NSEC(nsec) nsec % (long)1e9
 #define PERCENT(value, total) value * 100 / total
 #define CONFIG_FILE ".config/qlstatus/qlstatus.conf"
 #define HOME_PATTERN "^HOME=(.+)$"
+#define BUFFER_MAX_SIZE 32
 #define SPWM_COLOR_START "+@fg="
 #define SPWM_COLOR_STOP "+@fg=0;"
 
 /* OUTPUT FORMAT
+ * %D: time info
  * %U: cpu usage
  * %T: temp average
  * %M: memory usage
@@ -59,7 +61,7 @@
  * %B: remaining battery
  * %W: wireless info
  */
-#define DEFAULT_FORMAT "%U  %T  %M  %L  %V  %B  %W"
+#define DEFAULT_FORMAT "%U  %T  %M  %L  %V  %B  %W  %D"
 
 /* OPTIONS */
 typedef enum        opt_type {
@@ -67,24 +69,18 @@ typedef enum        opt_type {
     NUMBER
 }                   opt_type;
 
-typedef enum        opt_category {
-    STATE,
-    LABEL,
-    CRITICAL,
-    OTHER
-}                   opt_category;
-
 typedef struct      s_opt {
     char            *key;
     void            *value;
     char            *pattern;
-    opt_category    category;
     opt_type        type;
+    uint8_t         is_state;
     uint8_t         to_free;
 }                   t_opt;
 
 // number of options per module
 #define GLOBAL_NOPTS 4
+#define TIME_NOPTS 2
 #define BAT_NOPTS 12
 #define CPU_NOPTS 3
 #define TEMP_NOPTS 5
@@ -110,6 +106,10 @@ typedef struct      s_opt {
 #define OPT_RATE "rate"
 #define OPT_SPWM_COLORS "enable_spectrwm_colors"
 #define OPT_C_COLOR_IDX "critical_color_index"
+
+// time options
+#define OPT_TIME_ENABLED "time_enabled"
+#define OPT_TIME_FORMAT "time_format"
 
 // battery options
 #define OPT_BAT_ENABLED "battery_enabled"
@@ -162,11 +162,7 @@ typedef struct      s_opt {
 typedef struct      s_module {
     uint8_t         enabled;
     char            fmtid;
-    char            *label;
-    long            value;
-    char            *unit;
-    uint8_t         critical;
-    int             threshold;
+    char            buffer[BUFFER_MAX_SIZE];
     void            *data;
     t_opt           *opts;
     int             nopts;
@@ -175,6 +171,13 @@ typedef struct      s_module {
     void            (*init)(void *);
     void            (*mfree)(void *);
 }                   t_module;
+
+// time
+#define TIME_DEFAULT_FORMAT "%a %d %b %Y, %R %Z"
+
+typedef struct      s_ctime {
+    char            *format;
+}                   t_ctime;
 
 // battery
 #define BATTERY_NAME "BAT0"
@@ -216,6 +219,7 @@ typedef struct      s_power {
     pw_status       last_status;
     long            current;
     long            max;
+    int             cthreshold;
     char            *ic_full;
     char            *ic_plugged;
     char            *ic_low;
@@ -228,6 +232,7 @@ typedef struct      s_power {
 #define BRG_LABEL "brg"
 
 typedef struct      s_brg {
+    char            *label;
     char            *current_file;
     char            *max_file;
 }                   t_brg;
@@ -239,6 +244,7 @@ typedef struct      s_brg {
 #define CPU_STATS_SIZE 8
 
 typedef struct      s_cpu {
+    char            *label;
     long            stats[CPU_STATS_SIZE];
     long            prev_idle;
     long            prev_total;
@@ -250,6 +256,7 @@ typedef struct      s_cpu {
 #define TEMP_ROUND_THRESHOLD 500
 
 typedef struct      s_temp {
+    char            *label;
     char            **inputs;
 }                   t_temp;
 
@@ -286,6 +293,7 @@ typedef struct      s_wlan {
 #define MEM_LABEL "mem"
 
 typedef struct  s_meminfo {
+    char        *label;
     long        total;
     long        free;
     long        buffers;
@@ -329,6 +337,7 @@ int     putstr(const char *str);
 
 // format
 char    *format(t_main *main);
+void    set_generic_module_buffer(t_module *module, long value, char *label, char *unit);
 
 // regex
 bool    match_pattern(const char *regex, const char *str);
@@ -351,9 +360,10 @@ int     parse_config_file(t_main *main, const char *file);
 
 // notify
 int     notify(const char *summary, const char *body, const char *icon,
-               NotifyUrgency urgency); 
+               NotifyUrgency urgency);
 
 // routines
+void    *run_time(void *data);
 void    *run_battery(void *data);
 void    *run_cpu_usage(void *data);
 void    *run_memory(void *data);
@@ -363,6 +373,7 @@ void    *run_wireless(void *data);
 void    *run_volume(void *data);
 
 // init modules
+void    init_time(void *data);
 void    init_battery(void *data);
 void    init_cpu_usage(void *data);
 void    init_memory(void *data);
@@ -372,6 +383,7 @@ void    init_wireless(void *data);
 void    init_volume(void *data);
 
 // free modules
+void    free_time(void *data);
 void    free_battery(void *data);
 void    free_cpu_usage(void *data);
 void    free_memory(void *data);
