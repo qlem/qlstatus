@@ -230,7 +230,7 @@ int     main(int argc, char **argv, char **env) {
     v_memset(&wlan, 0, sizeof(t_wlan));
 
     // modules
-    t_module modules[NB_MODULES] = {
+    t_module modules[] = {
         {1, 'V', {}, &pulse, opts_vol,  VOL_NOPTS,  0, run_volume,      init_volume,      free_volume},
         {1, 'W', {}, &wlan,  opts_wlan, WLAN_NOPTS, 0, run_wireless,    init_wireless,    free_wireless},
         {1, 'T', {}, &temp,  opts_temp, TEMP_NOPTS, 0, run_temperature, init_temperature, free_temperature},
