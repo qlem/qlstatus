@@ -31,6 +31,7 @@ void        to_buffer(t_module *module, t_power *power) {
         set_generic_module_buffer(module, value, power->lb_dis, "%");
         power->status = value <= power->cthreshold ?
                                         PW_CRITICAL : PW_DISCHARGING;
+        module->critical = power->status == PW_CRITICAL ? 1 : 0;
     } else if (strcmp(power->raw_status, BAT_STATUS_CHR) == 0) {
         set_generic_module_buffer(module, value, power->lb_chr, "%");
         power->status = PW_CHARGING;
@@ -40,6 +41,7 @@ void        to_buffer(t_module *module, t_power *power) {
     } else {
         set_generic_module_buffer(module, value, power->lb_unk, "%");
         power->status = value <= power->cthreshold ? PW_CRITICAL : PW_UNKNOWN;
+        module->critical = power->status == PW_CRITICAL ? 1 : 0;
     }
     free(power->raw_status);
 }

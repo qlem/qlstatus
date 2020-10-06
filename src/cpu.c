@@ -80,6 +80,7 @@ void            *run_cpu_usage(void *data) {
     t_module    *module = data;
     t_cpu       *cpu = module->data;
     char        *rstats;
+    long        value;
 
     if ((rstats = parse_cpu_file()) == NULL) {
         printf("Cannot compute cpu usage: missing statistics\n");
@@ -90,9 +91,10 @@ void            *run_cpu_usage(void *data) {
         free(rstats);
         exit(EXIT_FAILURE);
     }
-    // TODO critical threshold
+    value = compute_cpu_usage(cpu);
+    module->critical = value >= cpu->cthreshold ? 1 : 0;
     v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
-    set_generic_module_buffer(module, compute_cpu_usage(cpu), cpu->label, "%");
+    set_generic_module_buffer(module, value, cpu->label, "%");
     free(rstats);
     return NULL;
 }
@@ -105,6 +107,8 @@ void            init_cpu_usage(void *data) {
     while (++i < CPU_NOPTS) {
         if (strcmp(module->opts[i].key, OPT_CPU_LABEL) == 0) {
             cpu->label = module->opts[i].value;
+        } else if (strcmp(module->opts[i].key, OPT_CPU_CRITICAL) == 0) {
+            cpu->cthreshold = ((int *)module->opts[i].value)[0];
         }
     }
 }

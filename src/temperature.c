@@ -103,11 +103,12 @@ long        compute_temp(char **files) {
 void            *run_temperature(void *data) {
     t_module    *module = data;
     t_temp      *temp = module->data;
+    long        value;
 
-    // TODO critical threshold
+    value = compute_temp(temp->inputs);
+    module->critical = value >= temp->cthreshold ? 1 : 0;
     v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
-    set_generic_module_buffer(module, compute_temp(temp->inputs),
-                              temp->label, "°");
+    set_generic_module_buffer(module, value, temp->label, "°");
     return NULL;
 }
 
@@ -125,6 +126,8 @@ void            init_temperature(void *data) {
             in_regex = resolve_temp_input_regex(module->opts[i].value);
         } else if (strcmp(module->opts[i].key, OPT_TEMP_LABEL) == 0) {
             temp->label = module->opts[i].value;
+        } else if (strcmp(module->opts[i].key, OPT_TEMP_CRITICAL) == 0) {
+            temp->cthreshold = ((int *)module->opts[i].value)[0];
         }
     }
     temp->inputs = read_dir(dir, in_regex);

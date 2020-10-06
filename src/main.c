@@ -231,14 +231,14 @@ int     main(int argc, char **argv, char **env) {
 
     // modules
     t_module modules[] = {
-        {1, 'V', {}, &pulse, opts_vol,  VOL_NOPTS,  0, run_volume,      init_volume,      free_volume},
-        {1, 'W', {}, &wlan,  opts_wlan, WLAN_NOPTS, 0, run_wireless,    init_wireless,    free_wireless},
-        {1, 'T', {}, &temp,  opts_temp, TEMP_NOPTS, 0, run_temperature, init_temperature, free_temperature},
-        {1, 'B', {}, &power, opts_bat,  BAT_NOPTS,  0, run_battery,     init_battery,     free_battery},
-        {1, 'L', {}, &brg,   opts_brg,  BRG_NOPTS,  0, run_brightness,  init_brightness,  free_brightness},
-        {1, 'M', {}, &imem,  opts_mem,  MEM_NOPTS,  0, run_memory,      init_memory,      free_memory},
-        {1, 'U', {}, &cpu,   opts_cpu,  CPU_NOPTS,  0, run_cpu_usage,   init_cpu_usage,   free_cpu_usage},
-        {1, 'D', {}, &time,  opts_time, TIME_NOPTS, 0, run_time,        init_time,        free_time}
+        {1, 'V', {}, 0, &pulse, opts_vol,  VOL_NOPTS,  0, run_volume,      init_volume,      free_volume},
+        {1, 'W', {}, 0, &wlan,  opts_wlan, WLAN_NOPTS, 0, run_wireless,    init_wireless,    free_wireless},
+        {1, 'T', {}, 0, &temp,  opts_temp, TEMP_NOPTS, 0, run_temperature, init_temperature, free_temperature},
+        {1, 'B', {}, 0, &power, opts_bat,  BAT_NOPTS,  0, run_battery,     init_battery,     free_battery},
+        {1, 'L', {}, 0, &brg,   opts_brg,  BRG_NOPTS,  0, run_brightness,  init_brightness,  free_brightness},
+        {1, 'M', {}, 0, &imem,  opts_mem,  MEM_NOPTS,  0, run_memory,      init_memory,      free_memory},
+        {1, 'U', {}, 0, &cpu,   opts_cpu,  CPU_NOPTS,  0, run_cpu_usage,   init_cpu_usage,   free_cpu_usage},
+        {1, 'D', {}, 0, &time,  opts_time, TIME_NOPTS, 0, run_time,        init_time,        free_time}
     };
 
     // vars declaration

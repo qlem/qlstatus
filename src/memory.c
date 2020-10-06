@@ -77,10 +77,10 @@ void            *run_memory(void *data) {
     }
     used = meminfo->total - meminfo->free - meminfo->buffers - meminfo->cached -
             meminfo->sreclaim;
-    // TODO critical threshold
+    used = PERCENT(used, meminfo->total);
+    module->critical = used >= meminfo->cthreshold ? 1 : 0;
     v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
-    set_generic_module_buffer(module, PERCENT(used, meminfo->total),
-                              meminfo->label, "%");
+    set_generic_module_buffer(module, used, meminfo->label, "%");
     return NULL;
 }
 
@@ -92,6 +92,8 @@ void            init_memory(void *data) {
     while (++i < MEM_NOPTS) {
         if (strcmp(module->opts[i].key, OPT_MEM_LABEL) == 0) {
             meminfo->label = module->opts[i].value;
+        } else if (strcmp(module->opts[i].key, OPT_MEM_CRITICAL) == 0) {
+            meminfo->cthreshold = ((int *)module->opts[i].value)[0];
         }
     }
 }

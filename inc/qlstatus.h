@@ -163,6 +163,7 @@ typedef struct      s_module {
     uint8_t         enabled;
     char            fmtid;
     char            buffer[BUFFER_MAX_SIZE];
+    uint8_t         critical;
     void            *data;
     t_opt           *opts;
     int             nopts;
@@ -248,6 +249,7 @@ typedef struct      s_cpu {
     long            stats[CPU_STATS_SIZE];
     long            prev_idle;
     long            prev_total;
+    int             cthreshold;
 }                   t_cpu;
 
 // temperature
@@ -258,6 +260,7 @@ typedef struct      s_cpu {
 typedef struct      s_temp {
     char            *label;
     char            **inputs;
+    int             cthreshold;
 }                   t_temp;
 
 // wireless
@@ -299,6 +302,7 @@ typedef struct  s_meminfo {
     long        buffers;
     long        cached;
     long        sreclaim;
+    int         cthreshold;
 }               t_meminfo;
 
 // volume audio

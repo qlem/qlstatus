@@ -19,17 +19,6 @@ char        *append_single_char(char *buffer, char c) {
     return buffer;
 }
 
-/*
-    if (main->spwm_colors && module->critical) {
-        size = v_strlen(module->label) + v_strlen(value) +
-                                                v_strlen(module->unit) + 17;
-        buffer = alloc_buffer(size);
-        sprintf(buffer, " %s%d;%s %s%s%s", SPWM_COLOR_START,
-                main->critical_color_idx, module->label, value, module->unit,
-                SPWM_COLOR_STOP);
-    }
-*/
-
 void        set_generic_module_buffer(t_module *module, long value,
                                       char *label, char *unit) {
     char    *bval = NULL;
@@ -48,8 +37,21 @@ char        *append_module(t_main *main, t_module *module, char *buffer) {
     size_t  blen;
     size_t  mlen;
 
-    (void)main;
     mlen = v_strlen(module->buffer);
+    if (main->spwm_colors && module->critical && buffer == NULL) {
+        new = alloc_buffer(mlen + 15);
+        sprintf(new, "%s%d;%s%s", SPWM_COLOR_START, main->spwm_colors,
+                module->buffer, SPWM_COLOR_STOP);
+        return new;
+    }
+    if (main->spwm_colors && module->critical) {
+        blen = v_strlen(buffer);
+        new = alloc_buffer(sizeof(char) * (blen + mlen + 15));
+        sprintf(new, "%s%s%d;%s%s", buffer, SPWM_COLOR_START, main->spwm_colors,
+                module->buffer, SPWM_COLOR_STOP);
+        free(buffer);
+        return new;
+    }
     if (buffer == NULL) {
         new = alloc_buffer(mlen + 1);
         v_strncpy(new, module->buffer, mlen);
