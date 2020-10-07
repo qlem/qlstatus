@@ -27,7 +27,7 @@ char        *resolve_temp_dir(const char *path) {
     char    *parent = NULL;
     char    **files = NULL;
     char    *resolved = NULL;
-    size_t  size = 0;
+    size_t  size;
 
     size = v_strlen(path);
     if (!has_asterisk(path)) {
@@ -56,9 +56,9 @@ char        *resolve_temp_input_regex(const char *input) {
     char    *regex = NULL;
     char    *start = "^temp[";
     char    *end = "]_input$";
-    size_t  in_len = 0;
-    size_t  start_len = 0;
-    size_t  end_len = 0;
+    size_t  in_len;
+    size_t  start_len;
+    size_t  end_len;
     int     i = -1;
 
     in_len = v_strlen(input);
@@ -81,10 +81,10 @@ char        *resolve_temp_input_regex(const char *input) {
 
 long        compute_temp(char **files) {
     char    *buffer;
-    long    temp = 0;
     long    sum = 0;
-    long    rem = 0;
     int     i = -1;
+    long    temp;
+    long    rem;
 
     while (files[++i][0]) {
         buffer = read_file(files[i]);

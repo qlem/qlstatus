@@ -25,6 +25,7 @@ char        *resolve_power_file(const char *dir, const char *pw_name,
 void        to_buffer(t_module *module, t_power *power) {
     int     value;
 
+    module->critical = 0;
     v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
     value = PERCENT(power->current, power->max);
     if (strcmp(power->raw_status, BAT_STATUS_DIS) == 0) {
