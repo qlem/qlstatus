@@ -251,8 +251,8 @@ int     main(int argc, char **argv, char **env) {
     t_main              main;
     char                *config;
     char                *buffer;
-    int                 err = 0;
     int                 i = -1;
+    int                 err;
 
     // init signal handler
     v_memset(&act, 0, sizeof(struct sigaction));
