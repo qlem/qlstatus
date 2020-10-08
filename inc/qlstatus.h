@@ -47,7 +47,6 @@
 #define PERCENT(value, total) value * 100 / total
 #define CONFIG_FILE ".config/qlstatus/qlstatus.conf"
 #define HOME_PATTERN "^HOME=(.+)$"
-#define BUFFER_MAX_SIZE 32
 #define SPWM_COLOR_START "+@fg="
 #define SPWM_COLOR_STOP "+@fg=0;"
 
@@ -159,6 +158,8 @@ typedef struct      s_opt {
 #define OPT_WLAN_IFACE "wireless_interface"
 
 /* MODULES */
+#define BUFFER_MAX_SIZE 32
+
 typedef struct      s_module {
     uint8_t         enabled;
     char            fmtid;
@@ -176,9 +177,9 @@ typedef struct      s_module {
 // time
 #define TIME_DEFAULT_FORMAT "%a %d %b %Y, %R %Z"
 
-typedef struct      s_ctime {
+typedef struct      s_mtime {
     char            *format;
-}                   t_ctime;
+}                   t_mtime;
 
 // battery
 #define BATTERY_NAME "BAT0"
@@ -295,7 +296,7 @@ typedef struct      s_wlan {
 #define MEM_SRECLAIM_PATTERN "^SReclaimable:[ \t]+([0-9]+) kB$"
 #define MEM_LABEL "mem"
 
-typedef struct  s_meminfo {
+typedef struct  s_mem {
     char        *label;
     long        total;
     long        free;
@@ -303,7 +304,7 @@ typedef struct  s_meminfo {
     long        cached;
     long        sreclaim;
     int         cthreshold;
-}               t_meminfo;
+}               t_mem;
 
 // volume audio
 #define PULSE_SINK_NAME "alsa_output.pci-0000_00_1f.3.analog-stereo"
@@ -325,8 +326,8 @@ typedef struct          s_main {
     t_module            *modules;
     char                *format;
     char                *rate;
-    uint8_t             spwm_colors;
-    uint8_t             critical_color_idx;
+    uint8_t             spwmcolors;
+    uint8_t             spwmcoloridx;
     t_opt               *opts;
 }                       t_main;
 

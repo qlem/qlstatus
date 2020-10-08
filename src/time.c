@@ -12,7 +12,7 @@ void            free_time(void *data) {
 
 void            *run_time(void *data) {
     t_module    *module = data;
-    t_ctime     *mtime = module->data;
+    t_mtime     *mtime = module->data;
     struct tm   *timeinfo;
     time_t      rawtime;
 
@@ -35,7 +35,7 @@ void            *run_time(void *data) {
 
 void            init_time(void *data) {
     t_module    *module = data;
-    t_ctime     *time = module->data;
+    t_mtime     *time = module->data;
     int         i = -1;
 
     while (++i < TIME_NOPTS) {

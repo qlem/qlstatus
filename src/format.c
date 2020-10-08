@@ -38,17 +38,17 @@ char        *append_module(t_main *main, t_module *module, char *buffer) {
     size_t  mlen;
 
     mlen = v_strlen(module->buffer);
-    if (main->spwm_colors && module->critical && buffer == NULL) {
+    if (main->spwmcolors && module->critical && buffer == NULL) {
         new = alloc_buffer(mlen + 15);
-        sprintf(new, "%s%d;%s%s", SPWM_COLOR_START, main->spwm_colors,
+        sprintf(new, "%s%d;%s%s", SPWM_COLOR_START, main->spwmcoloridx,
                 module->buffer, SPWM_COLOR_STOP);
         return new;
     }
-    if (main->spwm_colors && module->critical) {
+    if (main->spwmcolors && module->critical) {
         blen = v_strlen(buffer);
         new = alloc_buffer(sizeof(char) * (blen + mlen + 15));
-        sprintf(new, "%s%s%d;%s%s", buffer, SPWM_COLOR_START, main->spwm_colors,
-                module->buffer, SPWM_COLOR_STOP);
+        sprintf(new, "%s%s%d;%s%s", buffer, SPWM_COLOR_START,
+                main->spwmcoloridx, module->buffer, SPWM_COLOR_STOP);
         free(buffer);
         return new;
     }

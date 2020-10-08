@@ -10,25 +10,25 @@ void        free_memory(void *data) {
     (void)data;
 }
 
-void        parse_mem_stat(t_meminfo *meminfo, char *rstat) {
+void        parse_mem_stat(t_mem *mem, char *rstat) {
     char    *stat;
 
     if ((stat = substring(MEM_TOTAL_PATTERN, rstat))) {
-        meminfo->total = to_int(stat);
+        mem->total = to_int(stat);
     } else if ((stat = substring(MEM_FREE_PATTERN, rstat))) {
-        meminfo->free = to_int(stat);
+        mem->free = to_int(stat);
     } else if ((stat = substring(MEM_BUFFERS_PATTERN, rstat))) {
-        meminfo->buffers = to_int(stat);
+        mem->buffers = to_int(stat);
     } else if ((stat = substring(MEM_CACHED_PATTERN, rstat))) {
-        meminfo->cached = to_int(stat);
+        mem->cached = to_int(stat);
     } else if ((stat = substring(MEM_SRECLAIM_PATTERN, rstat))) {
-        meminfo->sreclaim = to_int(stat);
+        mem->sreclaim = to_int(stat);
     }
     free(rstat);
     free(stat);
 }
 
-int         parse_mem_file(t_meminfo *meminfo) {
+int         parse_mem_file(t_mem *mem) {
     FILE    *stream;
     size_t  size = 0;
     char    *line = NULL;
@@ -41,12 +41,12 @@ int         parse_mem_file(t_meminfo *meminfo) {
         if (line[sline - 1] == '\n') {
             line[sline - 1] = 0;
         }
-        parse_mem_stat(meminfo, line);
+        parse_mem_stat(mem, line);
         line = NULL;
         size = 0;
-        if (meminfo->total > -1 && meminfo->free > -1 &&
-            meminfo->buffers > -1 && meminfo->cached > -1 &&
-            meminfo->sreclaim > -1) {
+        if (mem->total > -1 && mem->free > -1 &&
+            mem->buffers > -1 && mem->cached > -1 &&
+            mem->sreclaim > -1) {
             close_stream(stream, PROC_MEMINFO);
             return 0;
         }
@@ -63,37 +63,36 @@ int         parse_mem_file(t_meminfo *meminfo) {
 
 void            *run_memory(void *data) {
     t_module    *module = data;
-    t_meminfo   *meminfo = module->data;
+    t_mem       *mem = module->data;
     long        used;
 
-    meminfo->total = -1;
-    meminfo->free = -1;
-    meminfo->buffers = -1;
-    meminfo->cached = -1;
-    meminfo->sreclaim = -1;
-    if (parse_mem_file(meminfo) == -1) {
+    mem->total = -1;
+    mem->free = -1;
+    mem->buffers = -1;
+    mem->cached = -1;
+    mem->sreclaim = -1;
+    if (parse_mem_file(mem) == -1) {
         printf("Cannot compute memory usage: missing statistics\n");
         exit(EXIT_FAILURE);
     }
-    used = meminfo->total - meminfo->free - meminfo->buffers - meminfo->cached -
-            meminfo->sreclaim;
-    used = PERCENT(used, meminfo->total);
-    module->critical = used >= meminfo->cthreshold ? 1 : 0;
+    used = mem->total - mem->free - mem->buffers - mem->cached - mem->sreclaim;
+    used = PERCENT(used, mem->total);
+    module->critical = used >= mem->cthreshold ? 1 : 0;
     v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
-    set_generic_module_buffer(module, used, meminfo->label, "%");
+    set_generic_module_buffer(module, used, mem->label, "%");
     return NULL;
 }
 
 void            init_memory(void *data) {
     t_module    *module = data;
-    t_meminfo   *meminfo = module->data;
+    t_mem       *mem = module->data;
     int         i = -1;
 
     while (++i < MEM_NOPTS) {
         if (strcmp(module->opts[i].key, OPT_MEM_LABEL) == 0) {
-            meminfo->label = module->opts[i].value;
+            mem->label = module->opts[i].value;
         } else if (strcmp(module->opts[i].key, OPT_MEM_CRITICAL) == 0) {
-            meminfo->cthreshold = ((int *)module->opts[i].value)[0];
+            mem->cthreshold = ((int *)module->opts[i].value)[0];
         }
     }
 }

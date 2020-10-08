@@ -7,9 +7,9 @@
 #include "qlstatus.h"
 
 int             compile_regex(const char *regex, regex_t *preg) {
-    int         errcode = 0;
     char        *buffer = NULL;
     size_t      size = 0;
+    int         errcode;
 
     if ((errcode = regcomp(preg, regex, REG_EXTENDED)) != 0) {
         size = regerror(errcode, preg, buffer, size);
@@ -24,10 +24,10 @@ int             compile_regex(const char *regex, regex_t *preg) {
 
 char        **multiple_subs(const char *regex, const char *str, int nmatch) {
     char            **match = NULL;
-    regex_t         preg;
     regmatch_t      pmatch[nmatch + 1];
-    size_t          size = 0;
     int             i = -1;
+    regex_t         preg;
+    size_t          size;
     int             j;
 
     compile_regex(regex, &preg);
@@ -53,11 +53,11 @@ char        **multiple_subs(const char *regex, const char *str, int nmatch) {
 }
 
 char                *substring(const char *regex, const char *str) {
-    regex_t         preg;
     regmatch_t      pmatch[2];
     char            *buffer = NULL;
-    size_t          size = 0;
     int             i = -1;
+    regex_t         preg;
+    size_t          size;
 
     compile_regex(regex, &preg);
     if (regexec(&preg, str, 2, pmatch, 0) == 0) {

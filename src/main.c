@@ -107,13 +107,13 @@ int     main(int argc, char **argv, char **env) {
     (void)argv;
 
     // global options
-    int         spwm_colors = 0;
-    int         c_color_idx = 1;
+    int         spwmcolors = 0;
+    int         spwmcoloridx = 1;
     t_opt       opts_global[] = {
         {OPT_FORMAT,      DEFAULT_FORMAT, TEXT_PATTERN,      STRING, 0, 0},
         {OPT_RATE,        RATE,           RATE_PATTERN,      STRING, 0, 0},
-        {OPT_SPWM_COLORS, &spwm_colors,   BOOLEAN_PATTERN,   NUMBER, 0, 0},
-        {OPT_C_COLOR_IDX, &c_color_idx,   COLOR_IDX_PATTERN, NUMBER, 0, 0}
+        {OPT_SPWM_COLORS, &spwmcolors,    BOOLEAN_PATTERN,   NUMBER, 0, 0},
+        {OPT_C_COLOR_IDX, &spwmcoloridx,  COLOR_IDX_PATTERN, NUMBER, 0, 0}
     };
 
     // time options
@@ -198,8 +198,8 @@ int     main(int argc, char **argv, char **env) {
     };
 
     // time
-    t_ctime     time;
-    v_memset(&time, 0, sizeof(t_ctime));
+    t_mtime     time;
+    v_memset(&time, 0, sizeof(t_mtime));
 
     // battery data
     t_power     power;
@@ -210,8 +210,8 @@ int     main(int argc, char **argv, char **env) {
     v_memset(&cpu, 0, sizeof(t_cpu));
 
     // mem data
-    t_meminfo   imem;
-    v_memset(&cpu, 0, sizeof(t_meminfo));
+    t_mem   mem;
+    v_memset(&cpu, 0, sizeof(t_mem));
 
     // temp data
     t_temp      temp;
@@ -236,7 +236,7 @@ int     main(int argc, char **argv, char **env) {
         {1, 'T', {}, 0, &temp,  opts_temp, TEMP_NOPTS, 0, run_temperature, init_temperature, free_temperature},
         {1, 'B', {}, 0, &power, opts_bat,  BAT_NOPTS,  0, run_battery,     init_battery,     free_battery},
         {1, 'L', {}, 0, &brg,   opts_brg,  BRG_NOPTS,  0, run_brightness,  init_brightness,  free_brightness},
-        {1, 'M', {}, 0, &imem,  opts_mem,  MEM_NOPTS,  0, run_memory,      init_memory,      free_memory},
+        {1, 'M', {}, 0, &mem,   opts_mem,  MEM_NOPTS,  0, run_memory,      init_memory,      free_memory},
         {1, 'U', {}, 0, &cpu,   opts_cpu,  CPU_NOPTS,  0, run_cpu_usage,   init_cpu_usage,   free_cpu_usage},
         {1, 'D', {}, 0, &time,  opts_time, TIME_NOPTS, 0, run_time,        init_time,        free_time}
     };
@@ -261,13 +261,13 @@ int     main(int argc, char **argv, char **env) {
     sigaction(SIGINT, &act, NULL);
     sigaction(SIGTERM, &act, NULL);
 
-    // init main strutcure
+    // init main structure
     main.modules = modules;
     main.opts = opts_global;
     main.format = DEFAULT_FORMAT;
     main.rate = RATE;
-    main.spwm_colors = 0;
-    main.critical_color_idx = 1;
+    main.spwmcolors = 0;
+    main.spwmcoloridx = 1;
 
     // resolve/load config file
     if ((config = resolve_config_file(env))) {
