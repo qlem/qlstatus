@@ -28,12 +28,12 @@ void        parse_mem_stat(t_mem *mem, char *rstat) {
     free(stat);
 }
 
-int         parse_mem_file(t_mem *mem) {
-    FILE    *stream;
-    size_t  size = 0;
-    char    *line = NULL;
-    size_t  sline;
-    ssize_t nb;
+int             parse_mem_file(t_mem *mem) {
+    char        *line = NULL;
+    size_t      size = 0;
+    FILE        *stream;
+    size_t      sline;
+    ssize_t     nb;
 
     stream = open_stream(PROC_MEMINFO);
     while ((nb = getline(&line, &size, stream)) != -1) {

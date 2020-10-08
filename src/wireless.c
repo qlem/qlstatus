@@ -48,7 +48,7 @@ static int              nl_station_cb(struct nl_msg *msg, void *data) {
     int                 attrlen = genlmsg_attrlen(gnlh, 0);
     struct nlattr       *s_info[NL80211_STA_INFO_MAX + 1];
     static struct       nla_policy stats_policy[NL80211_STA_INFO_MAX + 1];
-    int                 signal = 0;
+    int                 signal;
 
     if (nla_parse(tb, NL80211_ATTR_MAX, attr, attrlen, NULL) < 0) {
         return NL_SKIP;
@@ -69,10 +69,10 @@ static int              nl_station_cb(struct nl_msg *msg, void *data) {
 }
 
 void            resolve_essid(t_wlan *wlan, struct nlattr *attr) {
+    uint32_t    bss_ies_len = nla_len(attr);
+    uint8_t     *bss_ies = nla_data(attr);
     uint8_t     *ssid = NULL;
     uint32_t    ssid_len = 0;
-    uint8_t     *bss_ies = nla_data(attr);
-    uint32_t    bss_ies_len = nla_len(attr);
 
     find_ssid(bss_ies, bss_ies_len, &ssid, &ssid_len);
     if (ssid && ssid_len) {
@@ -88,7 +88,7 @@ void            resolve_essid(t_wlan *wlan, struct nlattr *attr) {
 
 static int              nl_scan_cb(struct nl_msg *msg, void *data) {
     t_wlan              *wlan = data;
-    uint32_t            status = 0;
+    uint32_t            status;
     struct genlmsghdr   *gnlh = nlmsg_data(nlmsg_hdr(msg));
     struct nlattr       *attr = genlmsg_attrdata(gnlh, 0);
     int                 attrlen = genlmsg_attrlen(gnlh, 0);
@@ -131,7 +131,7 @@ static int              nl_scan_cb(struct nl_msg *msg, void *data) {
 
 static int          send_for_station(t_wlan *wlan) {
     struct nl_msg   *msg = NULL;
-    int             err = 0;
+    int             err;
 
     if ((err = nl_socket_modify_cb(wlan->socket, NL_CB_VALID, NL_CB_CUSTOM,
         nl_station_cb, wlan)) < 0) {
@@ -167,7 +167,7 @@ static int          send_for_station(t_wlan *wlan) {
 
 static int          send_for_scan(t_wlan *wlan) {
     struct nl_msg   *msg = NULL;
-    int             err = 0;
+    int             err;
 
     if ((err = nl_socket_modify_cb(wlan->socket, NL_CB_VALID, NL_CB_CUSTOM,
         nl_scan_cb, wlan)) < 0) {

@@ -11,12 +11,12 @@ void        free_cpu_usage(void *data) {
 }
 
 long        compute_cpu_usage(t_cpu *cpu) {
-    long    idle = 0;
-    long    total = 0;
-    long    usage;
-    long    diff_idle;
     long    diff_total;
+    long    diff_idle;
+    long    total = 0;
+    long    idle = 0;
     int     i = -1;
+    long    usage;
 
     while (++i < CPU_STATS_SIZE) {
         total += cpu->stats[i];
@@ -46,13 +46,13 @@ int         parse_cpu_stats(t_cpu *cpu, char *line) {
     return -1;
 }
 
-char        *parse_cpu_file() {
-    FILE    *stream;
-    size_t  size = 0;
-    char    *line = NULL;
-    size_t  sline;
-    char    *stats = NULL;
-    ssize_t nb;
+char            *parse_cpu_file() {
+    char        *stats = NULL;
+    char        *line = NULL;
+    size_t      size = 0;
+    FILE        *stream;
+    size_t      sline;
+    ssize_t     nb;
 
     stream = open_stream(PROC_STAT);
     nb = getline(&line, &size, stream);

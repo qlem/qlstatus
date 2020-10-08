@@ -9,9 +9,9 @@
 static uint8_t running = 1;
 
 char        *resolve_config_file(char **env) {
-    int     i = -1;
-    char    *home = NULL;
     char    *config = NULL;
+    char    *home = NULL;
+    int     i = -1;
 
     while (env[++i] && !(home = substring(HOME_PATTERN, env[i]))) {}
     if (!home) {
@@ -26,8 +26,8 @@ char        *resolve_config_file(char **env) {
 int             resolve_rate(t_main *main, struct timespec *tp) {
     char        **unit;
     char        **buf;
-    long        val;
     uint64_t    nsec;
+    long        val;
 
     unit = multiple_subs("^[0-9]+(s)$|^[0-9]+(ms)$", main->rate, 2);
     buf = multiple_subs("^([0-9]+)s$|^([0-9]+)ms$", main->rate, 2);
@@ -248,10 +248,10 @@ int     main(int argc, char **argv, char **env) {
     struct timespec     itime;
     struct timespec     prate;
     struct sigaction    act;
-    t_main              main;
     char                *config;
     char                *buffer;
     int                 i = -1;
+    t_main              main;
     int                 err;
 
     // init signal handler

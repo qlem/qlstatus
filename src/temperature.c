@@ -24,9 +24,9 @@ bool        has_asterisk(const char *path) {
 }
 
 char        *resolve_temp_dir(const char *path) {
-    char    *parent = NULL;
-    char    **files = NULL;
     char    *resolved = NULL;
+    char    **files = NULL;
+    char    *parent = NULL;
     size_t  size;
 
     size = v_strlen(path);
@@ -53,12 +53,12 @@ char        *resolve_temp_dir(const char *path) {
 }
 
 char        *resolve_temp_input_regex(const char *input) {
-    char    *regex = NULL;
     char    *start = "^temp[";
     char    *end = "]_input$";
-    size_t  in_len;
+    char    *regex = NULL;
     size_t  start_len;
     size_t  end_len;
+    size_t  in_len;
     int     i = -1;
 
     in_len = v_strlen(input);
@@ -115,8 +115,8 @@ void            *run_temperature(void *data) {
 void            init_temperature(void *data) {
     t_module    *module = data;
     t_temp      *temp = module->data;
-    char        *dir = NULL;
     char        *in_regex = NULL;
+    char        *dir = NULL;
     int         i = -1;
 
     while (++i < TEMP_NOPTS) {

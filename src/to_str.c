@@ -33,9 +33,9 @@ void        compute_tens(long nb, t_info *info) {
 
 char        *to_str(long nb) {
     char    *str = NULL;
+    int     i = 0;
     t_info  info;
     long    tmp;
-    int     i = 0;
 
     if (nb <= 0) {
         return nbr_eq_zero();

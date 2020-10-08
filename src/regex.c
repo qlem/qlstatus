@@ -23,8 +23,8 @@ int             compile_regex(const char *regex, regex_t *preg) {
 }
 
 char        **multiple_subs(const char *regex, const char *str, int nmatch) {
-    char            **match = NULL;
     regmatch_t      pmatch[nmatch + 1];
+    char            **match = NULL;
     int             i = -1;
     regex_t         preg;
     size_t          size;
@@ -53,8 +53,8 @@ char        **multiple_subs(const char *regex, const char *str, int nmatch) {
 }
 
 char                *substring(const char *regex, const char *str) {
-    regmatch_t      pmatch[2];
     char            *buffer = NULL;
+    regmatch_t      pmatch[2];
     int             i = -1;
     regex_t         preg;
     size_t          size;

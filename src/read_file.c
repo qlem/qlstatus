@@ -23,7 +23,7 @@ FILE        *open_stream(const char *file) {
     return stream;
 }
 
-off_t   file_len(const char *path) {
+off_t               file_len(const char *path) {
     struct stat     info;
 
     if (stat(path, &info) == -1) {
@@ -34,9 +34,9 @@ off_t   file_len(const char *path) {
 }
 
 char        *read_file(const char *file) {
-    int     fd;
     char    *buffer;
     off_t   size;
+    int     fd;
 
     if ((fd = open(file, O_RDONLY)) == -1) {
         printf("Cannot open file %s: %s\n", file, strerror(errno));
