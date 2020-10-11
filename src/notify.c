@@ -6,26 +6,38 @@
 
 #include "qlstatus.h"
 
-int         notify(const char *summary, const char *body, const char *icon,
-                   NotifyUrgency urgency) {
-    NotifyNotification  *notify = NULL;
-    if (!notify_init("qlstatus")) {
-        printf("Call to notify_init() failed\n");
-        return 1;
-    }
-    if (!(notify = notify_notification_new(summary, body, icon))) {
-        printf("Call to notify_notification_new() failed\n");
-        notify_uninit();
-        return 1;
-    }
-    notify_notification_set_urgency(notify, urgency);
-    if (!notify_notification_show(notify, NULL)) {
-        printf("Call to notify_notification_show() failed\n");
-        g_object_unref(G_OBJECT(notify));
-        notify_uninit();
-        return 1;
-    }
+int         notify_free(NotifyNotification *notify) {
     g_object_unref(G_OBJECT(notify));
     notify_uninit();
     return 0;
+}
+
+int     notify(NotifyNotification *notify, const char *summary,
+               const char *body, const char *icon, NotifyUrgency urgency) {
+    if (!notify_notification_update(notify, summary, body, icon)) {
+        fprintf(stderr, "Call to notify_notification_update() failed\n");
+        notify_uninit();
+        return -1;
+    }
+    notify_notification_set_urgency(notify, urgency);
+    if (!notify_notification_show(notify, NULL)) {
+        fprintf(stderr, "Call to notify_notification_show() failed\n");
+        notify_uninit();
+        return -1;
+    }
+    return 0;
+}
+
+NotifyNotification      *notify_new(const char *summary) {
+    NotifyNotification  *notify = NULL;
+    if (!notify_init("qlstatus")) {
+        fprintf(stderr, "Call to notify_init() failed\n");
+        return NULL;
+    }
+    if (!(notify = notify_notification_new(summary, NULL, NULL))) {
+        fprintf(stderr, "Call to notify_notification_new() failed\n");
+        notify_uninit();
+        return NULL;
+    }
+    return notify;
 }

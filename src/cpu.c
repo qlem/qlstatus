@@ -51,7 +51,6 @@ char            *parse_cpu_file() {
     char        *line = NULL;
     size_t      size = 0;
     FILE        *stream;
-    size_t      sline;
     ssize_t     nb;
 
     stream = open_stream(PROC_STAT);
@@ -66,10 +65,7 @@ char            *parse_cpu_file() {
         close_stream(stream, PROC_STAT);
         return NULL;
     }
-    sline = v_strlen(line);
-    if (line[sline - 1] == '\n') {
-        line[sline - 1] = 0;
-    }
+    line[nb - 1] == '\n' ? line[nb - 1] = 0 : 0;
     stats = substring(CPU_STATS_PATTERN, line);
     free(line);
     close_stream(stream, PROC_STAT);

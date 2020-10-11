@@ -256,22 +256,18 @@ int         parse_config_line(t_main *main, char *line, int nline) {
 }
 
 int         parse_config_file(t_main *main, const char *file) {
-    FILE    *stream;
-    size_t  size = 0;
     char    *line = NULL;
-    size_t  sline;
-    ssize_t nb;
+    size_t  size = 0;
+    FILE    *stream;
     int     i = 0;
+    ssize_t nb;
 
     if ((stream = fopen(file, "r")) == NULL) {
         return -1;
     }
     while ((nb = getline(&line, &size, stream)) != -1) {
         ++i;
-        sline = v_strlen(line);
-        if (line[sline - 1] == '\n') {
-            line[sline - 1] = 0;
-        }
+        line[nb - 1] == '\n' ? line[nb - 1] = 0 : 0;
         if (parse_config_line(main, line, i) < 0) {
             close_stream(stream, file);
             exit(EXIT_FAILURE);

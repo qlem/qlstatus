@@ -10,6 +10,7 @@ void            free_battery(void *data) {
     t_module    *module = data;
     t_power     *power = module->data;
 
+    notify_free(power->notify);
     free(power->file);
 }
 
@@ -69,15 +70,11 @@ int         parse_power_file(t_power *power) {
     FILE    *stream;
     size_t  size = 0;
     char    *line = NULL;
-    size_t  sline;
     ssize_t nb;
 
     stream = open_stream(power->file);
     while ((nb = getline(&line, &size, stream)) != -1) {
-        sline = v_strlen(line);
-        if (line[sline - 1] == '\n') {
-            line[sline - 1] = 0;
-        }
+        line[nb - 1] == '\n' ? line[nb - 1] = 0 : 0;
         parse_power_line(power, line);
         free(line);
         line = NULL;
@@ -101,16 +98,16 @@ void            power_notify(t_power *power) {
     if (power->status != power->last_status) {
         switch (power->status) {
             case PW_FULL:
-                notify("Power", BAT_NOTIFY_FULL, power->ic_full,
-                                                        NOTIFY_URGENCY_NORMAL);
+                notify(power->notify, "Power", BAT_NOTIFY_FULL, power->ic_full,
+                       NOTIFY_URGENCY_NORMAL);
                 break;
             case PW_CHARGING:
-                notify("Power", BAT_NOTIFY_PLUGGED, power->ic_plugged,
-                                                        NOTIFY_URGENCY_NORMAL);
+                notify(power->notify, "Power", BAT_NOTIFY_PLUGGED,
+                       power->ic_plugged, NOTIFY_URGENCY_NORMAL);
                 break;
             case PW_CRITICAL:
-                notify("Power", BAT_NOTIFY_LOW, power->ic_low,
-                                                    NOTIFY_URGENCY_CRITICAL);
+                notify(power->notify, "Power", BAT_NOTIFY_LOW, power->ic_low,
+                       NOTIFY_URGENCY_CRITICAL);
                 break;
             default:
                 break;
@@ -131,7 +128,7 @@ void            *run_battery(void *data) {
         exit(EXIT_FAILURE);
     }
     to_buffer(module, power);
-    if (power->notify) {
+    if (power->mnotify) {
         power_notify(power);
     }
     return NULL;
@@ -161,7 +158,7 @@ void            init_battery(void *data) {
         } else if (strcmp(module->opts[i].key, OPT_BAT_CRITICAL) == 0) {
             power->cthreshold = ((int *)module->opts[i].value)[0];
         } else if (strcmp(module->opts[i].key, OPT_BAT_NOTIFY) == 0) {
-            power->notify = ((int *)module->opts[i].value)[0];
+            power->mnotify = ((int *)module->opts[i].value)[0];
         } else if (strcmp(module->opts[i].key, OPT_BAT_NOTIFY_ICON_LOW) == 0) {
             power->ic_low = module->opts[i].value;
         } else if (strcmp(module->opts[i].key, OPT_BAT_NOTIFY_ICON_FULL) == 0) {
@@ -170,5 +167,8 @@ void            init_battery(void *data) {
                           OPT_BAT_NOTIFY_ICON_PLUGGED) == 0) {
             power->ic_plugged = module->opts[i].value;
         }
+    }
+    if (power->mnotify) {
+        power->notify = notify_new("Power");
     }
 }

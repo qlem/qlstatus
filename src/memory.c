@@ -32,21 +32,16 @@ int             parse_mem_file(t_mem *mem) {
     char        *line = NULL;
     size_t      size = 0;
     FILE        *stream;
-    size_t      sline;
     ssize_t     nb;
 
     stream = open_stream(PROC_MEMINFO);
     while ((nb = getline(&line, &size, stream)) != -1) {
-        sline = v_strlen(line);
-        if (line[sline - 1] == '\n') {
-            line[sline - 1] = 0;
-        }
+        line[nb - 1] == '\n' ? line[nb - 1] = 0 : 0;
         parse_mem_stat(mem, line);
         line = NULL;
         size = 0;
-        if (mem->total > -1 && mem->free > -1 &&
-            mem->buffers > -1 && mem->cached > -1 &&
-            mem->sreclaim > -1) {
+        if (mem->total > -1 && mem->free > -1 && mem->buffers > -1 &&
+            mem->cached > -1 && mem->sreclaim > -1) {
             close_stream(stream, PROC_MEMINFO);
             return 0;
         }

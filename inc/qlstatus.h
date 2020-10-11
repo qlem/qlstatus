@@ -215,7 +215,8 @@ typedef struct      s_power {
     char            *lb_unk;
     char            *lb_full;
     uint8_t         full_design;
-    uint8_t         notify;
+    uint8_t         mnotify;
+    NotifyNotification *notify;
     char            *raw_status;
     pw_status       status;
     pw_status       last_status;
@@ -364,8 +365,9 @@ char    *read_file(const char *file);
 int     parse_config_file(t_main *main, const char *file);
 
 // notify
-int     notify(const char *summary, const char *body, const char *icon,
-               NotifyUrgency urgency);
+NotifyNotification      *notify_new(const char *summary);
+int     notify(NotifyNotification *notify, const char *summary, const char *body, const char *icon, NotifyUrgency urgency);
+int     notify_free(NotifyNotification *notify);
 
 // routines
 void    *run_time(void *data);
