@@ -95,25 +95,22 @@ int         parse_power_file(t_power *power) {
 }
 
 void            power_notify(t_power *power) {
-    if (power->status != power->last_status) {
-        switch (power->status) {
-            case PW_FULL:
-                notify(power->notify, "Power", BAT_NOTIFY_FULL, power->ic_full,
-                       NOTIFY_URGENCY_NORMAL);
-                break;
-            case PW_CHARGING:
-                notify(power->notify, "Power", BAT_NOTIFY_PLUGGED,
-                       power->ic_plugged, NOTIFY_URGENCY_NORMAL);
-                break;
-            case PW_CRITICAL:
-                notify(power->notify, "Power", BAT_NOTIFY_LOW, power->ic_low,
-                       NOTIFY_URGENCY_CRITICAL);
-                break;
-            default:
-                break;
-        }
+    switch (power->status) {
+        case PW_FULL:
+            notify(power->notify, "Power", BAT_NOTIFY_FULL, power->ic_full,
+                    NOTIFY_URGENCY_NORMAL);
+            break;
+        case PW_CHARGING:
+            notify(power->notify, "Power", BAT_NOTIFY_PLUGGED,
+                    power->ic_plugged, NOTIFY_URGENCY_NORMAL);
+            break;
+        case PW_CRITICAL:
+            notify(power->notify, "Power", BAT_NOTIFY_LOW, power->ic_low,
+                    NOTIFY_URGENCY_CRITICAL);
+            break;
+        default:
+            break;
     }
-    power->last_status = power->status;
 }
 
 void            *run_battery(void *data) {
@@ -128,9 +125,10 @@ void            *run_battery(void *data) {
         exit(EXIT_FAILURE);
     }
     to_buffer(module, power);
-    if (power->mnotify) {
+    if (power->mnotify && power->status != power->last_status) {
         power_notify(power);
     }
+    power->last_status = power->status;
     return NULL;
 }
 
