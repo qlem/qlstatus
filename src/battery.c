@@ -10,7 +10,6 @@ void            free_battery(void *data) {
     t_module    *module = data;
     t_power     *power = module->data;
 
-    notify_free(power->notify);
     free(power->file);
 }
 

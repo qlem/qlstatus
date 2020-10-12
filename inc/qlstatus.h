@@ -367,7 +367,6 @@ int     parse_config_file(t_main *main, const char *file);
 // notify
 NotifyNotification      *notify_new(const char *summary);
 int     notify(NotifyNotification *notify, const char *summary, const char *body, const char *icon, NotifyUrgency urgency);
-int     notify_free(NotifyNotification *notify);
 
 // routines
 void    *run_time(void *data);

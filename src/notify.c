@@ -6,12 +6,6 @@
 
 #include "qlstatus.h"
 
-int         notify_free(NotifyNotification *notify) {
-    g_object_unref(G_OBJECT(notify));
-    notify_uninit();
-    return 0;
-}
-
 int     notify(NotifyNotification *notify, const char *summary,
                const char *body, const char *icon, NotifyUrgency urgency) {
     if (!notify_notification_update(notify, summary, body, icon)) {
@@ -30,10 +24,7 @@ int     notify(NotifyNotification *notify, const char *summary,
 
 NotifyNotification      *notify_new(const char *summary) {
     NotifyNotification  *notify = NULL;
-    if (!notify_init("qlstatus")) {
-        fprintf(stderr, "Call to notify_init() failed\n");
-        return NULL;
-    }
+
     if (!(notify = notify_notification_new(summary, NULL, NULL))) {
         fprintf(stderr, "Call to notify_notification_new() failed\n");
         notify_uninit();

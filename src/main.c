@@ -61,6 +61,9 @@ void        free_resources(t_main *main) {
     int     i = -1;
     int     j;
 
+    // free libnotify
+    notify_uninit();
+
     // free global option values
     while (++i < GLOBAL_NOPTS) {
         if (main->opts[i].to_free) {
@@ -268,6 +271,12 @@ int     main(int argc, char **argv, char **env) {
     main.rate = RATE;
     main.spwmcolors = 0;
     main.spwmcoloridx = 1;
+
+    // init libnotify
+    if (!notify_init("qlstatus")) {
+        fprintf(stderr, "Call to notify_init() failed\n");
+        return -1;
+    }
 
     // resolve/load config file
     if ((config = resolve_config_file(env))) {
