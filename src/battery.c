@@ -97,15 +97,15 @@ void            power_notify(t_power *power) {
     switch (power->status) {
         case PW_FULL:
             notify(power->notify, "Power", BAT_NOTIFY_FULL, power->ic_full,
-                    NOTIFY_URGENCY_NORMAL);
+                   NOTIFY_URGENCY_NORMAL);
             break;
         case PW_CHARGING:
             notify(power->notify, "Power", BAT_NOTIFY_PLUGGED,
-                    power->ic_plugged, NOTIFY_URGENCY_NORMAL);
+                   power->ic_plugged, NOTIFY_URGENCY_NORMAL);
             break;
         case PW_CRITICAL:
             notify(power->notify, "Power", BAT_NOTIFY_LOW, power->ic_low,
-                    NOTIFY_URGENCY_CRITICAL);
+                   NOTIFY_URGENCY_CRITICAL);
             break;
         default:
             break;
