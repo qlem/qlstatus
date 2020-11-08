@@ -6,6 +6,9 @@
 
 #include "qlstatus.h"
 
+// Based from sources of pa_volume_snprint() function
+#define VOLUME(avg) (((uint64_t)avg * 100 + (uint64_t)PA_VOLUME_NORM / 2) / (uint64_t)PA_VOLUME_NORM)
+
 void            free_volume(void *data) {
     t_module    *module = data;
     t_pulse     *pulse = module->data;
@@ -19,18 +22,16 @@ void        sink_info_cb(pa_context *context, const pa_sink_info *info,
                          int eol, void *data) {
     t_module        *module = data;
     t_pulse         *pulse = module->data;
-    pa_volume_t     volume_avg;
+    pa_volume_t     avg;
 
     (void)context;
     if (eol == 0) {
-        volume_avg = pa_cvolume_avg(&info->volume);
+        avg = pa_cvolume_avg(&info->volume);
         v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
         if (info->mute) {
-            set_generic_module_buffer(module, PERCENT(volume_avg,
-                                      PA_VOLUME_NORM), pulse->lb_mute, "%");
+            set_generic_module_buffer(module, VOLUME(avg), pulse->lb_mute, "%");
         } else {
-            set_generic_module_buffer(module, PERCENT(volume_avg,
-                                      PA_VOLUME_NORM), pulse->label, "%");
+            set_generic_module_buffer(module, VOLUME(avg), pulse->label, "%");
         }
     }
     pa_threaded_mainloop_signal(pulse->mainloop, 0);

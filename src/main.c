@@ -87,20 +87,17 @@ void        free_resources(t_main *main) {
     }
 }
 
-void        subtract_time(struct timespec *end, struct timespec *start,
-                          struct timespec *diff) {
-    long    sdiff = end->tv_sec - start->tv_sec;
-    long    nsdiff = end->tv_nsec - start->tv_nsec;
+void        compute_tick(struct timespec *ref, struct timespec *rate,
+                         struct timespec *tick) {
+    long    sec = ref->tv_sec + rate->tv_sec;
+    long    nsec = ref->tv_nsec + rate->tv_nsec;
 
-    if (sdiff < 0 || (sdiff == 0 && nsdiff < 0)) {
-        diff->tv_sec = 0;
-        diff->tv_nsec = 0;
-    } else if (nsdiff < 0) {
-        diff->tv_sec = sdiff - 1;
-        diff->tv_nsec = NSEC + nsdiff;
+    if (nsec > NSEC) {
+        tick->tv_sec = sec + 1;
+        tick->tv_nsec = nsec - (long)1e9;
     } else {
-        diff->tv_sec = sdiff;
-        diff->tv_nsec = nsdiff;
+        tick->tv_sec = sec;
+        tick->tv_nsec = nsec;
     }
 }
 
@@ -246,10 +243,8 @@ int     main(int argc, char **argv, char **env) {
 
     // vars declaration
     struct timespec     rate;
-    struct timespec     start;
-    struct timespec     end;
-    struct timespec     itime;
-    struct timespec     prate;
+    struct timespec     ref;
+    struct timespec     tick;
     struct sigaction    act;
     char                *config;
     char                *buffer;
@@ -261,8 +256,7 @@ int     main(int argc, char **argv, char **env) {
     v_memset(&act, 0, sizeof(struct sigaction));
     act.sa_handler = signal_handler;
     sigemptyset(&act.sa_mask);
-    sigaction(SIGINT, &act, NULL);
-    sigaction(SIGTERM, &act, NULL);
+    sigaction(SIGINT | SIGTERM, &act, NULL);
 
     // init main structure
     main.modules = modules;
@@ -297,8 +291,8 @@ int     main(int argc, char **argv, char **env) {
     // main loop
     while (running) {
 
-        // store start time
-        if (clock_gettime(CLOCK_REALTIME, &start) == -1) {
+        // store reference time
+        if (clock_gettime(CLOCK_REALTIME, &ref) == -1) {
             printf("Call to clock_gettime() failed: %s\n", strerror(errno));
             exit(EXIT_FAILURE);
         }
@@ -333,16 +327,12 @@ int     main(int argc, char **argv, char **env) {
         putstr(buffer);
         free(buffer);
 
-        // adjust rate based on the execution time of the loop iteration
-        if (clock_gettime(CLOCK_REALTIME, &end) == -1) {
-            printf("Call to clock_gettime() failed: %s\n", strerror(errno));
-            exit(EXIT_FAILURE);
-        }
-        subtract_time(&end, &start, &itime);
-        subtract_time(&rate, &itime, &prate);
+        // compute tick duration
+        compute_tick(&ref, &rate, &tick);
 
         // waiting
-        if ((err = clock_nanosleep(CLOCK_REALTIME, 0, &prate, NULL))) {
+        if ((err = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tick,
+                                   NULL))) {
             if (err != EINTR) {
                 printf("Call to clock_nanosleep() failed: %s\n", strerror(err));
                 exit(EXIT_FAILURE);
