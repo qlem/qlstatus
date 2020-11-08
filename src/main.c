@@ -256,7 +256,8 @@ int     main(int argc, char **argv, char **env) {
     v_memset(&act, 0, sizeof(struct sigaction));
     act.sa_handler = signal_handler;
     sigemptyset(&act.sa_mask);
-    sigaction(SIGINT | SIGTERM, &act, NULL);
+    sigaction(SIGINT, &act, NULL);
+    sigaction(SIGTERM, &act, NULL);
 
     // init main structure
     main.modules = modules;
