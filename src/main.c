@@ -255,9 +255,18 @@ int     main(int argc, char **argv, char **env) {
     // init signal handler
     v_memset(&act, 0, sizeof(struct sigaction));
     act.sa_handler = signal_handler;
-    sigemptyset(&act.sa_mask);
-    sigaction(SIGINT, &act, NULL);
-    sigaction(SIGTERM, &act, NULL);
+    if (sigemptyset(&act.sa_mask) == -1) {
+        fprintf(stderr, "Call to sigemptyset() failed: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGINT, &act, NULL) == -1) {
+        fprintf(stderr, "Call to sigaction() failed: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGTERM, &act, NULL) == -1) {
+        fprintf(stderr, "Call to sigaction() failed: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
 
     // init main structure
     main.modules = modules;
@@ -270,7 +279,7 @@ int     main(int argc, char **argv, char **env) {
     // init libnotify
     if (!notify_init("qlstatus")) {
         fprintf(stderr, "Call to notify_init() failed\n");
-        return -1;
+        exit(EXIT_FAILURE);
     }
 
     // resolve/load config file
