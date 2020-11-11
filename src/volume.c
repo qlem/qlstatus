@@ -61,28 +61,21 @@ void                    *pulse_connect(void *data) {
     }
     if ((mloop_api = pa_threaded_mainloop_get_api(pulse->mainloop)) == NULL) {
         fprintf(stderr, "Call to pa_threaded_mainloop_get_api() failed\n");
-        pa_threaded_mainloop_free(pulse->mainloop);
         exit(EXIT_FAILURE);
     }
     if ((pulse->context = pa_context_new(mloop_api, PULSE_APP_NAME)) == NULL) {
         fprintf(stderr, "Call to pa_context_new() failed\n");
-        pa_threaded_mainloop_free(pulse->mainloop);
         exit(EXIT_FAILURE);
     }
     pa_context_set_state_callback(pulse->context, context_state_cb, pulse);
     if (pa_context_connect(pulse->context, NULL, PA_CONTEXT_NOFAIL |
                            PA_CONTEXT_NOAUTOSPAWN, NULL) < 0) {
         fprintf(stderr, "Call to pa_context_connect() failed\n");
-        pa_context_unref(pulse->context);
-        pa_threaded_mainloop_free(pulse->mainloop);
         exit(EXIT_FAILURE);
 
     }
     if (pa_threaded_mainloop_start(pulse->mainloop) < 0) {
         fprintf(stderr, "Call to pa_threaded_mainloop_start() failed\n");
-        pa_context_disconnect(pulse->context);
-        pa_context_unref(pulse->context);
-        pa_threaded_mainloop_free(pulse->mainloop);
         exit(EXIT_FAILURE);
     }
     while (pulse->connected == 0) {
