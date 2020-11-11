@@ -11,6 +11,9 @@ void            free_battery(void *data) {
     t_power     *power = module->data;
 
     free(power->file);
+    if (power->mnotify) {
+        g_object_unref(G_OBJECT(power->notify));
+    }
 }
 
 char        *resolve_power_file(const char *dir, const char *pw_name,

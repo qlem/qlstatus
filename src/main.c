@@ -54,15 +54,13 @@ int             resolve_rate(t_main *main, struct timespec *tp) {
 
 void    signal_handler(int signum) {
     (void)signum;
+    printf("Exiting ql-status\n");
     running = 0;
 }
 
 void        free_resources(t_main *main) {
     int     i = -1;
     int     j;
-
-    // free libnotify
-    notify_uninit();
 
     // free global option values
     while (++i < GLOBAL_NOPTS) {
@@ -85,6 +83,9 @@ void        free_resources(t_main *main) {
             }
         }
     }
+
+    // free libnotify
+    notify_uninit();
 }
 
 void        compute_tick(struct timespec *ref, struct timespec *rate,
@@ -351,7 +352,6 @@ int     main(int argc, char **argv, char **env) {
     }
 
     // free resources on exit
-    printf("Exiting ql-status\n");
     free_resources(&main);
     return 0;
 }
