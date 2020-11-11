@@ -9,6 +9,11 @@
 char        *append_single_char(char *buffer, char c) {
     size_t  size;
 
+    if (buffer == NULL) {
+        buffer = alloc_buffer(sizeof(char) * 2);
+        buffer[0] = c;
+        return buffer;
+    }
     size = v_strlen(buffer) + 2;
     if ((buffer = realloc(buffer, sizeof(char) * size)) == NULL) {
         printf("Call to realloc() failed: %s\n", strerror(errno));
