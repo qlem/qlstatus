@@ -78,6 +78,7 @@ void                    *pulse_connect(void *data) {
         exit(EXIT_FAILURE);
 
     }
+    pulse->mainloop = NULL;
     if (pa_threaded_mainloop_start(pulse->mainloop) < 0) {
         fprintf(stderr, "Call to pa_threaded_mainloop_start() failed\n");
         pa_context_disconnect(pulse->context);
@@ -132,11 +133,11 @@ void            init_volume(void *data) {
         }
     }
     if ((err = pthread_create(&thread, NULL, pulse_connect, pulse)) != 0) {
-        printf("Call to pthread_create() failed: %s\n", strerror(err));
+        fprintf(stderr, "Call to pthread_create() failed: %s\n", strerror(err));
         exit(EXIT_FAILURE);
     }
     if ((err = pthread_join(thread, NULL)) != 0) {
-        printf("Call to pthread_join() failed: %s\n", strerror(err));
+        fprintf(stderr, "Call to pthread_join() failed: %s\n", strerror(err));
         exit(EXIT_FAILURE);
     }
 }
