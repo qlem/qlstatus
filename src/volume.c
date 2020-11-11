@@ -72,7 +72,6 @@ void                    *pulse_connect(void *data) {
                            PA_CONTEXT_NOAUTOSPAWN, NULL) < 0) {
         fprintf(stderr, "Call to pa_context_connect() failed\n");
         exit(EXIT_FAILURE);
-
     }
     if (pa_threaded_mainloop_start(pulse->mainloop) < 0) {
         fprintf(stderr, "Call to pa_threaded_mainloop_start() failed\n");
