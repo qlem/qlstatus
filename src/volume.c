@@ -78,7 +78,6 @@ void                    *pulse_connect(void *data) {
         exit(EXIT_FAILURE);
 
     }
-    pulse->mainloop = NULL;
     if (pa_threaded_mainloop_start(pulse->mainloop) < 0) {
         fprintf(stderr, "Call to pa_threaded_mainloop_start() failed\n");
         pa_context_disconnect(pulse->context);
