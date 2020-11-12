@@ -25,7 +25,7 @@ NotifyNotification      *notify_new(const char *summary) {
 
     if (!(notify = notify_notification_new(summary, NULL, NULL))) {
         fprintf(stderr, "Call to notify_notification_new() failed\n");
-        return NULL;
+        exit(EXIT_FAILURE);
     }
     return notify;
 }
