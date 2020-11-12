@@ -25,11 +25,17 @@ char        *resolve_power_file(const char *dir, const char *pw_name,
     return path;
 }
 
-void        to_buffer(t_module *module, t_power *power) {
+int         to_buffer(t_module *module, t_power *power) {
     int     value;
 
     module->critical = 0;
     v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
+    if (!power->raw_status || power->current < -1 || power->max < -1) {
+        sprintf(module->buffer, "bat --%%");
+        power->status = PW_UNKNOWN;
+        module->critical = 0;
+        return 0;
+    }
     value = PERCENT(power->current, power->max);
     if (strcmp(power->raw_status, BAT_STATUS_DIS) == 0) {
         set_generic_module_buffer(module, value, power->lb_dis, "%");
@@ -47,7 +53,7 @@ void        to_buffer(t_module *module, t_power *power) {
         power->status = value <= power->cthreshold ? PW_CRITICAL : PW_UNKNOWN;
         module->critical = power->status == PW_CRITICAL ? 1 : 0;
     }
-    free(power->raw_status);
+    return 0;
 }
 
 void        parse_power_line(t_power *power, const char *line) {
@@ -93,7 +99,7 @@ int         parse_power_file(t_power *power) {
     }
     free(line);
     close_stream(stream, power->file);
-    return -1;
+    return 0;
 }
 
 void            power_notify(t_power *power) {
@@ -122,11 +128,9 @@ void            *run_battery(void *data) {
     power->max = -1;
     power->current = -1;
     power->raw_status = NULL;
-    if (parse_power_file(power) == -1) {
-        printf("Cannot compute battery percent: missing statistics\n");
-        exit(EXIT_FAILURE);
-    }
+    parse_power_file(power);
     to_buffer(module, power);
+    free(power->raw_status);
     if (power->mnotify && power->status != power->last_status) {
         power_notify(power);
     }
