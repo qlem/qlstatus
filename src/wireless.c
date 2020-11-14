@@ -248,7 +248,7 @@ void            init_wireless(void *data) {
     }
     wlan->socket = nl_socket_alloc();
     if (wlan->socket == NULL) {
-        printf("Unable to allocate memory for netlink socket\n");
+        printf("Call to nl_socket_alloc() failed\n");
         exit(EXIT_FAILURE);
     }
     if ((err = genl_connect(wlan->socket)) < 0) {

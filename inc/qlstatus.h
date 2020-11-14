@@ -362,7 +362,7 @@ char    **read_dir(const char *path, const char *regex);
 char    *read_file(const char *file);
 
 // config file
-int     parse_config_file(t_main *main, const char *file);
+int     load_config_file(t_main *main, const char *file);
 
 // notify
 NotifyNotification      *notify_new(const char *summary);

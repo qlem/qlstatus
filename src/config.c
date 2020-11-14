@@ -255,7 +255,7 @@ int         parse_config_line(t_main *main, char *line, int nline) {
     return 0;
 }
 
-int         parse_config_file(t_main *main, const char *file) {
+int         load_config_file(t_main *main, const char *file) {
     char    *line = NULL;
     size_t  size = 0;
     FILE    *stream;

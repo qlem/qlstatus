@@ -15,6 +15,7 @@ char        *resolve_config_file(char **env) {
 
     while (env[++i] && !(home = substring(HOME_PATTERN, env[i]))) {}
     if (!home) {
+        printf("Config file not found\n");
         return NULL;
     }
     config = alloc_buffer(v_strlen(home) + v_strlen(CONFIG_FILE) + 2);
@@ -285,7 +286,7 @@ int     main(int argc, char **argv, char **env) {
 
     // resolve/load config file
     if ((config = resolve_config_file(env))) {
-        parse_config_file(&main, config);
+        load_config_file(&main, config);
         free(config);
     }
 
