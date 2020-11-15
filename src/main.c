@@ -15,7 +15,7 @@ char        *resolve_config_file(char **env) {
 
     while (env[++i] && !(home = substring(HOME_PATTERN, env[i]))) {}
     if (!home) {
-        printf("Config file not found\n");
+        fprintf(stderr, "Cannot resolve config file: HOME dir not found\n");
         return NULL;
     }
     config = alloc_buffer(v_strlen(home) + v_strlen(CONFIG_FILE) + 2);
@@ -305,7 +305,8 @@ int     main(int argc, char **argv, char **env) {
 
         // store reference time
         if (clock_gettime(CLOCK_REALTIME, &ref) == -1) {
-            printf("Call to clock_gettime() failed: %s\n", strerror(errno));
+            fprintf(stderr, "Call to clock_gettime() failed: %s\n",
+                    strerror(errno));
             exit(EXIT_FAILURE);
         }
 
@@ -315,8 +316,8 @@ int     main(int argc, char **argv, char **env) {
             if (main.modules[i].enabled) {
                 if ((err = pthread_create(&main.modules[i].thread, NULL,
                     main.modules[i].routine, &main.modules[i])) != 0) {
-                    printf("Call to pthread_create() failed: %s\n",
-                           strerror(err));
+                    fprintf(stderr, "Call to pthread_create() failed: %s\n",
+                            strerror(err));
                     exit(EXIT_FAILURE);
                 }
             }
@@ -327,8 +328,8 @@ int     main(int argc, char **argv, char **env) {
         while (++i < NB_MODULES) {
             if (main.modules[i].enabled) {
                 if ((err = pthread_join(main.modules[i].thread, NULL)) != 0) {
-                    printf("Call to pthread_join() failed: %s\n",
-                           strerror(err));
+                    fprintf(stderr, "Call to pthread_join() failed: %s\n",
+                            strerror(err));
                     exit(EXIT_FAILURE);
                 }
             }
@@ -346,7 +347,8 @@ int     main(int argc, char **argv, char **env) {
         if ((err = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tick,
                                    NULL))) {
             if (err != EINTR) {
-                printf("Call to clock_nanosleep() failed: %s\n", strerror(err));
+                fprintf(stderr, "Call to clock_nanosleep() failed: %s\n",
+                        strerror(err));
                 exit(EXIT_FAILURE);
             }
         }

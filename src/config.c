@@ -31,7 +31,8 @@ int         check_global_opts(t_main *main, char **opt, int nline) {
         if (strcmp(opt[0], main->opts[i].key) == 0) {
             // check if value match pattern
             if (!match_pattern(main->opts[i].pattern, opt[1])) {
-                printf("Invalid value at line %d: %s\n", nline, opt[0]);
+                fprintf(stderr, "Invalid value at line %d: %s\n", nline,
+                        opt[0]);
                 return -1;
             }
             // set option value
@@ -76,7 +77,8 @@ int             check_module_opts(t_module *modules, char **opt, int nline) {
             if (strcmp(opt[0], opts[j].key) == 0) {
                 // check if value match pattern
                 if (!match_pattern(opts[j].pattern, opt[1])) {
-                    printf("Invalid value at line %d: %s\n", nline, opt[0]);
+                    fprintf(stderr, "Invalid value at line %d: %s\n", nline,
+                            opt[0]);
                     return -1;
                 }
                 // set option value
@@ -217,8 +219,8 @@ int         parse_config_line(t_main *main, char *line, int nline) {
 
     // check if key and value exist
     if (!opt[0] || !opt[1]) {
-        printf("Invalid option at line %d: %s\n", nline,
-               opt[0] ? opt[0] : opt[1]);
+        fprintf(stderr, "Invalid option at line %d: %s\n", nline,
+                opt[0] ? opt[0] : opt[1]);
         free(line);
         free_opt(opt);
         return -1;
@@ -242,7 +244,7 @@ int         parse_config_line(t_main *main, char *line, int nline) {
 
     // check if the option exist
     if (mcode == 1 && gcode == 1) {
-        printf("Invalid option at line %d: %s\n", nline, opt[0]);
+        fprintf(stderr, "Invalid option at line %d: %s\n", nline, opt[0]);
         free(line);
         free_opt(opt);
         return -1;
@@ -263,6 +265,7 @@ int         load_config_file(t_main *main, const char *file) {
     ssize_t nb;
 
     if ((stream = fopen(file, "r")) == NULL) {
+        fprintf(stderr, "Cannot load config file: %s\n", strerror(errno));
         return -1;
     }
     while ((nb = getline(&line, &size, stream)) != -1) {
@@ -276,7 +279,7 @@ int         load_config_file(t_main *main, const char *file) {
         size = 0;
     }
     if (nb == -1 && errno) {
-        printf("Error reading file %s: %s\n", file, strerror(errno));
+        fprintf(stderr, "Error reading file %s: %s\n", file, strerror(errno));
         close_stream(stream, file);
         exit(EXIT_FAILURE);
     }

@@ -57,7 +57,8 @@ char            *parse_cpu_file() {
     nb = getline(&line, &size, stream);
     if (nb == -1) {
         if (errno) {
-            printf("Error reading file %s: %s\n", PROC_STAT, strerror(errno));
+            fprintf(stderr, "Error reading file %s: %s\n", PROC_STAT,
+                    strerror(errno));
             close_stream(stream, PROC_STAT);
             exit(EXIT_FAILURE);
         }
@@ -79,11 +80,11 @@ void            *run_cpu_usage(void *data) {
     long        value;
 
     if ((rstats = parse_cpu_file()) == NULL) {
-        printf("Cannot compute cpu usage: missing statistics\n");
+        fprintf(stderr, "Cannot compute cpu usage: missing statistics\n");
         exit(EXIT_FAILURE);
     }
     if (parse_cpu_stats(cpu, rstats) == -1) {
-        printf("Cannot compute cpu usage: missing statistics\n");
+        fprintf(stderr, "Cannot compute cpu usage: missing statistics\n");
         free(rstats);
         exit(EXIT_FAILURE);
     }

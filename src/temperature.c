@@ -39,7 +39,7 @@ char        *resolve_temp_dir(const char *path) {
     v_strncpy(parent, path, size - 1);
     files = read_dir(parent, NULL);
     if (!files[0][0]) {
-        printf("Cannot resolve temp directory %s\n", path);
+        fprintf(stderr, "Cannot resolve temp directory %s\n", path);
         free_files(files);
         free(parent);
         exit(EXIT_FAILURE);
@@ -133,7 +133,8 @@ void            init_temperature(void *data) {
     temp->inputs = read_dir(dir, in_regex);
     free(in_regex);
     if (!temp->inputs[0][0]) {
-        printf("Cannot compute temp, no input files found in %s\n", dir);
+        fprintf(stderr, "Cannot resolve temp dir, no input files found in %s\n",
+                dir);
         free_files(temp->inputs);
         free(dir);
         exit(EXIT_FAILURE);

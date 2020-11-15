@@ -15,7 +15,7 @@ int             compile_regex(const char *regex, regex_t *preg) {
         size = regerror(errcode, preg, buffer, size);
         buffer = alloc_buffer(size + 1);
         regerror(errcode, preg, buffer, size);
-        printf("Cannot compile regex: %s\n", buffer);
+        fprintf(stderr, "Cannot compile regex: %s\n", buffer);
         free(buffer);
         exit(EXIT_FAILURE);
     }

@@ -27,7 +27,7 @@ char        **add_file(char **files, size_t *size, const char *file,
     }
     free(files[*size - 1]);
     if ((files = realloc(files, sizeof(char *) * ++(*size))) == NULL) {
-        printf("Call to realloc() failed: %s\n", strerror(errno));
+        fprintf(stderr, "Call to realloc() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
     sfile = v_strlen(file);
@@ -51,7 +51,7 @@ char                **read_dir(const char *path, const char *regex) {
     DIR             *dir;
 
     if ((dir = opendir(path)) == NULL) {
-        printf("Cannot open dir %s: %s\n", path, strerror(errno));
+        fprintf(stderr, "Cannot open dir %s: %s\n", path, strerror(errno));
         exit(EXIT_FAILURE);
     }
     files = alloc_ptr(sizeof(char *));
@@ -60,11 +60,11 @@ char                **read_dir(const char *path, const char *regex) {
         files = add_file(files, &size, s_dir->d_name, regex, path);
     }
     if (errno) {
-        printf("Error readding dir %s: %s\n", path, strerror(errno));
+        fprintf(stderr, "Error readding dir %s: %s\n", path, strerror(errno));
         exit(EXIT_FAILURE);
     }
     if (closedir(dir) == -1) {
-        printf("Cannot close dir %s: %s\n", path, strerror(errno));
+        fprintf(stderr, "Cannot close dir %s: %s\n", path, strerror(errno));
         exit(EXIT_FAILURE);
     }
     return files;

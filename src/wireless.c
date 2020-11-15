@@ -135,31 +135,33 @@ static int          send_for_station(t_wlan *wlan) {
 
     if ((err = nl_socket_modify_cb(wlan->socket, NL_CB_VALID, NL_CB_CUSTOM,
         nl_station_cb, wlan)) < 0) {
-        printf("Call to nl_socket_modify_cb() failed: %s\n", nl_geterror(err));
+        fprintf(stderr, "Call to nl_socket_modify_cb() failed: %s\n",
+                nl_geterror(err));
         return -1;
     }
     if ((msg = nlmsg_alloc()) == NULL) {
-        printf("Call to nlmsg_alloc() failed\n");
+        fprintf(stderr, "Call to nlmsg_alloc() failed\n");
         return -1;
     }
     if (genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, wlan->nl80211_id, 0,
         NLM_F_DUMP, NL80211_CMD_GET_STATION, 0) == NULL) {
-        printf("Call to genlmsg_put() failed\n");
+        fprintf(stderr, "Call to genlmsg_put() failed\n");
         nlmsg_free(msg);
         return -1;
     }
     if ((err = nla_put_u32(msg, NL80211_ATTR_IFINDEX, wlan->ifindex)) < 0) {
-        printf("Call to nla_put_u32() failed: %s\n", nl_geterror(err));
+        fprintf(stderr, "Call to nla_put_u32() failed: %s\n", nl_geterror(err));
         nlmsg_free(msg);
         return -1;
     }
     if ((err = nla_put(msg, NL80211_ATTR_MAC, 6, wlan->bssid)) < 0) {
-        printf("Call to nla_put() failed: %s\n", nl_geterror(err));
+        fprintf(stderr, "Call to nla_put() failed: %s\n", nl_geterror(err));
         nlmsg_free(msg);
         return -1;
     }
     if ((err = nl_send_sync(wlan->socket, msg)) < 0) {
-        printf("Call to nl_send_sync() failed: %s\n", nl_geterror(err));
+        fprintf(stderr, "Call to nl_send_sync() failed: %s\n",
+                nl_geterror(err));
         return -1;
     }
     return 0;
@@ -171,26 +173,28 @@ static int          send_for_scan(t_wlan *wlan) {
 
     if ((err = nl_socket_modify_cb(wlan->socket, NL_CB_VALID, NL_CB_CUSTOM,
         nl_scan_cb, wlan)) < 0) {
-        printf("Call to nl_socket_modify_cb() failed: %s\n", nl_geterror(err));
+        fprintf(stderr, "Call to nl_socket_modify_cb() failed: %s\n",
+                nl_geterror(err));
         return -1;
     }
     if ((msg = nlmsg_alloc()) == NULL) {
-        printf("Call to nlmsg_alloc() failed\n");
+        fprintf(stderr, "Call to nlmsg_alloc() failed\n");
         return -1;
     }
     if (genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, wlan->nl80211_id, 0,
         NLM_F_DUMP, NL80211_CMD_GET_SCAN, 0) == NULL) {
-        printf("Call to genlmsg_put() failed\n");
+        fprintf(stderr, "Call to genlmsg_put() failed\n");
         nlmsg_free(msg);
         return -1;
     }
     if ((err = nla_put_u32(msg, NL80211_ATTR_IFINDEX, wlan->ifindex)) < 0) {
-        printf("Call to nla_put_u32() failed: %s\n", nl_geterror(err));
+        fprintf(stderr, "Call to nla_put_u32() failed: %s\n", nl_geterror(err));
         nlmsg_free(msg);
         return -1;
     }
     if ((err = nl_send_sync(wlan->socket, msg)) < 0) {
-        printf("Call to nl_send_sync() failed: %s\n", nl_geterror(err));
+        fprintf(stderr, "Call to nl_send_sync() failed: %s\n",
+                nl_geterror(err));
         return -1;
     }
     return 0;
@@ -248,23 +252,24 @@ void            init_wireless(void *data) {
     }
     wlan->socket = nl_socket_alloc();
     if (wlan->socket == NULL) {
-        printf("Call to nl_socket_alloc() failed\n");
+        fprintf(stderr, "Call to nl_socket_alloc() failed\n");
         exit(EXIT_FAILURE);
     }
     if ((err = genl_connect(wlan->socket)) < 0) {
-        printf("Call to genl_connect() failed: %s\n", nl_geterror(err));
+        fprintf(stderr, "Call to genl_connect() failed: %s\n",
+                nl_geterror(err));
         nl_socket_free(wlan->socket);
         exit(EXIT_FAILURE);
     }
     if ((wlan->nl80211_id = genl_ctrl_resolve(wlan->socket, NL80211)) < 0) {
-        printf("Call to genl_ctrl_resolve() failed: %s\n",
-               nl_geterror(wlan->nl80211_id));
+        fprintf(stderr, "Call to genl_ctrl_resolve() failed: %s\n",
+                nl_geterror(wlan->nl80211_id));
         nl_socket_free(wlan->socket);
         exit(EXIT_FAILURE);
     }
     if ((wlan->ifindex = if_nametoindex(wlan->ifname)) == 0) {
-        printf("Unable to resolve wireless interface %s: %s\n", wlan->ifname,
-               strerror(errno));
+        fprintf(stderr, "Unable to resolve wireless interface %s: %s\n",
+                wlan->ifname, strerror(errno));
         nl_socket_free(wlan->socket);
         exit(EXIT_FAILURE);
     }

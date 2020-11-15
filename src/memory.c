@@ -47,7 +47,8 @@ int             parse_mem_file(t_mem *mem) {
         }
     }
     if (nb == -1 && errno) {
-        printf("Error reading file %s: %s\n", PROC_MEMINFO, strerror(errno));
+        fprintf(stderr, "Error reading file %s: %s\n", PROC_MEMINFO,
+                strerror(errno));
         close_stream(stream, PROC_MEMINFO);
         exit(EXIT_FAILURE);
     }
@@ -67,7 +68,7 @@ void            *run_memory(void *data) {
     mem->cached = -1;
     mem->sreclaim = -1;
     if (parse_mem_file(mem) == -1) {
-        printf("Cannot compute memory usage: missing statistics\n");
+        fprintf(stderr, "Cannot compute memory usage: missing statistics\n");
         exit(EXIT_FAILURE);
     }
     used = mem->total - mem->free - mem->buffers - mem->cached - mem->sreclaim;

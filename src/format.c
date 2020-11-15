@@ -16,7 +16,7 @@ char        *append_single_char(char *buffer, char c) {
     }
     size = v_strlen(buffer) + 2;
     if ((buffer = realloc(buffer, sizeof(char) * size)) == NULL) {
-        printf("Call to realloc() failed: %s\n", strerror(errno));
+        fprintf(stderr, "Call to realloc() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
     buffer[size - 2] = c;
@@ -88,7 +88,7 @@ char        *format(t_main *main) {
                 }
             }
             if (j == NB_MODULES) {
-                printf("Format error: bad format\n");
+                fprintf(stderr, "Format error: bad format\n");
                 exit(EXIT_FAILURE);
             }
         } else {

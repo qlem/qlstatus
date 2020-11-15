@@ -43,7 +43,7 @@ int         putstr(const char *str) {
     size_t  size = v_strlen(str);
 
     if (write(1, str, size) == -1) {
-        printf("Call to write() failed: %s\n", strerror(errno));
+        fprintf(stderr, "Call to write() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
     return size;
@@ -53,7 +53,7 @@ char        *alloc_buffer(size_t size) {
     char    *buffer;
 
     if ((buffer = malloc(sizeof(char) * size)) == NULL) {
-        printf("Call to malloc() failed: %s\n", strerror(errno));
+        fprintf(stderr, "Call to malloc() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
     v_memset(buffer, 0, size);
@@ -64,7 +64,7 @@ void        *alloc_ptr(size_t size) {
     void    *ptr;
 
     if ((ptr = malloc(size)) == NULL) {
-        printf("Call to malloc() failed: %s\n", strerror(errno));
+        fprintf(stderr, "Call to malloc() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
     return ptr;
@@ -75,7 +75,7 @@ long        to_int(const char *str) {
 
     nb = strtol(str, NULL, BASE);
     if ((nb == LONG_MIN || nb == LONG_MAX)) {
-        printf("Call to strtol() failed: %s\n", strerror(errno));
+        fprintf(stderr, "Call to strtol() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
     return nb;
