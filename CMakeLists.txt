@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(qlstatus C)
 
+set(RELEASE "v1.0.9")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_FLAGS "-W -Wall -Wextra -Werror")
@@ -28,5 +29,6 @@ add_executable(qlstatus
     src/regex.c
     src/notify.c)
 
+target_compile_definitions(qlstatus PRIVATE VERSION="${RELEASE}")
 target_include_directories(qlstatus PRIVATE inc ${LIBNL_INCLUDE_DIRS} ${LIBNOTIFY_INCLUDE_DIRS})
 target_link_libraries(qlstatus -lpthread -lpulse ${LIBNL_LINK_LIBRARIES} ${LIBNOTIFY_LINK_LIBRARIES})

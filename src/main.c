@@ -105,8 +105,16 @@ void        compute_tick(struct timespec *ref, struct timespec *rate,
 
 int     main(int argc, char **argv, char **env) {
 
-    (void)argc;
-    (void)argv;
+    // print version/usage and exit
+    if (argc == 2 && (strcmp(argv[1], "-v") == 0 ||
+        strcmp(argv[1], "--version") == 0)) {
+        printf("%s\n", VERSION);
+        return 1;
+    }
+    if (argc > 1) {
+        printf("usage: qlstatus [-v][--version]\n");
+        return 1;
+    }
 
     // global options
     int         spwmcolors = 0;
