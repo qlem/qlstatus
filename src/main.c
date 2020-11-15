@@ -107,7 +107,7 @@ int     main(int argc, char **argv, char **env) {
 
     // print version/usage and exit
     if (argc == 2 && (strcmp(argv[1], "-v") == 0 ||
-        strcmp(argv[1], "--version") == 0)) {
+                      strcmp(argv[1], "--version") == 0)) {
         printf("%s\n", VERSION);
         return 0;
     }
@@ -140,6 +140,7 @@ int     main(int argc, char **argv, char **env) {
     int         bat_notify = 1;
     t_opt       opts_bat[] = {
         {OPT_BAT_ENABLED,     &bat_enabled,     BOOLEAN_PATTERN,   NUMBER, 1, 0},
+        {OPT_BAT_FORMAT,      BAT_FORMAT,       TEXT_PATTERN,      STRING, 0, 0},
         {OPT_BAT_LB_UNK,      BAT_LABEL_UNK,    LABEL_PATTERN,     STRING, 0, 0},
         {OPT_BAT_LB_FULL,     BAT_LABEL_FULL,   LABEL_PATTERN,     STRING, 0, 0},
         {OPT_BAT_LB_CHR,      BAT_LABEL_CHR,    LABEL_PATTERN,     STRING, 0, 0},
@@ -158,6 +159,7 @@ int     main(int argc, char **argv, char **env) {
     int         cpu_threshold = 80;
     t_opt       opts_cpu[] = {
         {OPT_CPU_ENABLED,  &cpu_enabled,   BOOLEAN_PATTERN,   NUMBER, 1, 0},
+        {OPT_CPU_FORMAT,   CPU_FORMAT,     TEXT_PATTERN,      STRING, 0, 0},
         {OPT_CPU_LABEL,    CPU_LABEL,      LABEL_PATTERN,     STRING, 0, 0},
         {OPT_CPU_CRITICAL, &cpu_threshold, THRESHOLD_PATTERN, NUMBER, 0, 0}
     };
@@ -167,6 +169,7 @@ int     main(int argc, char **argv, char **env) {
     int         temp_threshold = 80;
     t_opt       opts_temp[] = {
         {OPT_TEMP_ENABLED,  &temp_enabled,   BOOLEAN_PATTERN,   NUMBER, 1, 0},
+        {OPT_TEMP_FORMAT,   TEMP_FORMAT,     TEXT_PATTERN,      STRING, 0, 0},
         {OPT_TEMP_LABEL,    TEMP_LABEL,      LABEL_PATTERN,     STRING, 0, 0},
         {OPT_TEMP_DIR,      TEMP_DIR,        PATH_PATTERN,      STRING, 0, 0},
         {OPT_TEMP_INPUT,    "1",             IN_TEMP_PATTERN,   STRING, 0, 0},
@@ -178,6 +181,7 @@ int     main(int argc, char **argv, char **env) {
     int         mem_threshold = 80;
     t_opt       opts_mem[] = {
         {OPT_MEM_ENABLED,  &mem_enabled,   BOOLEAN_PATTERN,   NUMBER, 1, 0},
+        {OPT_MEM_FORMAT,   MEM_FORMAT,     TEXT_PATTERN,      STRING, 0, 0},
         {OPT_MEM_LABEL,    MEM_LABEL,      LABEL_PATTERN,     STRING, 0, 0},
         {OPT_MEM_CRITICAL, &mem_threshold, THRESHOLD_PATTERN, NUMBER, 0, 0}
     };
@@ -186,6 +190,7 @@ int     main(int argc, char **argv, char **env) {
     int         brg_enabled = 1;
     t_opt       opts_brg[] = {
         {OPT_BRG_ENABLED, &brg_enabled, BOOLEAN_PATTERN, NUMBER, 1, 0},
+        {OPT_BRG_FORMAT,  BRG_FORMAT,   TEXT_PATTERN,    STRING, 0, 0},
         {OPT_BRG_LABEL,   BRG_LABEL,    LABEL_PATTERN,   STRING, 0, 0},
         {OPT_BRG_DIR,     BRG_DIR,      PATH_PATTERN,    STRING, 0, 0}
     };
@@ -194,6 +199,7 @@ int     main(int argc, char **argv, char **env) {
     int         volume_enabled = 1;
     t_opt       opts_vol[] = {
         {OPT_VOL_ENABLED,  &volume_enabled,    BOOLEAN_PATTERN, NUMBER, 1, 0},
+        {OPT_VOL_FORMAT,   VOLUME_FORMAT,      TEXT_PATTERN,    STRING, 0, 0},
         {OPT_VOL_LABEL,    VOLUME_LABEL,       LABEL_PATTERN,   STRING, 0, 0},
         {OPT_VOL_LB_MUTED, VOLUME_MUTED_LABEL, LABEL_PATTERN,   STRING, 0, 0},
         {OPT_VOL_SINK,     PULSE_SINK_NAME,    TEXT_PATTERN,    STRING, 0, 0}
@@ -203,6 +209,7 @@ int     main(int argc, char **argv, char **env) {
     int         wlan_enabled = 1;
     t_opt       opts_wlan[] = {
         {OPT_WLAN_ENABLED, &wlan_enabled,  BOOLEAN_PATTERN,  NUMBER, 1, 0},
+        {OPT_WLAN_FORMAT,  WLAN_FORMAT,    TEXT_PATTERN,     STRING, 0, 0},
         {OPT_WLAN_LB_UNK,  WLAN_UNK_LABEL, WL_LABEL_PATTERN, STRING, 0, 0},
         {OPT_WLAN_IFACE,   WLAN_INTERFACE, TEXT_PATTERN,     STRING, 0, 0}
     };
@@ -214,6 +221,10 @@ int     main(int argc, char **argv, char **env) {
     // battery data
     t_power     power;
     v_memset(&power, 0, sizeof(t_power));
+    power.tokens[0].enabled = 1;
+    power.tokens[0].fmtid = 'L';
+    power.tokens[1].enabled = 1;
+    power.tokens[1].fmtid = 'V';
 
     // cpu data
     t_cpu   cpu;

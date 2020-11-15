@@ -80,13 +80,13 @@ typedef struct      s_opt {
 // number of options per module
 #define GLOBAL_NOPTS 4
 #define TIME_NOPTS 2
-#define BAT_NOPTS 12
-#define CPU_NOPTS 3
-#define TEMP_NOPTS 5
-#define MEM_NOPTS 3
-#define BRG_NOPTS 3
-#define VOL_NOPTS 4
-#define WLAN_NOPTS 3
+#define BAT_NOPTS 13
+#define CPU_NOPTS 4
+#define TEMP_NOPTS 6
+#define MEM_NOPTS 4
+#define BRG_NOPTS 4
+#define VOL_NOPTS 5
+#define WLAN_NOPTS 4
 
 // option patterns
 #define TEXT_PATTERN "^.{1,100}$"
@@ -112,6 +112,7 @@ typedef struct      s_opt {
 
 // battery options
 #define OPT_BAT_ENABLED "battery_enabled"
+#define OPT_BAT_FORMAT "battery_format"
 #define OPT_BAT_NAME "battery_name"
 #define OPT_BAT_LB_FULL "battery_label_full"
 #define OPT_BAT_LB_CHR "battery_label_charging"
@@ -124,13 +125,15 @@ typedef struct      s_opt {
 #define OPT_BAT_NOTIFY_ICON_PLUGGED "battery_notify_icon_plugged"
 #define OPT_BAT_NOTIFY_ICON_LOW "battery_notify_icon_low"
 
-// usage cpu options
-#define OPT_CPU_ENABLED "cpu_usage_enabled"
-#define OPT_CPU_LABEL "cpu_usage_label"
-#define OPT_CPU_CRITICAL "cpu_usage_critical"
+// cpu options
+#define OPT_CPU_ENABLED "cpu_enabled"
+#define OPT_CPU_FORMAT "cpu_format"
+#define OPT_CPU_LABEL "cpu_label"
+#define OPT_CPU_CRITICAL "cpu_critical"
 
-// temperature
+// temperature options
 #define OPT_TEMP_ENABLED "temperature_enabled"
+#define OPT_TEMP_FORMAT "temperature_format"
 #define OPT_TEMP_LABEL "temperature_label"
 #define OPT_TEMP_DIR "temperature_dir"
 #define OPT_TEMP_INPUT "temperature_input"
@@ -138,22 +141,26 @@ typedef struct      s_opt {
 
 // memory options
 #define OPT_MEM_ENABLED "memory_enabled"
+#define OPT_MEM_FORMAT "memory_format"
 #define OPT_MEM_LABEL "memory_label"
 #define OPT_MEM_CRITICAL "memory_critical"
 
 // brightness options
 #define OPT_BRG_ENABLED "brightness_enabled"
+#define OPT_BRG_FORMAT "brightness_format"
 #define OPT_BRG_LABEL "brightness_label"
 #define OPT_BRG_DIR "brightness_dir"
 
 // volume options
 #define OPT_VOL_ENABLED "volume_enabled"
+#define OPT_VOL_FORMAT "volume_format"
 #define OPT_VOL_LABEL "volume_label"
 #define OPT_VOL_LB_MUTED "volume_muted_label"
 #define OPT_VOL_SINK "volume_sink_name"
 
 // wireless options
 #define OPT_WLAN_ENABLED "wireless_enabled"
+#define OPT_WLAN_FORMAT "wireless_format"
 #define OPT_WLAN_LB_UNK "wireless_unknown_label"
 #define OPT_WLAN_IFACE "wireless_interface"
 
@@ -174,6 +181,13 @@ typedef struct      s_module {
     void            (*mfree)(void *);
 }                   t_module;
 
+// module output format
+typedef struct      s_token {
+    uint8_t         enabled;
+    char            fmtid;
+    char            buffer[16];
+}                   t_token;
+
 // time
 #define TIME_DEFAULT_FORMAT "%a %d %b %Y, %R %Z"
 
@@ -182,6 +196,7 @@ typedef struct      s_mtime {
 }                   t_mtime;
 
 // battery
+#define BAT_FORMAT "%L %V"
 #define BATTERY_NAME "BAT0"
 #define POWER_DIR "/sys/class/power_supply"
 #define POWER_FILE "uevent"
@@ -226,9 +241,11 @@ typedef struct      s_power {
     char            *ic_full;
     char            *ic_plugged;
     char            *ic_low;
+    t_token         tokens[2];
 }                   t_power;
 
 // brightness
+#define BRG_FORMAT "%L %V"
 #define BRG_DIR "/sys/class/backlight/intel_backlight"
 #define BRG_CURRENT "actual_brightness"
 #define BRG_MAX "max_brightness"
@@ -241,6 +258,7 @@ typedef struct      s_brg {
 }                   t_brg;
 
 // usage cpu
+#define CPU_FORMAT "%L %V"
 #define PROC_STAT "/proc/stat"
 #define CPU_STATS_PATTERN "^cpu[ \t]+(([0-9]+ ){9}[0-9]+)$"
 #define CPU_LABEL "cpu"
@@ -255,6 +273,7 @@ typedef struct      s_cpu {
 }                   t_cpu;
 
 // temperature
+#define TEMP_FORMAT "%L %V"
 #define TEMP_DIR "/sys/devices/platform/coretemp.0/hwmon/*"
 #define TEMP_LABEL "temp"
 #define TEMP_ROUND_THRESHOLD 500
@@ -266,6 +285,7 @@ typedef struct      s_temp {
 }                   t_temp;
 
 // wireless
+#define WLAN_FORMAT "%L: %V"
 #define NL80211 "nl80211"
 #define WLAN_EID_SSID 0
 #define WLAN_INTERFACE "wlan0"
@@ -289,6 +309,7 @@ typedef struct      s_wlan {
 }                   t_wlan;
 
 // memory
+#define MEM_FORMAT "%L %V"
 #define PROC_MEMINFO "/proc/meminfo"
 #define MEM_TOTAL_PATTERN "^MemTotal:[ \t]+([0-9]+) kB$"
 #define MEM_FREE_PATTERN "^MemFree:[ \t]+([0-9]+) kB$"
@@ -308,6 +329,7 @@ typedef struct  s_mem {
 }               t_mem;
 
 // volume audio
+#define VOLUME_FORMAT "%L %V"
 #define PULSE_SINK_NAME "alsa_output.pci-0000_00_1f.3.analog-stereo"
 #define PULSE_APP_NAME "qlstatus"
 #define VOLUME_LABEL "vol"

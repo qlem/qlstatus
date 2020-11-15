@@ -6,6 +6,10 @@
 
 #include "qlstatus.h"
 
+int         set_module_buffer() {
+    return 0;
+}
+
 char        *append_single_char(char *buffer, char c) {
     size_t  size;
 

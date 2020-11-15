@@ -31,25 +31,26 @@ int         to_buffer(t_module *module, t_power *power) {
     module->critical = 0;
     v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
     if (!power->raw_status || power->current < -1 || power->max < -1) {
-        sprintf(module->buffer, "bat --%%");
+        v_strncpy(power->tokens[0].buffer, power->lb_dis, v_strlen(power->lb_dis));
+        v_strncpy(power->tokens[1].buffer, "--%", 3);
         power->status = PW_UNKNOWN;
         module->critical = 0;
         return 0;
     }
     value = PERCENT(power->current, power->max);
+    sprintf(power->tokens[1].buffer, "%d%%", value);
     if (strcmp(power->raw_status, BAT_STATUS_DIS) == 0) {
-        set_generic_module_buffer(module, value, power->lb_dis, "%");
-        power->status = value <= power->cthreshold ?
-                                        PW_CRITICAL : PW_DISCHARGING;
+        v_strncpy(power->tokens[0].buffer, power->lb_dis, v_strlen(power->lb_dis));
+        power->status = value <= power->cthreshold ? PW_CRITICAL : PW_DISCHARGING;
         module->critical = power->status == PW_CRITICAL ? 1 : 0;
     } else if (strcmp(power->raw_status, BAT_STATUS_CHR) == 0) {
-        set_generic_module_buffer(module, value, power->lb_chr, "%");
+        v_strncpy(power->tokens[0].buffer, power->lb_chr, v_strlen(power->lb_chr));
         power->status = PW_CHARGING;
     } else if (strcmp(power->raw_status, BAT_STATUS_FULL) == 0) {
-        set_generic_module_buffer(module, value, power->lb_full, "%");
+        v_strncpy(power->tokens[0].buffer, power->lb_full, v_strlen(power->lb_full));
         power->status = PW_FULL;
     } else {
-        set_generic_module_buffer(module, value, power->lb_unk, "%");
+        v_strncpy(power->tokens[0].buffer, power->lb_unk, v_strlen(power->lb_unk));
         power->status = value <= power->cthreshold ? PW_CRITICAL : PW_UNKNOWN;
         module->critical = power->status == PW_CRITICAL ? 1 : 0;
     }
