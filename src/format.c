@@ -88,7 +88,7 @@ char        *format(t_main *main) {
                 }
             }
             if (j == NB_MODULES) {
-                fprintf(stderr, "Format error: bad format\n");
+                fprintf(stderr, "Invalid escape sequence: %%%c\n", fmt[i]);
                 exit(EXIT_FAILURE);
             }
         } else {

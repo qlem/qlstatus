@@ -55,7 +55,7 @@ int             resolve_rate(t_main *main, struct timespec *tp) {
 
 void    signal_handler(int signum) {
     (void)signum;
-    printf("\n(interrupt) Exiting ql-status.\n");
+    putstr("\n(interrupt) Exiting ql-status.\n");
     running = 0;
 }
 
