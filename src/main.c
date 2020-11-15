@@ -109,11 +109,11 @@ int     main(int argc, char **argv, char **env) {
     if (argc == 2 && (strcmp(argv[1], "-v") == 0 ||
         strcmp(argv[1], "--version") == 0)) {
         printf("%s\n", VERSION);
-        return 1;
+        return 0;
     }
     if (argc > 1) {
         printf("usage: qlstatus [-v][--version]\n");
-        return 1;
+        return EXIT_FAILURE;
     }
 
     // global options
