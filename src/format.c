@@ -6,7 +6,103 @@
 
 #include "qlstatus.h"
 
-int         set_module_buffer() {
+int         append_single_char_to_module_buffer(t_module *module, char c) {
+    int     i = -1;
+
+    while (++i < BUFFER_MAX_SIZE && module->buffer[i]) {}
+    if (i == BUFFER_MAX_SIZE) {
+        module->buffer[BUFFER_MAX_SIZE - 1] = '.';
+        return 0;
+    }
+    module->buffer[i] = c;
+    return 1;
+}
+
+int         append_token(t_module *module, const char *token) {
+    int     i = -1;
+    int     j = -1;
+
+    while (++i < BUFFER_MAX_SIZE && module->buffer[i]) {}
+    if (i == BUFFER_MAX_SIZE) {
+        module->buffer[BUFFER_MAX_SIZE - 1] = '.';
+        return 0;
+    }
+    while (token[++j] && i < BUFFER_MAX_SIZE) {
+        module->buffer[i] = token[j];
+        i++;
+    }
+    return j;
+}
+
+int         set_module_buffer(t_module *module, const char *format, t_token *tokens, int size) {
+    int     i = -1;
+    int     j;
+
+    v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
+    while (format[++i]) {
+        if (format[i] == '%') {
+            ++i;
+            switch (format[i]) {
+                case 0:
+                    fprintf(stderr, "Module [%c]: invalid escape sequence [%%]\n", module->fmtid);
+                    exit(EXIT_FAILURE);
+                case '%':
+                    if (!append_single_char_to_module_buffer(module, '%')) {
+                        return 0;
+                    }
+                    break;
+                default:
+                    j = -1;
+                    while (++j < size) {
+                        if (format[i] == tokens[j].fmtid && tokens[j].enabled) {
+                            if (!append_token(module, tokens[j].buffer)) {
+                                return 0;
+                            }
+                            break;
+                        }
+                    }
+                    if (j == size) {
+                        fprintf(stderr, "Module [%c]: invalid escape sequence [%%%c]\n", module->fmtid, format[i]);
+                        exit(EXIT_FAILURE);
+                    }
+            }
+        } else {
+            if (!append_single_char_to_module_buffer(module, format[i])) {
+                return 0;
+            }
+        }
+    }
+    return 0;
+}
+
+int         init_module_tokens(t_module *module, const char *format, t_token *tokens, int size) {
+    int     i = -1;
+    int     j;
+
+    while (format[++i]) {
+        if (format[i] == '%') {
+            ++i;
+            switch (format[i]) {
+                case 0:
+                    fprintf(stderr, "Module [%c]: invalid escape sequence [%%]\n", module->fmtid);
+                    exit(EXIT_FAILURE);
+                case '%':
+                    break;
+                default:
+                    j = -1;
+                    while (++j < size) {
+                        if (format[i] == tokens[j].fmtid) {
+                            tokens[j].enabled = 1;
+                            break;
+                        }
+                    }
+                    if (j == size) {
+                        fprintf(stderr, "Module [%c]: invalid escape sequence [%%%c]\n", module->fmtid, format[i]);
+                        exit(EXIT_FAILURE);
+                    }
+            }
+        }
+    }
     return 0;
 }
 
@@ -74,31 +170,71 @@ char        *append_module(t_main *main, t_module *module, char *buffer) {
     return new;
 }
 
-char        *format(t_main *main) {
-    char    *fmt = main->format;
+char        *get_output_buffer(t_main *main) {
+    char    *format = main->format;
     char    *buffer = NULL;
     int     i = -1;
     int     j;
 
-    while (fmt[++i]) {
-        if (fmt[i] == '%') {
+    while (format[++i]) {
+        if (format[i] == '%') {
             ++i;
-            j = -1;
-            while (++j < NB_MODULES) {
-                if (main->modules[j].enabled &&
-                    main->modules[j].fmtid == fmt[i]) {
-                    buffer = append_module(main, &main->modules[j], buffer);
+            switch (format[i]) {
+                case 0:
+                    fprintf(stderr, "Output format: invalid escape sequence [%%]\n");
+                    exit(EXIT_FAILURE);
+                case '%':
+                    buffer = append_single_char(buffer, '%');
                     break;
-                }
-            }
-            if (j == NB_MODULES) {
-                fprintf(stderr, "Invalid escape sequence: %%%c\n", fmt[i]);
-                exit(EXIT_FAILURE);
+                default:
+                    j = -1;
+                    while (++j < NB_MODULES) {
+                        if (main->modules[j].fmtid == format[i] && main->modules[j].enabled) {
+                            buffer = append_module(main, &main->modules[j], buffer);
+                            break;
+                        }
+                    }
+                    if (j == NB_MODULES) {
+                        fprintf(stderr, "Output format: invalid escape sequence [%%%c]\n", format[i]);
+                        exit(EXIT_FAILURE);
+                    }
             }
         } else {
-            buffer = append_single_char(buffer, fmt[i]);
+            buffer = append_single_char(buffer, format[i]);
+        }
+        buffer = append_single_char(buffer, '\n');
+    }
+    return 0;
+}
+
+int         enable_modules(t_main *main) {
+    char    *format = main->format;
+    int     i = -1;
+    int     j;
+
+    while (format[++i]) {
+        if (format[i] == '%') {
+            ++i;
+            switch (format[i]) {
+                case 0:
+                    fprintf(stderr, "Output format: invalid escape sequence [%%]\n");
+                    exit(EXIT_FAILURE);
+                case '%':
+                    break;
+                default:
+                    j = -1;
+                    while (++j < NB_MODULES) {
+                        if (main->modules[j].fmtid == format[i]) {
+                            main->modules[j].enabled = 1;
+                            break;
+                        }
+                    }
+                    if (j == NB_MODULES) {
+                        fprintf(stderr, "Output format: invalid escape sequence [%%%c]\n", format[i]);
+                        exit(EXIT_FAILURE);
+                    }
+            }
         }
     }
-    buffer = append_single_char(buffer, '\n');
-    return buffer;
+    return 0;
 }

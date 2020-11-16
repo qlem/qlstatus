@@ -11,8 +11,8 @@ void            free_battery(void *data) {
     t_power     *power = module->data;
 
     free(power->file);
-    if (power->mnotify) {
-        g_object_unref(G_OBJECT(power->notify));
+    if (power->notify.enabled) {
+        g_object_unref(G_OBJECT(power->notify.notify));
     }
 }
 
@@ -25,16 +25,14 @@ char        *resolve_power_file(const char *dir, const char *pw_name,
     return path;
 }
 
-int         to_buffer(t_module *module, t_power *power) {
+int         set_tokens(t_module *module, t_power *power) {
     int     value;
 
     module->critical = 0;
-    v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
     if (!power->raw_status || power->current < -1 || power->max < -1) {
         v_strncpy(power->tokens[0].buffer, power->lb_dis, v_strlen(power->lb_dis));
         v_strncpy(power->tokens[1].buffer, "--%", 3);
         power->status = PW_UNKNOWN;
-        module->critical = 0;
         return 0;
     }
     value = PERCENT(power->current, power->max);
@@ -107,15 +105,15 @@ int         parse_power_file(t_power *power) {
 void            power_notify(t_power *power) {
     switch (power->status) {
         case PW_FULL:
-            notify(power->notify, "Power", BAT_NOTIFY_FULL, power->ic_full,
+            notify(power->notify.notify, "Power", BAT_NOTIFY_FULL, power->notify.ic_full,
                    NOTIFY_URGENCY_NORMAL);
             break;
         case PW_CHARGING:
-            notify(power->notify, "Power", BAT_NOTIFY_PLUGGED,
-                   power->ic_plugged, NOTIFY_URGENCY_NORMAL);
+            notify(power->notify.notify, "Power", BAT_NOTIFY_PLUGGED,
+                   power->notify.ic_plugged, NOTIFY_URGENCY_NORMAL);
             break;
         case PW_CRITICAL:
-            notify(power->notify, "Power", BAT_NOTIFY_LOW, power->ic_low,
+            notify(power->notify.notify, "Power", BAT_NOTIFY_LOW, power->notify.ic_low,
                    NOTIFY_URGENCY_CRITICAL);
             break;
         default:
@@ -131,9 +129,10 @@ void            *run_battery(void *data) {
     power->current = -1;
     power->raw_status = NULL;
     parse_power_file(power);
-    to_buffer(module, power);
+    set_tokens(module, power);
+    set_module_buffer(module, module->opts[0].value, power->tokens, BAT_TOKENS);
     free(power->raw_status);
-    if (power->mnotify && power->status != power->last_status) {
+    if (power->notify.notify && power->status != power->last_status) {
         power_notify(power);
     }
     power->last_status = power->status;
@@ -143,38 +142,27 @@ void            *run_battery(void *data) {
 void            init_battery(void *data) {
     t_module    *module = data;
     t_power     *power = module->data;
-    int         i = -1;
 
     power->status = PW_UNKNOWN;
     power->last_status = PW_UNKNOWN;
-    while (++i < BAT_NOPTS) {
-        if (strcmp(module->opts[i].key, OPT_BAT_NAME) == 0) {
-            power->file = resolve_power_file(POWER_DIR, module->opts[i].value,
-                                             POWER_FILE);
-        } else if (strcmp(module->opts[i].key, OPT_BAT_LB_CHR) == 0) {
-            power->lb_chr = module->opts[i].value;
-        } else if (strcmp(module->opts[i].key, OPT_BAT_LB_DIS) == 0) {
-            power->lb_dis = module->opts[i].value;
-        } else if (strcmp(module->opts[i].key, OPT_BAT_LB_FULL) == 0) {
-            power->lb_full = module->opts[i].value;
-        } else if (strcmp(module->opts[i].key, OPT_BAT_LB_UNK) == 0) {
-            power->lb_unk = module->opts[i].value;
-        } else if (strcmp(module->opts[i].key, OPT_BAT_FULL_DESIGN) == 0) {
-            power->full_design = ((int *)module->opts[i].value)[0];
-        } else if (strcmp(module->opts[i].key, OPT_BAT_CRITICAL) == 0) {
-            power->cthreshold = ((int *)module->opts[i].value)[0];
-        } else if (strcmp(module->opts[i].key, OPT_BAT_NOTIFY) == 0) {
-            power->mnotify = ((int *)module->opts[i].value)[0];
-        } else if (strcmp(module->opts[i].key, OPT_BAT_NOTIFY_ICON_LOW) == 0) {
-            power->ic_low = module->opts[i].value;
-        } else if (strcmp(module->opts[i].key, OPT_BAT_NOTIFY_ICON_FULL) == 0) {
-            power->ic_full = module->opts[i].value;
-        } else if (strcmp(module->opts[i].key,
-                          OPT_BAT_NOTIFY_ICON_PLUGGED) == 0) {
-            power->ic_plugged = module->opts[i].value;
-        }
-    }
-    if (power->mnotify) {
-        power->notify = notify_new("Power");
+
+    power->tokens[0].fmtid = 'L';
+    power->tokens[1].fmtid = 'V';
+    init_module_tokens(module, module->opts[0].value, power->tokens, BAT_TOKENS);
+
+    power->lb_unk = module->opts[1].value;
+    power->lb_full = module->opts[2].value;
+    power->lb_chr = module->opts[3].value;
+    power->lb_dis = module->opts[4].value;
+    power->file = resolve_power_file(POWER_DIR, module->opts[5].value, POWER_FILE);
+    power->cthreshold = ((int *)module->opts[6].value)[0];
+    power->full_design = ((int *)module->opts[7].value)[0];
+    power->notify.enabled = ((int *)module->opts[8].value)[0];
+    power->notify.ic_full = module->opts[9].value;
+    power->notify.ic_plugged = module->opts[10].value;
+    power->notify.ic_low = module->opts[11].value;
+
+    if (power->notify.enabled) {
+        power->notify.notify = notify_new("Power");
     }
 }

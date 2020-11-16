@@ -90,10 +90,7 @@ int             check_module_opts(t_module *modules, char **opt, int nline) {
                     opts[j].value = opt[1];
                 }
                 opts[j].to_free = 1;
-                // enable/disable module
-                if (opts[j].is_state) {
-                    modules[i].enabled = ((long *)opts[j].value)[0];
-                }
+
                 // logging
                 print_option(&opts[j]);
                 return 0;

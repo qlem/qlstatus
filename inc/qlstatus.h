@@ -73,20 +73,19 @@ typedef struct      s_opt {
     void            *value;
     char            *pattern;
     opt_type        type;
-    uint8_t         is_state;
     uint8_t         to_free;
 }                   t_opt;
 
 // number of options per module
 #define GLOBAL_NOPTS 4
-#define TIME_NOPTS 2
-#define BAT_NOPTS 13
-#define CPU_NOPTS 4
-#define TEMP_NOPTS 6
-#define MEM_NOPTS 4
-#define BRG_NOPTS 4
-#define VOL_NOPTS 5
-#define WLAN_NOPTS 4
+#define TIME_NOPTS 1
+#define BAT_NOPTS 12
+#define CPU_NOPTS 3
+#define TEMP_NOPTS 5
+#define MEM_NOPTS 3
+#define BRG_NOPTS 3
+#define VOL_NOPTS 4
+#define WLAN_NOPTS 3
 
 // option patterns
 #define TEXT_PATTERN "^.{1,100}$"
@@ -107,11 +106,9 @@ typedef struct      s_opt {
 #define OPT_C_COLOR_IDX "critical_color_index"
 
 // time options
-#define OPT_TIME_ENABLED "time_enabled"
 #define OPT_TIME_FORMAT "time_format"
 
 // battery options
-#define OPT_BAT_ENABLED "battery_enabled"
 #define OPT_BAT_FORMAT "battery_format"
 #define OPT_BAT_NAME "battery_name"
 #define OPT_BAT_LB_FULL "battery_label_full"
@@ -126,13 +123,11 @@ typedef struct      s_opt {
 #define OPT_BAT_NOTIFY_ICON_LOW "battery_notify_icon_low"
 
 // cpu options
-#define OPT_CPU_ENABLED "cpu_enabled"
 #define OPT_CPU_FORMAT "cpu_format"
 #define OPT_CPU_LABEL "cpu_label"
 #define OPT_CPU_CRITICAL "cpu_critical"
 
 // temperature options
-#define OPT_TEMP_ENABLED "temperature_enabled"
 #define OPT_TEMP_FORMAT "temperature_format"
 #define OPT_TEMP_LABEL "temperature_label"
 #define OPT_TEMP_DIR "temperature_dir"
@@ -140,26 +135,22 @@ typedef struct      s_opt {
 #define OPT_TEMP_CRITICAL "temperature_critical"
 
 // memory options
-#define OPT_MEM_ENABLED "memory_enabled"
 #define OPT_MEM_FORMAT "memory_format"
 #define OPT_MEM_LABEL "memory_label"
 #define OPT_MEM_CRITICAL "memory_critical"
 
 // brightness options
-#define OPT_BRG_ENABLED "brightness_enabled"
 #define OPT_BRG_FORMAT "brightness_format"
 #define OPT_BRG_LABEL "brightness_label"
 #define OPT_BRG_DIR "brightness_dir"
 
 // volume options
-#define OPT_VOL_ENABLED "volume_enabled"
 #define OPT_VOL_FORMAT "volume_format"
 #define OPT_VOL_LABEL "volume_label"
 #define OPT_VOL_LB_MUTED "volume_muted_label"
 #define OPT_VOL_SINK "volume_sink_name"
 
 // wireless options
-#define OPT_WLAN_ENABLED "wireless_enabled"
 #define OPT_WLAN_FORMAT "wireless_format"
 #define OPT_WLAN_LB_UNK "wireless_unknown_label"
 #define OPT_WLAN_IFACE "wireless_interface"
@@ -197,6 +188,7 @@ typedef struct      s_mtime {
 
 // battery
 #define BAT_FORMAT "%L %V"
+#define BAT_TOKENS 2
 #define BATTERY_NAME "BAT0"
 #define POWER_DIR "/sys/class/power_supply"
 #define POWER_FILE "uevent"
@@ -223,6 +215,14 @@ typedef enum        pw_status {
     PW_UNKNOWN
 }                   pw_status;
 
+typedef struct          s_notify {
+    uint8_t             enabled;
+    NotifyNotification  *notify;
+    char                *ic_full;
+    char                *ic_plugged;
+    char                *ic_low;
+}                       t_notify;
+
 typedef struct      s_power {
     char            *file;
     char            *lb_chr;
@@ -230,17 +230,13 @@ typedef struct      s_power {
     char            *lb_unk;
     char            *lb_full;
     uint8_t         full_design;
-    uint8_t         mnotify;
-    NotifyNotification *notify;
     char            *raw_status;
-    pw_status       status;
-    pw_status       last_status;
     long            current;
     long            max;
     int             cthreshold;
-    char            *ic_full;
-    char            *ic_plugged;
-    char            *ic_low;
+    pw_status       status;
+    pw_status       last_status;
+    t_notify        notify;
     t_token         tokens[2];
 }                   t_power;
 
@@ -363,8 +359,13 @@ long    to_int(const char *str);
 char	*to_str(long nb);
 int     putstr(const char *str);
 
-// format
-char    *format(t_main *main);
+// output format
+int     enable_modules(t_main *main);
+char    *get_output_buffer(t_main *main);
+int     set_module_buffer(t_module *module, const char *format, t_token *tokens, int size);
+int     init_module_tokens(t_module *module, const char *format, t_token *tokens, int size);
+
+// -- deprecated --
 void    set_generic_module_buffer(t_module *module, long value, char *label, char *unit);
 
 // regex
