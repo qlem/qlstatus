@@ -128,7 +128,7 @@ int     main(int argc, char **argv, char **env) {
 
     // time options
     t_opt       opts_time[] = {
-        {OPT_TIME_FORMAT,  TIME_DEFAULT_FORMAT, TEXT_PATTERN,    STRING, 0}
+        {OPT_TIME_FORMAT, TIME_DEFAULT_FORMAT, TEXT_PATTERN, STRING, 0}
     };
 
     // battery options
@@ -178,24 +178,24 @@ int     main(int argc, char **argv, char **env) {
 
     // brightness options
     t_opt       opts_brg[] = {
-        {OPT_BRG_FORMAT,  BRG_FORMAT,   TEXT_PATTERN,    STRING, 0},
-        {OPT_BRG_LABEL,   BRG_LABEL,    LABEL_PATTERN,   STRING, 0},
-        {OPT_BRG_DIR,     BRG_DIR,      PATH_PATTERN,    STRING, 0}
+        {OPT_BRG_FORMAT, BRG_FORMAT, TEXT_PATTERN,  STRING, 0},
+        {OPT_BRG_LABEL,  BRG_LABEL,  LABEL_PATTERN, STRING, 0},
+        {OPT_BRG_DIR,    BRG_DIR,    PATH_PATTERN,  STRING, 0}
     };
 
     // volume options
     t_opt       opts_vol[] = {
-        {OPT_VOL_FORMAT,   VOLUME_FORMAT,      TEXT_PATTERN,    STRING, 0},
-        {OPT_VOL_LABEL,    VOLUME_LABEL,       LABEL_PATTERN,   STRING, 0},
-        {OPT_VOL_LB_MUTED, VOLUME_MUTED_LABEL, LABEL_PATTERN,   STRING, 0},
-        {OPT_VOL_SINK,     PULSE_SINK_NAME,    TEXT_PATTERN,    STRING, 0}
+        {OPT_VOL_FORMAT,   VOLUME_FORMAT,      TEXT_PATTERN,  STRING, 0},
+        {OPT_VOL_LABEL,    VOLUME_LABEL,       LABEL_PATTERN, STRING, 0},
+        {OPT_VOL_LB_MUTED, VOLUME_MUTED_LABEL, LABEL_PATTERN, STRING, 0},
+        {OPT_VOL_SINK,     PULSE_SINK_NAME,    TEXT_PATTERN,  STRING, 0}
     };
 
     // wireless options
     t_opt       opts_wlan[] = {
-        {OPT_WLAN_FORMAT,  WLAN_FORMAT,    TEXT_PATTERN,     STRING, 0},
-        {OPT_WLAN_LB_UNK,  WLAN_UNK_LABEL, WL_LABEL_PATTERN, STRING, 0},
-        {OPT_WLAN_IFACE,   WLAN_INTERFACE, TEXT_PATTERN,     STRING, 0}
+        {OPT_WLAN_FORMAT, WLAN_FORMAT,    TEXT_PATTERN,     STRING, 0},
+        {OPT_WLAN_LB_UNK, WLAN_UNK_LABEL, WL_LABEL_PATTERN, STRING, 0},
+        {OPT_WLAN_IFACE,  WLAN_INTERFACE, TEXT_PATTERN,     STRING, 0}
     };
 
     // time

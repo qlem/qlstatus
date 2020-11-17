@@ -76,7 +76,8 @@ void            *run_memory(void *data) {
     module->critical = used >= mem->cthreshold ? 1 : 0;
     set_token_buffer(mem->tokens[0].buffer, mem->label);
     snprintf(mem->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%", used);
-    set_module_buffer(module, module->opts[0].value, mem->tokens, MBUFFER_MAX_SIZE);
+    set_module_buffer(module, module->opts[0].value, mem->tokens,
+                      MBUFFER_MAX_SIZE);
     return NULL;
 }
 

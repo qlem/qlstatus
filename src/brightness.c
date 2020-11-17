@@ -36,8 +36,10 @@ void            *run_brightness(void *data) {
     max = to_int(buffer);
     free(buffer);
     set_token_buffer(brg->tokens[0].buffer, brg->label);
-    snprintf(brg->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%", PERCENT(current, max));
-    set_module_buffer(module, module->opts[0].value, brg->tokens, MBUFFER_MAX_SIZE);
+    snprintf(brg->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%",
+             PERCENT(current, max));
+    set_module_buffer(module, module->opts[0].value, brg->tokens,
+                      MBUFFER_MAX_SIZE);
     return NULL;
 }
 

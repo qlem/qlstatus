@@ -89,7 +89,8 @@ int         append_to_buffer(char *buffer, const char *append, int size) {
     return j;
 }
 
-int         set_module_buffer(t_module *module, const char *format, t_token *tokens, int size) {
+int         set_module_buffer(t_module *module, const char *format,
+                              t_token *tokens, int size) {
     int     i = -1;
     int     j;
 
@@ -99,7 +100,8 @@ int         set_module_buffer(t_module *module, const char *format, t_token *tok
             ++i;
             switch (format[i]) {
                 case '%':
-                    if (!append_single_char(module->buffer, '%', MBUFFER_MAX_SIZE)) {
+                    if (!append_single_char(module->buffer, '%',
+                        MBUFFER_MAX_SIZE)) {
                         return 0;
                     }
                     break;
@@ -107,7 +109,8 @@ int         set_module_buffer(t_module *module, const char *format, t_token *tok
                     j = -1;
                     while (++j < size) {
                         if (format[i] == tokens[j].fmtid && tokens[j].enabled) {
-                            if (!append_to_buffer(module->buffer, tokens[j].buffer, MBUFFER_MAX_SIZE)) {
+                            if (!append_to_buffer(module->buffer,
+                                tokens[j].buffer, MBUFFER_MAX_SIZE)) {
                                 return 0;
                             }
                             break;
@@ -115,7 +118,8 @@ int         set_module_buffer(t_module *module, const char *format, t_token *tok
                     }
             }
         } else {
-            if (!append_single_char(module->buffer, format[i], MBUFFER_MAX_SIZE)) {
+            if (!append_single_char(module->buffer, format[i],
+                MBUFFER_MAX_SIZE)) {
                 return 0;
             }
         }
@@ -123,7 +127,8 @@ int         set_module_buffer(t_module *module, const char *format, t_token *tok
     return 0;
 }
 
-int         init_module_tokens(t_module *module, const char *format, t_token *tokens, int size) {
+int         init_module_tokens(t_module *module, const char *format,
+                               t_token *tokens, int size) {
     int     i = -1;
     int     j;
 
@@ -132,7 +137,8 @@ int         init_module_tokens(t_module *module, const char *format, t_token *to
             ++i;
             switch (format[i]) {
                 case 0:
-                    fprintf(stderr, "Module [%c]: invalid escape sequence [%%]\n", module->fmtid);
+                    fprintf(stderr, "Module [%c]: invalid escape sequence [%%]\n",
+                            module->fmtid);
                     exit(EXIT_FAILURE);
                 case '%':
                     break;
@@ -145,7 +151,8 @@ int         init_module_tokens(t_module *module, const char *format, t_token *to
                         }
                     }
                     if (j == size) {
-                        fprintf(stderr, "Module [%c]: invalid escape sequence [%%%c]\n", module->fmtid, format[i]);
+                        fprintf(stderr, "Module [%c]: invalid escape sequence [%%%c]\n",
+                                module->fmtid, format[i]);
                         exit(EXIT_FAILURE);
                     }
             }
@@ -165,15 +172,18 @@ int         set_output_buffer(t_main *main) {
             ++i;
             switch (format[i]) {
                 case '%':
-                    if (!append_single_char(main->buffer, '%', BUFFER_MAX_SIZE)) {
+                    if (!append_single_char(main->buffer, '%',
+                        BUFFER_MAX_SIZE)) {
                         return 0;
                     }
                     break;
                 default:
                     j = -1;
                     while (++j < NB_MODULES) {
-                        if (main->modules[j].fmtid == format[i] && main->modules[j].enabled) {
-                            if (!append_to_buffer(main->buffer, main->modules[j].buffer, BUFFER_MAX_SIZE)) {
+                        if (main->modules[j].fmtid == format[i] &&
+                            main->modules[j].enabled) {
+                            if (!append_to_buffer(main->buffer,
+                                main->modules[j].buffer, BUFFER_MAX_SIZE)) {
                                 return 0;
                             }
                             break;
@@ -209,12 +219,14 @@ int         enable_modules(t_main *main) {
                     while (++j < NB_MODULES) {
                         if (main->modules[j].fmtid == format[i]) {
                             main->modules[j].enabled = 1;
-                            printf("Module [%c] enabled\n", main->modules[j].fmtid);
+                            printf("Module [%c] enabled\n",
+                                   main->modules[j].fmtid);
                             break;
                         }
                     }
                     if (j == NB_MODULES) {
-                        fprintf(stderr, "Output format: invalid escape sequence [%%%c]\n", format[i]);
+                        fprintf(stderr, "Output format: invalid escape sequence [%%%c]\n",
+                                format[i]);
                         exit(EXIT_FAILURE);
                     }
             }

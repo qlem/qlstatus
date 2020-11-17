@@ -39,7 +39,8 @@ static void         set_buffer(t_module *module, t_power *power) {
     snprintf(power->tokens[1].buffer, TBUFFER_MAX_SIZE, "%d%%", value);
     if (strcmp(power->raw_status, BAT_STATUS_DIS) == 0) {
         set_token_buffer(power->tokens[0].buffer, power->lb_dis);
-        power->status = value <= power->cthreshold ? PW_CRITICAL : PW_DISCHARGING;
+        power->status = value <= power->cthreshold ? PW_CRITICAL
+                                                   : PW_DISCHARGING;
         module->critical = power->status == PW_CRITICAL ? 1 : 0;
     } else if (strcmp(power->raw_status, BAT_STATUS_CHR) == 0) {
         set_token_buffer(power->tokens[0].buffer, power->lb_chr);
@@ -105,16 +106,16 @@ int         parse_power_file(t_power *power) {
 void            power_notify(t_power *power) {
     switch (power->status) {
         case PW_FULL:
-            notify(power->notify.notify, "Power", BAT_NOTIFY_FULL, power->notify.ic_full,
-                   NOTIFY_URGENCY_NORMAL);
+            notify(power->notify.notify, "Power", BAT_NOTIFY_FULL,
+                   power->notify.ic_full, NOTIFY_URGENCY_NORMAL);
             break;
         case PW_CHARGING:
             notify(power->notify.notify, "Power", BAT_NOTIFY_PLUGGED,
                    power->notify.ic_plugged, NOTIFY_URGENCY_NORMAL);
             break;
         case PW_CRITICAL:
-            notify(power->notify.notify, "Power", BAT_NOTIFY_LOW, power->notify.ic_low,
-                   NOTIFY_URGENCY_CRITICAL);
+            notify(power->notify.notify, "Power", BAT_NOTIFY_LOW,
+                   power->notify.ic_low, NOTIFY_URGENCY_CRITICAL);
             break;
         default:
             break;
@@ -131,7 +132,7 @@ void            *run_battery(void *data) {
     parse_power_file(power);
     set_buffer(module, power);
     free(power->raw_status);
-    if (power->notify.notify && power->status != power->last_status) {
+    if (power->notify.enabled && power->status != power->last_status) {
         power_notify(power);
     }
     power->last_status = power->status;
@@ -147,13 +148,15 @@ void            init_battery(void *data) {
 
     power->tokens[0].fmtid = 'L';
     power->tokens[1].fmtid = 'V';
-    init_module_tokens(module, module->opts[0].value, power->tokens, BAT_TOKENS);
+    init_module_tokens(module, module->opts[0].value, power->tokens,
+                       BAT_TOKENS);
 
     power->lb_unk = module->opts[1].value;
     power->lb_full = module->opts[2].value;
     power->lb_chr = module->opts[3].value;
     power->lb_dis = module->opts[4].value;
-    power->file = resolve_power_file(POWER_DIR, module->opts[5].value, POWER_FILE);
+    power->file = resolve_power_file(POWER_DIR, module->opts[5].value,
+                                     POWER_FILE);
     power->cthreshold = ((int *)module->opts[6].value)[0];
     power->full_design = ((int *)module->opts[7].value)[0];
     power->notify.enabled = ((int *)module->opts[8].value)[0];
