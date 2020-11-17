@@ -32,12 +32,10 @@ void        sink_info_cb(pa_context *context, const pa_sink_info *info,
     (void)context;
     if (eol == 0) {
         avg = pa_cvolume_avg(&info->volume);
-        v_memset(module->buffer, 0, MBUFFER_MAX_SIZE);
-        if (info->mute) {
-            set_generic_module_buffer(module, VOLUME(avg), pulse->lb_mute, "%");
-        } else {
-            set_generic_module_buffer(module, VOLUME(avg), pulse->label, "%");
-        }
+        info->mute ? set_token_buffer(pulse->tokens[0].buffer, pulse->lb_mute)
+        : set_token_buffer(pulse->tokens[0].buffer, pulse->label);
+        snprintf(pulse->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%", VOLUME(avg));
+        set_module_buffer(module, module->opts[0].value, pulse->tokens, MBUFFER_MAX_SIZE);
     }
     pa_threaded_mainloop_signal(pulse->mainloop, 0);
 }
@@ -111,18 +109,16 @@ void            init_volume(void *data) {
     t_module    *module = data;
     t_pulse     *pulse = module->data;
     pthread_t   thread = 0;
-    int         i = -1;
     int         err;
 
-    while (++i < VOL_NOPTS) {
-        if (strcmp(module->opts[i].key, OPT_VOL_LABEL) == 0) {
-            pulse->label = module->opts[i].value;
-        } else if (strcmp(module->opts[i].key, OPT_VOL_LB_MUTED) == 0) {
-            pulse->lb_mute = module->opts[i].value;
-        } else if (strcmp(module->opts[i].key, OPT_VOL_SINK) == 0) {
-            pulse->sink = module->opts[i].value;
-        }
-    }
+    pulse->tokens[0].fmtid = 'L';
+    pulse->tokens[1].fmtid = 'V';
+    init_module_tokens(module, module->opts[0].value, pulse->tokens, VOLUME_TOKENS);
+
+    pulse->label = module->opts[1].value;
+    pulse->lb_mute = module->opts[2].value;
+    pulse->sink = module->opts[3].value;
+
     if ((err = pthread_create(&thread, NULL, pulse_connect, pulse)) != 0) {
         fprintf(stderr, "Call to pthread_create() failed: %s\n", strerror(err));
         exit(EXIT_FAILURE);

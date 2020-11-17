@@ -25,15 +25,15 @@ char        *resolve_power_file(const char *dir, const char *pw_name,
     return path;
 }
 
-int         set_tokens(t_module *module, t_power *power) {
-    int     value;
+static void         set_buffer(t_module *module, t_power *power) {
+    int             value;
 
     module->critical = 0;
     if (!power->raw_status || power->current < -1 || power->max < -1) {
         set_token_buffer(power->tokens[0].buffer, power->lb_dis);
         set_token_buffer(power->tokens[1].buffer, "--%%");
         power->status = PW_UNKNOWN;
-        return 0;
+        return;
     }
     value = PERCENT(power->current, power->max);
     snprintf(power->tokens[1].buffer, TBUFFER_MAX_SIZE, "%d%%", value);
@@ -52,7 +52,7 @@ int         set_tokens(t_module *module, t_power *power) {
         power->status = value <= power->cthreshold ? PW_CRITICAL : PW_UNKNOWN;
         module->critical = power->status == PW_CRITICAL ? 1 : 0;
     }
-    return 0;
+    set_module_buffer(module, module->opts[0].value, power->tokens, BAT_TOKENS);
 }
 
 void        parse_power_line(t_power *power, const char *line) {
@@ -129,8 +129,7 @@ void            *run_battery(void *data) {
     power->current = -1;
     power->raw_status = NULL;
     parse_power_file(power);
-    set_tokens(module, power);
-    set_module_buffer(module, module->opts[0].value, power->tokens, BAT_TOKENS);
+    set_buffer(module, power);
     free(power->raw_status);
     if (power->notify.notify && power->status != power->last_status) {
         power_notify(power);

@@ -107,8 +107,9 @@ void            *run_temperature(void *data) {
 
     value = compute_temp(temp->inputs);
     module->critical = value >= temp->cthreshold ? 1 : 0;
-    v_memset(module->buffer, 0, MBUFFER_MAX_SIZE);
-    set_generic_module_buffer(module, value, temp->label, "°");
+    set_token_buffer(temp->tokens[0].buffer, temp->label);
+    snprintf(temp->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld°", value);
+    set_module_buffer(module, module->opts[0].value, temp->tokens, MBUFFER_MAX_SIZE);
     return NULL;
 }
 
@@ -117,19 +118,16 @@ void            init_temperature(void *data) {
     t_temp      *temp = module->data;
     char        *in_regex = NULL;
     char        *dir = NULL;
-    int         i = -1;
 
-    while (++i < TEMP_NOPTS) {
-        if (strcmp(module->opts[i].key, OPT_TEMP_DIR) == 0)  {
-            dir = resolve_temp_dir(module->opts[i].value);
-        } else if (strcmp(module->opts[i].key, OPT_TEMP_INPUT) == 0) {
-            in_regex = resolve_temp_input_regex(module->opts[i].value);
-        } else if (strcmp(module->opts[i].key, OPT_TEMP_LABEL) == 0) {
-            temp->label = module->opts[i].value;
-        } else if (strcmp(module->opts[i].key, OPT_TEMP_CRITICAL) == 0) {
-            temp->cthreshold = ((int *)module->opts[i].value)[0];
-        }
-    }
+    temp->tokens[0].fmtid = 'L';
+    temp->tokens[1].fmtid = 'V';
+    init_module_tokens(module, module->opts[0].value, temp->tokens, TEMP_TOKENS);
+
+    temp->label = module->opts[1].value;
+    dir = resolve_temp_dir(module->opts[2].value);
+    in_regex = resolve_temp_input_regex(module->opts[3].value);
+    temp->cthreshold = ((int *)module->opts[4].value)[0];
+
     temp->inputs = read_dir(dir, in_regex);
     free(in_regex);
     if (!temp->inputs[0][0]) {

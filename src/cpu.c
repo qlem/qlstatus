@@ -90,8 +90,9 @@ void            *run_cpu_usage(void *data) {
     }
     value = compute_cpu_usage(cpu);
     module->critical = value >= cpu->cthreshold ? 1 : 0;
-    v_memset(module->buffer, 0, MBUFFER_MAX_SIZE);
-    set_generic_module_buffer(module, value, cpu->label, "%");
+    set_token_buffer(cpu->tokens[0].buffer, cpu->label);
+    snprintf(cpu->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%", value);
+    set_module_buffer(module, module->opts[0].value, cpu->tokens, MBUFFER_MAX_SIZE);
     free(rstats);
     return NULL;
 }
@@ -99,13 +100,11 @@ void            *run_cpu_usage(void *data) {
 void            init_cpu_usage(void *data) {
     t_module    *module = data;
     t_cpu       *cpu = module->data;
-    int         i = -1;
 
-    while (++i < CPU_NOPTS) {
-        if (strcmp(module->opts[i].key, OPT_CPU_LABEL) == 0) {
-            cpu->label = module->opts[i].value;
-        } else if (strcmp(module->opts[i].key, OPT_CPU_CRITICAL) == 0) {
-            cpu->cthreshold = ((int *)module->opts[i].value)[0];
-        }
-    }
+    cpu->tokens[0].fmtid = 'L';
+    cpu->tokens[1].fmtid = 'V';
+    init_module_tokens(module, module->opts[0].value, cpu->tokens, CPU_TOKENS);
+
+    cpu->label = module->opts[1].value;
+    cpu->cthreshold = ((int *)module->opts[2].value)[0];
 }

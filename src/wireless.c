@@ -200,25 +200,18 @@ static int          send_for_scan(t_wlan *wlan) {
     return 0;
 }
 
-void            set_buffer(t_module *module, t_wlan *wlan) {
-    char        *signal = NULL;
-    char        *label = NULL;
-
-    if (wlan->flags & WLAN_FLAG_HAS_SIGNAL) {
-        signal = to_str(wlan->signal);
-    } else {
-        signal = alloc_buffer(3);
-        v_strncpy(signal, "--", 2);
-    }
+static void         set_buffer(t_module *module, t_wlan *wlan) {
     if (wlan->flags & WLAN_FLAG_HAS_ESSID) {
-        label = wlan->essid;
+        set_token_buffer(wlan->tokens[0].buffer, wlan->essid);
     } else {
-        label = wlan->lb_unk;
+        set_token_buffer(wlan->tokens[0].buffer, wlan->lb_unk);
     }
-    // TODO check signal size
-    v_memset(module->buffer, 0, MBUFFER_MAX_SIZE);
-    sprintf(module->buffer, "%s: %s%%", label, signal);
-    free(signal);
+    if (wlan->flags & WLAN_FLAG_HAS_SIGNAL) {
+        snprintf(wlan->tokens[1].buffer, TBUFFER_MAX_SIZE, "%d%%", wlan->signal);
+    } else {
+        set_token_buffer(wlan->tokens[1].buffer, "--%");
+    }
+    set_module_buffer(module, module->opts[0].value, wlan->tokens, MBUFFER_MAX_SIZE);
 }
 
 void            *run_wireless(void *data) {
@@ -240,16 +233,15 @@ void            *run_wireless(void *data) {
 void            init_wireless(void *data) {
     t_module    *module = data;
     t_wlan      *wlan = module->data;
-    int         i = -1;
     int         err;
 
-    while (++i < WLAN_NOPTS) {
-        if (strcmp(module->opts[i].key, OPT_WLAN_LB_UNK) == 0) {
-            wlan->lb_unk = module->opts[i].value;
-        } else if (strcmp(module->opts[i].key, OPT_WLAN_IFACE) == 0) {
-            wlan->ifname = module->opts[i].value;
-        }
-    }
+    wlan->tokens[0].fmtid = 'L';
+    wlan->tokens[1].fmtid = 'V';
+    init_module_tokens(module, module->opts[0].value, wlan->tokens, WLAN_TOKENS);
+
+    wlan->lb_unk = module->opts[1].value;
+    wlan->ifname = module->opts[2].value;
+
     wlan->socket = nl_socket_alloc();
     if (wlan->socket == NULL) {
         fprintf(stderr, "Call to nl_socket_alloc() failed\n");

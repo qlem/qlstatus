@@ -16,7 +16,6 @@ void            *run_time(void *data) {
     struct tm   *timeinfo;
     time_t      rawtime;
 
-    v_memset(module->buffer, 0, MBUFFER_MAX_SIZE);
     if (time(&rawtime) == ((time_t) -1)) {
         fprintf(stderr, "Call to time() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
@@ -25,6 +24,7 @@ void            *run_time(void *data) {
         fprintf(stderr, "Call to localtime() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
+    v_memset(module->buffer, 0, MBUFFER_MAX_SIZE);
     if (strftime(module->buffer, MBUFFER_MAX_SIZE, mtime->format,
                  timeinfo) == 0) {
         fprintf(stderr, "Call to strftime() failed\n");
@@ -36,11 +36,6 @@ void            *run_time(void *data) {
 void            init_time(void *data) {
     t_module    *module = data;
     t_mtime     *time = module->data;
-    int         i = -1;
 
-    while (++i < TIME_NOPTS) {
-        if (strcmp(module->opts[i].key, OPT_TIME_FORMAT) == 0) {
-            time->format = module->opts[i].value;
-        }
-    }
+    time->format = module->opts[0].value;
 }

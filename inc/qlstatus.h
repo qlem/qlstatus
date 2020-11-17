@@ -239,11 +239,12 @@ typedef struct      s_power {
     pw_status       status;
     pw_status       last_status;
     t_notify        notify;
-    t_token         tokens[2];
+    t_token         tokens[BAT_TOKENS];
 }                   t_power;
 
 // brightness
 #define BRG_FORMAT "%L %V"
+#define BRG_TOKENS 2
 #define BRG_DIR "/sys/class/backlight/intel_backlight"
 #define BRG_CURRENT "actual_brightness"
 #define BRG_MAX "max_brightness"
@@ -253,10 +254,12 @@ typedef struct      s_brg {
     char            *label;
     char            *current_file;
     char            *max_file;
+    t_token         tokens[BRG_TOKENS];
 }                   t_brg;
 
 // cpu
 #define CPU_FORMAT "%L %V"
+#define CPU_TOKENS 2
 #define PROC_STAT "/proc/stat"
 #define CPU_STATS_PATTERN "^cpu[ \t]+(([0-9]+ ){9}[0-9]+)$"
 #define CPU_LABEL "cpu"
@@ -268,10 +271,12 @@ typedef struct      s_cpu {
     long            prev_idle;
     long            prev_total;
     int             cthreshold;
+    t_token         tokens[CPU_TOKENS];
 }                   t_cpu;
 
 // temperature
 #define TEMP_FORMAT "%L %V"
+#define TEMP_TOKENS 2
 #define TEMP_DIR "/sys/devices/platform/coretemp.0/hwmon/*"
 #define TEMP_LABEL "temp"
 #define TEMP_ROUND_THRESHOLD 500
@@ -280,10 +285,12 @@ typedef struct      s_temp {
     char            *label;
     char            **inputs;
     int             cthreshold;
+    t_token         tokens[TEMP_TOKENS];
 }                   t_temp;
 
 // wireless
 #define WLAN_FORMAT "%L: %V"
+#define WLAN_TOKENS 2
 #define NL80211 "nl80211"
 #define WLAN_EID_SSID 0
 #define WLAN_INTERFACE "wlan0"
@@ -304,10 +311,12 @@ typedef struct      s_wlan {
     char            essid[WLAN_ESSID_MAX_SIZE];
     char            *lb_unk;
     int             signal;
+    t_token         tokens[WLAN_TOKENS];
 }                   t_wlan;
 
 // memory
 #define MEM_FORMAT "%L %V"
+#define MEM_TOKENS 2
 #define PROC_MEMINFO "/proc/meminfo"
 #define MEM_TOTAL_PATTERN "^MemTotal:[ \t]+([0-9]+) kB$"
 #define MEM_FREE_PATTERN "^MemFree:[ \t]+([0-9]+) kB$"
@@ -324,10 +333,12 @@ typedef struct  s_mem {
     long        cached;
     long        sreclaim;
     int         cthreshold;
+    t_token     tokens[MEM_TOKENS];
 }               t_mem;
 
 // volume audio
 #define VOLUME_FORMAT "%L %V"
+#define VOLUME_TOKENS 2
 #define PULSE_SINK_NAME "alsa_output.pci-0000_00_1f.3.analog-stereo"
 #define PULSE_APP_NAME "qlstatus"
 #define VOLUME_LABEL "vol"
@@ -340,6 +351,7 @@ typedef struct              s_pulse {
     pa_threaded_mainloop    *mainloop;
     pa_context              *context;
     uint8_t                 connected;
+    t_token                 tokens[VOLUME_TOKENS];
 }                           t_pulse;
 
 /* GLOBAL STRUCTURE */
@@ -370,9 +382,6 @@ int     set_output_buffer(t_main *main);
 int     set_token_buffer(char *buffer, const char *src);
 int     set_module_buffer(t_module *module, const char *format, t_token *tokens, int size);
 int     init_module_tokens(t_module *module, const char *format, t_token *tokens, int size);
-
-// -- deprecated --
-void    set_generic_module_buffer(t_module *module, long value, char *label, char *unit);
 
 // regex
 bool    match_pattern(const char *regex, const char *str);

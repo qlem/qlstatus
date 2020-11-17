@@ -7,20 +7,6 @@
 #include "qlstatus.h"
 
 // deprecated
-void        set_generic_module_buffer(t_module *module, long value,
-                                      char *label, char *unit) {
-    char    *bval = NULL;
-
-    bval = to_str(value);
-    if (v_strlen(bval) > 6) {
-        sprintf(module->buffer, "%s %s%s", label, "--", unit);
-    } else {
-        sprintf(module->buffer, "%s %s%s", label, bval, unit);
-    }
-    free(bval);
-}
-
-// deprecated
 char        *append_module(t_main *main, t_module *module, char *buffer) {
     char    *new = NULL;
     size_t  blen;

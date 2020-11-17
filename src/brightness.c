@@ -35,8 +35,9 @@ void            *run_brightness(void *data) {
     buffer = read_file(brg->max_file);
     max = to_int(buffer);
     free(buffer);
-    v_memset(module->buffer, 0, MBUFFER_MAX_SIZE);
-    set_generic_module_buffer(module, PERCENT(current, max), brg->label, "%");
+    set_token_buffer(brg->tokens[0].buffer, brg->label);
+    snprintf(brg->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%", PERCENT(current, max));
+    set_module_buffer(module, module->opts[0].value, brg->tokens, MBUFFER_MAX_SIZE);
     return NULL;
 }
 
@@ -44,15 +45,14 @@ void            init_brightness(void *data) {
     t_module    *module = data;
     t_brg       *brg = module->data;
     char        *dir = NULL;
-    int         i = -1;
 
-    while (++i < BRG_NOPTS) {
-        if (strcmp(module->opts[i].key, OPT_BRG_DIR) == 0) {
-            dir = module->opts[i].value;
-        } else if (strcmp(module->opts[i].key, OPT_BRG_LABEL) == 0) {
-            brg->label = module->opts[i].value;
-        }
-    }
+    brg->tokens[0].fmtid = 'L';
+    brg->tokens[1].fmtid = 'V';
+    init_module_tokens(module, module->opts[0].value, brg->tokens, BRG_TOKENS);
+
+    brg->label = module->opts[1].value;
+    dir = module->opts[2].value;
+
     brg->current_file = resolve_brightness_file(dir, BRG_CURRENT);
     brg->max_file = resolve_brightness_file(dir, BRG_MAX);
 }
