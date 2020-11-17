@@ -107,7 +107,7 @@ void            *run_temperature(void *data) {
 
     value = compute_temp(temp->inputs);
     module->critical = value >= temp->cthreshold ? 1 : 0;
-    v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
+    v_memset(module->buffer, 0, MBUFFER_MAX_SIZE);
     set_generic_module_buffer(module, value, temp->label, "°");
     return NULL;
 }

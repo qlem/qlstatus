@@ -35,7 +35,7 @@ void            *run_brightness(void *data) {
     buffer = read_file(brg->max_file);
     max = to_int(buffer);
     free(buffer);
-    v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
+    v_memset(module->buffer, 0, MBUFFER_MAX_SIZE);
     set_generic_module_buffer(module, PERCENT(current, max), brg->label, "%");
     return NULL;
 }

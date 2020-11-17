@@ -74,7 +74,7 @@ void            *run_memory(void *data) {
     used = mem->total - mem->free - mem->buffers - mem->cached - mem->sreclaim;
     used = PERCENT(used, mem->total);
     module->critical = used >= mem->cthreshold ? 1 : 0;
-    v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
+    v_memset(module->buffer, 0, MBUFFER_MAX_SIZE);
     set_generic_module_buffer(module, used, mem->label, "%");
     return NULL;
 }

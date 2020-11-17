@@ -32,7 +32,7 @@ void        sink_info_cb(pa_context *context, const pa_sink_info *info,
     (void)context;
     if (eol == 0) {
         avg = pa_cvolume_avg(&info->volume);
-        v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
+        v_memset(module->buffer, 0, MBUFFER_MAX_SIZE);
         if (info->mute) {
             set_generic_module_buffer(module, VOLUME(avg), pulse->lb_mute, "%");
         } else {

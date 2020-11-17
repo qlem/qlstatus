@@ -90,7 +90,7 @@ void            *run_cpu_usage(void *data) {
     }
     value = compute_cpu_usage(cpu);
     module->critical = value >= cpu->cthreshold ? 1 : 0;
-    v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
+    v_memset(module->buffer, 0, MBUFFER_MAX_SIZE);
     set_generic_module_buffer(module, value, cpu->label, "%");
     free(rstats);
     return NULL;

@@ -216,7 +216,7 @@ void            set_buffer(t_module *module, t_wlan *wlan) {
         label = wlan->lb_unk;
     }
     // TODO check signal size
-    v_memset(module->buffer, 0, BUFFER_MAX_SIZE);
+    v_memset(module->buffer, 0, MBUFFER_MAX_SIZE);
     sprintf(module->buffer, "%s: %s%%", label, signal);
     free(signal);
 }

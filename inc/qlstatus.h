@@ -155,13 +155,22 @@ typedef struct      s_opt {
 #define OPT_WLAN_LB_UNK "wireless_unknown_label"
 #define OPT_WLAN_IFACE "wireless_interface"
 
+/* TOKENS */
+#define TBUFFER_MAX_SIZE 16
+
+typedef struct      s_token {
+    uint8_t         enabled;
+    char            fmtid;
+    char            buffer[TBUFFER_MAX_SIZE];
+}                   t_token;
+
 /* MODULES */
-#define BUFFER_MAX_SIZE 32
+#define MBUFFER_MAX_SIZE 32
 
 typedef struct      s_module {
     uint8_t         enabled;
     char            fmtid;
-    char            buffer[BUFFER_MAX_SIZE];
+    char            buffer[MBUFFER_MAX_SIZE];
     uint8_t         critical;
     void            *data;
     t_opt           *opts;
@@ -171,13 +180,6 @@ typedef struct      s_module {
     void            (*init)(void *);
     void            (*mfree)(void *);
 }                   t_module;
-
-// module output format
-typedef struct      s_token {
-    uint8_t         enabled;
-    char            fmtid;
-    char            buffer[16];
-}                   t_token;
 
 // time
 #define TIME_DEFAULT_FORMAT "%a %d %b %Y, %R %Z"
@@ -253,7 +255,7 @@ typedef struct      s_brg {
     char            *max_file;
 }                   t_brg;
 
-// usage cpu
+// cpu
 #define CPU_FORMAT "%L %V"
 #define PROC_STAT "/proc/stat"
 #define CPU_STATS_PATTERN "^cpu[ \t]+(([0-9]+ ){9}[0-9]+)$"
@@ -341,8 +343,11 @@ typedef struct              s_pulse {
 }                           t_pulse;
 
 /* GLOBAL STRUCTURE */
+#define BUFFER_MAX_SIZE 256
+
 typedef struct          s_main {
     t_module            *modules;
+    char                buffer[BUFFER_MAX_SIZE];
     char                *format;
     char                *rate;
     uint8_t             spwmcolors;
@@ -361,7 +366,8 @@ int     putstr(const char *str);
 
 // output format
 int     enable_modules(t_main *main);
-char    *get_output_buffer(t_main *main);
+int     set_output_buffer(t_main *main);
+int     set_token_buffer(char *buffer, const char *src);
 int     set_module_buffer(t_module *module, const char *format, t_token *tokens, int size);
 int     init_module_tokens(t_module *module, const char *format, t_token *tokens, int size);
 

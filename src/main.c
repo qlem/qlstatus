@@ -248,7 +248,6 @@ int     main(int argc, char **argv, char **env) {
     struct timespec     tick;
     struct sigaction    act;
     char                *config;
-    char                *buffer;
     int                 i = -1;
     t_main              main;
     int                 err;
@@ -270,6 +269,7 @@ int     main(int argc, char **argv, char **env) {
     }
 
     // init main structure
+    v_memset(&main, 0, sizeof(t_main));
     main.modules = modules;
     main.opts = opts_global;
     main.format = DEFAULT_FORMAT;
@@ -338,9 +338,8 @@ int     main(int argc, char **argv, char **env) {
         }
 
         // output
-        buffer = get_output_buffer(&main);
-        putstr(buffer);
-        free(buffer);
+        set_output_buffer(&main);
+        putstr(main.buffer);
 
         // compute tick duration
         compute_tick(&ref, &rate, &tick);
