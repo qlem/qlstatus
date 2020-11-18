@@ -252,7 +252,6 @@ typedef struct      s_power {
 #define BRG_LABEL "brg"
 
 typedef struct      s_brg {
-    char            *label;
     char            *current_file;
     char            *max_file;
     t_token         tokens[BRG_TOKENS];
@@ -267,7 +266,6 @@ typedef struct      s_brg {
 #define CPU_STATS_SIZE 8
 
 typedef struct      s_cpu {
-    char            *label;
     long            stats[CPU_STATS_SIZE];
     long            prev_idle;
     long            prev_total;
@@ -283,7 +281,6 @@ typedef struct      s_cpu {
 #define TEMP_ROUND_THRESHOLD 500
 
 typedef struct      s_temp {
-    char            *label;
     char            **inputs;
     int             cthreshold;
     t_token         tokens[TEMP_TOKENS];
@@ -327,7 +324,6 @@ typedef struct      s_wlan {
 #define MEM_LABEL "mem"
 
 typedef struct  s_mem {
-    char        *label;
     long        total;
     long        free;
     long        buffers;

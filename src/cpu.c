@@ -90,7 +90,6 @@ void            *run_cpu_usage(void *data) {
     }
     value = compute_cpu_usage(cpu);
     module->critical = value >= cpu->cthreshold ? 1 : 0;
-    set_token_buffer(cpu->tokens[0].buffer, cpu->label);
     snprintf(cpu->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%", value);
     set_module_buffer(module, cpu->tokens, CPU_TOKENS);
     free(rstats);
@@ -105,6 +104,6 @@ void            init_cpu_usage(void *data) {
     cpu->tokens[1].fmtid = 'V';
     init_module_tokens(module, cpu->tokens, CPU_TOKENS);
 
-    cpu->label = module->opts[1].value;
+    set_token_buffer(cpu->tokens[0].buffer, module->opts[1].value);
     cpu->cthreshold = ((int *)module->opts[2].value)[0];
 }

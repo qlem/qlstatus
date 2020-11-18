@@ -35,7 +35,6 @@ void            *run_brightness(void *data) {
     buffer = read_file(brg->max_file);
     max = to_int(buffer);
     free(buffer);
-    set_token_buffer(brg->tokens[0].buffer, brg->label);
     snprintf(brg->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%",
              PERCENT(current, max));
     set_module_buffer(module, brg->tokens, BRG_TOKENS);
@@ -51,7 +50,7 @@ void            init_brightness(void *data) {
     brg->tokens[1].fmtid = 'V';
     init_module_tokens(module, brg->tokens, BRG_TOKENS);
 
-    brg->label = module->opts[1].value;
+    set_token_buffer(brg->tokens[0].buffer, module->opts[1].value);
     dir = module->opts[2].value;
 
     brg->current_file = resolve_brightness_file(dir, BRG_CURRENT);

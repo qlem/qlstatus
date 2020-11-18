@@ -107,7 +107,6 @@ void            *run_temperature(void *data) {
 
     value = compute_temp(temp->inputs);
     module->critical = value >= temp->cthreshold ? 1 : 0;
-    set_token_buffer(temp->tokens[0].buffer, temp->label);
     snprintf(temp->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld°", value);
     set_module_buffer(module, temp->tokens, TEMP_TOKENS);
     return NULL;
@@ -123,7 +122,7 @@ void            init_temperature(void *data) {
     temp->tokens[1].fmtid = 'V';
     init_module_tokens(module, temp->tokens, TEMP_TOKENS);
 
-    temp->label = module->opts[1].value;
+    set_token_buffer(temp->tokens[0].buffer, module->opts[1].value);
     dir = resolve_temp_dir(module->opts[2].value);
     in_regex = resolve_temp_input_regex(module->opts[3].value);
     temp->cthreshold = ((int *)module->opts[4].value)[0];

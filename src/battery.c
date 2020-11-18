@@ -31,7 +31,7 @@ static void         set_buffer(t_module *module, t_power *power) {
     module->critical = 0;
     if (!power->raw_status || power->current < -1 || power->max < -1) {
         set_token_buffer(power->tokens[0].buffer, power->lb_dis);
-        set_token_buffer(power->tokens[1].buffer, "--%%");
+        set_token_buffer(power->tokens[1].buffer, "--%");
         power->status = PW_UNKNOWN;
         return;
     }
