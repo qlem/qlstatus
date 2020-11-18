@@ -76,8 +76,7 @@ void            *run_memory(void *data) {
     module->critical = used >= mem->cthreshold ? 1 : 0;
     set_token_buffer(mem->tokens[0].buffer, mem->label);
     snprintf(mem->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%", used);
-    set_module_buffer(module, module->opts[0].value, mem->tokens,
-                      MBUFFER_MAX_SIZE);
+    set_module_buffer(module, mem->tokens, MEM_TOKENS);
     return NULL;
 }
 
@@ -87,7 +86,7 @@ void            init_memory(void *data) {
 
     mem->tokens[0].fmtid = 'L';
     mem->tokens[1].fmtid = 'V';
-    init_module_tokens(module, module->opts[0].value, mem->tokens, MEM_TOKENS);
+    init_module_tokens(module, mem->tokens, MEM_TOKENS);
 
     mem->label = module->opts[1].value;
     mem->cthreshold = ((int *)module->opts[2].value)[0];

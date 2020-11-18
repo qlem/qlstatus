@@ -212,8 +212,7 @@ static void         set_buffer(t_module *module, t_wlan *wlan) {
     } else {
         set_token_buffer(wlan->tokens[1].buffer, "--%");
     }
-    set_module_buffer(module, module->opts[0].value, wlan->tokens,
-                      MBUFFER_MAX_SIZE);
+    set_module_buffer(module, wlan->tokens, WLAN_TOKENS);
 }
 
 void            *run_wireless(void *data) {
@@ -239,8 +238,7 @@ void            init_wireless(void *data) {
 
     wlan->tokens[0].fmtid = 'L';
     wlan->tokens[1].fmtid = 'V';
-    init_module_tokens(module, module->opts[0].value, wlan->tokens,
-                       WLAN_TOKENS);
+    init_module_tokens(module, wlan->tokens, WLAN_TOKENS);
 
     wlan->lb_unk = module->opts[1].value;
     wlan->ifname = module->opts[2].value;

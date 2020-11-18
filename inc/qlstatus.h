@@ -49,6 +49,7 @@
 #define HOME_PATTERN "^HOME=(.+)$"
 #define SPWM_COLOR_START "+@fg="
 #define SPWM_COLOR_STOP "+@fg=0;"
+#define TRUNCATE_CHAR '.'
 
 /* OUTPUT FORMAT
  * %D: time info
@@ -377,11 +378,12 @@ char	*to_str(long nb);
 int     putstr(const char *str);
 
 // output format
-int     enable_modules(t_main *main);
+int     print_output_buffer(const char *buffer);
 int     set_output_buffer(t_main *main);
+int     set_module_buffer(t_module *module, t_token *tokens, int size);
 int     set_token_buffer(char *buffer, const char *src);
-int     set_module_buffer(t_module *module, const char *format, t_token *tokens, int size);
-int     init_module_tokens(t_module *module, const char *format, t_token *tokens, int size);
+int     init_module_tokens(t_module *module, t_token *tokens, int size);
+int     enable_modules(t_main *main);
 
 // regex
 bool    match_pattern(const char *regex, const char *str);

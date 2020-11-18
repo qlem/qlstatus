@@ -38,8 +38,7 @@ void            *run_brightness(void *data) {
     set_token_buffer(brg->tokens[0].buffer, brg->label);
     snprintf(brg->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%",
              PERCENT(current, max));
-    set_module_buffer(module, module->opts[0].value, brg->tokens,
-                      MBUFFER_MAX_SIZE);
+    set_module_buffer(module, brg->tokens, BRG_TOKENS);
     return NULL;
 }
 
@@ -50,7 +49,7 @@ void            init_brightness(void *data) {
 
     brg->tokens[0].fmtid = 'L';
     brg->tokens[1].fmtid = 'V';
-    init_module_tokens(module, module->opts[0].value, brg->tokens, BRG_TOKENS);
+    init_module_tokens(module, brg->tokens, BRG_TOKENS);
 
     brg->label = module->opts[1].value;
     dir = module->opts[2].value;

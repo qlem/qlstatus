@@ -339,7 +339,7 @@ int     main(int argc, char **argv, char **env) {
 
         // output
         set_output_buffer(&main);
-        putstr(main.buffer);
+        print_output_buffer(main.buffer);
 
         // compute tick duration
         compute_tick(&ref, &rate, &tick);

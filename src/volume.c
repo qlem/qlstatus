@@ -36,8 +36,7 @@ void        sink_info_cb(pa_context *context, const pa_sink_info *info,
         : set_token_buffer(pulse->tokens[0].buffer, pulse->label);
         snprintf(pulse->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%",
                  VOLUME(avg));
-        set_module_buffer(module, module->opts[0].value, pulse->tokens,
-                          MBUFFER_MAX_SIZE);
+        set_module_buffer(module, pulse->tokens, VOLUME_TOKENS);
     }
     pa_threaded_mainloop_signal(pulse->mainloop, 0);
 }
@@ -115,8 +114,7 @@ void            init_volume(void *data) {
 
     pulse->tokens[0].fmtid = 'L';
     pulse->tokens[1].fmtid = 'V';
-    init_module_tokens(module, module->opts[0].value, pulse->tokens,
-                       VOLUME_TOKENS);
+    init_module_tokens(module, pulse->tokens, VOLUME_TOKENS);
 
     pulse->label = module->opts[1].value;
     pulse->lb_mute = module->opts[2].value;

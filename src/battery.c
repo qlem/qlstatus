@@ -53,7 +53,7 @@ static void         set_buffer(t_module *module, t_power *power) {
         power->status = value <= power->cthreshold ? PW_CRITICAL : PW_UNKNOWN;
         module->critical = power->status == PW_CRITICAL ? 1 : 0;
     }
-    set_module_buffer(module, module->opts[0].value, power->tokens, BAT_TOKENS);
+    set_module_buffer(module, power->tokens, BAT_TOKENS);
 }
 
 void        parse_power_line(t_power *power, const char *line) {
@@ -148,8 +148,7 @@ void            init_battery(void *data) {
 
     power->tokens[0].fmtid = 'L';
     power->tokens[1].fmtid = 'V';
-    init_module_tokens(module, module->opts[0].value, power->tokens,
-                       BAT_TOKENS);
+    init_module_tokens(module, power->tokens, BAT_TOKENS);
 
     power->lb_unk = module->opts[1].value;
     power->lb_full = module->opts[2].value;
