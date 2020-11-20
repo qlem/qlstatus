@@ -5,7 +5,7 @@ Light and modular status bar for tiling window managers like [dwm](https://dwm.s
 ![alt text](https://raw.githubusercontent.com/qlem/qlstatus/master/screenshot.png)
 
 ## Goals
-Light, modular, eazy to use and eazy to maintain.
+Light, modular, eazy to use, eazy to maintain.
 
 ## Features
 - date and time
@@ -84,7 +84,7 @@ Any no-escaped character will be print.
 For modules that have a critical threshold (battery, cpu usage, temperature and memory), you can enable the support of the spectrwm colors `enable_spectrwm_colors = 1`
 and set the index of the desired spectrwm foreground color to use when the module value reach the critical threshold `critical_color_index = n`.
 
-*-- The support of spectrwm colors is stopped for now. --*
+*-- The support of spectrwm colors is stopped for now --*
 
 ### Power notifications
 By default notifications related to the battery are enabled. Change the value of the option `battery_notifications` to enable or disable power notifications.
