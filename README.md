@@ -45,7 +45,9 @@ cp build/qlstatus ~/bin
 
 ## Configuration
 You should override the default value of some options by editing `~/.config/qlstatus/qlstatus.conf`. You can find an example of this file at the root of this repository.
-Each option has `key = value` form. For the detailed list of available options, see the [wiki](https://github.com/qlem/qlstatus/wiki/Options).
+Each option has `key = value` form.
+
+~~For the detailed list of available options, see the [wiki](https://github.com/qlem/qlstatus/wiki/Options).~~
 
 ### Output format
 To enable and change the output order of some modules, override the value of the `format` option.
