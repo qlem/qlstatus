@@ -5,7 +5,7 @@ Light and modular status bar for tiling window managers like [dwm](https://dwm.s
 ![alt text](https://raw.githubusercontent.com/qlem/qlstatus/master/screenshot.png)
 
 ## Goals
-Light, modular, eazy to use, eazy to maintain.. No Memory Leaks !
+Light, modular, eazy to use and eazy to maintain.
 
 ## Features
 - date and time
@@ -44,13 +44,16 @@ cp build/qlstatus ~/bin
 ```
 
 ## Configuration
-You should override the default value of some options by editing `~/.config/qlstatus/qlstatus.conf`.  
+You should override the default value of some options by editing `~/.config/qlstatus/qlstatus.conf`. You can find an example of this file at the root of this repository.
 Each option has `key = value` form. For the detailed list of available options, see the [wiki](https://github.com/qlem/qlstatus/wiki/Options).
 
 ### Output format
-Change the output order of the modules by overriding the value of the `format` option, e.g. `format = %U  %M  %B`.
+To enable and change the output order of some modules, override the value of the `format` option.
+```
+format = %U  %M  %B < %D
+```
 
-Use the following escape sequences to add the desired modules:
+Use the following escape sequences to enable the desired modules:
 - `%D` date and time
 - `%U` CPU
 - `%T` temperature
@@ -60,16 +63,33 @@ Use the following escape sequences to add the desired modules:
 - `%B` battery
 - `%W` wireless
 
-Make sure the modules present in the format string are **enabled**.
+For each module you can change its output format, e.g.:
+```
+# battery
+battery_format = %L %V      # gives the output: bat 42%
+...
+
+# temperature
+temperature = %V            # to only print the module value
+...
+
+# wireless
+wireless_format = %L: %V    # gives: ESSID: 84%
+...
+```
+
+Any no-escaped character will be print.
 
 ### Critical thresholds
 For modules that have a critical threshold (battery, cpu usage, temperature and memory), you can enable the support of the spectrwm colors `enable_spectrwm_colors = 1`
 and set the index of the desired spectrwm foreground color to use when the module value reach the critical threshold `critical_color_index = n`.
 
+*-- The support of spectrwm colors is stopped for now. --*
+
 ### Power notifications
 By default notifications related to the battery are enabled. Change the value of the option `battery_notifications` to enable or disable power notifications.
 
-Three notifications can be send:
+Three notifications are triggered:
 - when the battery is fully charged
 - when the AC adpater is plugged
 - when the battery reach the critical threshold
