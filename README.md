@@ -2,9 +2,7 @@
 Light and modular status bar for tiling window managers like [dwm](https://dwm.suckless.org/) or [spectrwm](https://github.com/conformal/spectrwm). Only for Linux based distributions, written in C.
 
 ---
-![alt text](https://raw.githubusercontent.com/qlem/qlstatus/master/screenshot01.png)
-
-![alt text](https://raw.githubusercontent.com/qlem/qlstatus/master/screenshot02.png)
+![alt text](https://raw.githubusercontent.com/qlem/qlstatus/master/screenshot.png)
 
 ## Goals
 Light, modular, easy to use, easy to maintain.
