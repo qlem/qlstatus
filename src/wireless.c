@@ -77,9 +77,9 @@ void            resolve_essid(t_wlan *wlan, struct nlattr *attr) {
     find_ssid(bss_ies, bss_ies_len, &ssid, &ssid_len);
     if (ssid && ssid_len) {
         wlan->flags |= WLAN_FLAG_HAS_ESSID;
-        if (ssid_len >= WLAN_ESSID_MAX_SIZE) {
-            v_strncpy(wlan->essid, (char *)ssid, WLAN_ESSID_MAX_SIZE);
-            wlan->essid[WLAN_ESSID_MAX_SIZE - 1] = '.';
+        if (ssid_len > TBUFFER_MAX_SIZE) {
+            v_strncpy(wlan->essid, (char *)ssid, TBUFFER_MAX_SIZE);
+            wlan->essid[TBUFFER_MAX_SIZE - 1] = '.';
         } else {
             v_strncpy(wlan->essid, (char *)ssid, ssid_len);
         }
@@ -222,7 +222,7 @@ void            *run_wireless(void *data) {
     wlan->flags = 0;
     wlan->signal = 0;
     v_memset(wlan->bssid, 0, ETH_ALEN);
-    v_memset(wlan->essid, 0, WLAN_ESSID_MAX_SIZE);
+    v_memset(wlan->essid, 0, TBUFFER_MAX_SIZE);
     if (send_for_scan(wlan) < 0 || send_for_station(wlan) < 0) {
         nl_socket_free(wlan->socket);
         exit(EXIT_FAILURE);

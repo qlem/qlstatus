@@ -294,7 +294,6 @@ typedef struct      s_temp {
 #define WLAN_INTERFACE "wlan0"
 #define WLAN_FLAG_HAS_ESSID (1 << 0)
 #define WLAN_FLAG_HAS_SIGNAL (1 << 1)
-#define WLAN_ESSID_MAX_SIZE 16
 #define WLAN_UNK_LABEL "SSID unk"
 #define NOISE_FLOOR_DBM (-90)
 #define SIGNAL_MAX_DBM (-20)
@@ -306,7 +305,7 @@ typedef struct      s_wlan {
     char            *ifname;
     int             nl80211_id;
     uint8_t         bssid[ETH_ALEN];
-    char            essid[WLAN_ESSID_MAX_SIZE];
+    char            essid[TBUFFER_MAX_SIZE];
     char            *lb_unk;
     int             signal;
     t_token         tokens[WLAN_TOKENS];
