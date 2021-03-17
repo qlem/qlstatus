@@ -6,8 +6,6 @@
 
 #include "qlstatus.h"
 
-static uint8_t running = 1;
-
 char        *resolve_config_file(char **env) {
     char    *config = NULL;
     char    *home = NULL;
@@ -56,7 +54,7 @@ int             resolve_rate(t_main *main, struct timespec *tp) {
 void    signal_handler(int signum) {
     (void)signum;
     putstr("\n(interrupt) Exiting ql-status.\n");
-    running = 0;
+    exit(EXIT_SUCCESS);
 }
 
 void        free_resources(t_main *main) {
@@ -94,9 +92,9 @@ void        compute_tick(struct timespec *ref, struct timespec *rate,
     long    sec = ref->tv_sec + rate->tv_sec;
     long    nsec = ref->tv_nsec + rate->tv_nsec;
 
-    if (nsec > NSEC) {
+    if (nsec >= NSEC) {
         tick->tv_sec = sec + 1;
-        tick->tv_nsec = nsec - (long)1e9;
+        tick->tv_nsec = nsec - NSEC;
     } else {
         tick->tv_sec = sec;
         tick->tv_nsec = nsec;
@@ -303,7 +301,7 @@ int     main(int argc, char **argv, char **env) {
     }
 
     // main loop
-    while (running) {
+    while (true) {
 
         // store reference time
         if (clock_gettime(CLOCK_REALTIME, &ref) == -1) {
@@ -354,8 +352,5 @@ int     main(int argc, char **argv, char **env) {
             }
         }
     }
-
-    // free resources on exit
-    free_resources(&main);
     return 0;
 }

@@ -7,6 +7,8 @@
 #ifndef QLSTATUS_H_
 #define QLSTATUS_H_
 
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
@@ -41,9 +43,9 @@
 #define BASE 10
 #define RATE "1s"
 #define NB_MODULES 8
-#define NSEC 999999999
-#define NSEC_TO_SEC(nsec) nsec / (long)1e9
-#define REM_NSEC(nsec) nsec % (long)1e9
+#define NSEC 1000000000
+#define NSEC_TO_SEC(nsec) nsec / NSEC
+#define REM_NSEC(nsec) nsec % NSEC
 #define PERCENT(value, total) value * 100 / total
 #define CONFIG_FILE ".config/qlstatus/qlstatus.conf"
 #define HOME_PATTERN "^HOME=(.+)$"
@@ -339,6 +341,7 @@ typedef struct  s_mem {
 #define PULSE_APP_NAME "qlstatus"
 #define VOLUME_LABEL "vol"
 #define VOLUME_MUTED_LABEL "mut"
+#define PULSE_CONNECTION_TIMEOUT 400000000
 
 typedef struct              s_pulse {
     char                    *sink;

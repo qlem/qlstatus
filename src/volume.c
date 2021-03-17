@@ -106,11 +106,12 @@ void                    *run_volume(void *data) {
     return NULL;
 }
 
-void            init_volume(void *data) {
-    t_module    *module = data;
-    t_pulse     *pulse = module->data;
-    pthread_t   thread = 0;
-    int         err;
+void                    init_volume(void *data) {
+    t_module            *module = data;
+    t_pulse             *pulse = module->data;
+    struct timespec     abstime;
+    pthread_t           thread = 0;
+    int                 err;
 
     pulse->tokens[0].fmtid = 'L';
     pulse->tokens[1].fmtid = 'V';
@@ -124,7 +125,26 @@ void            init_volume(void *data) {
         fprintf(stderr, "Call to pthread_create() failed: %s\n", strerror(err));
         exit(EXIT_FAILURE);
     }
-    if ((err = pthread_join(thread, NULL)) != 0) {
+
+    if (clock_gettime(CLOCK_REALTIME, &abstime) == -1) {
+        fprintf(stderr, "Call to clock_gettime() failed: %s\n",
+                strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+
+    if (abstime.tv_nsec + PULSE_CONNECTION_TIMEOUT >= NSEC) {
+        abstime.tv_sec += 1;
+        abstime.tv_nsec = (abstime.tv_nsec + PULSE_CONNECTION_TIMEOUT) - NSEC;
+    } else {
+        abstime.tv_nsec += PULSE_CONNECTION_TIMEOUT;
+    }
+
+    if ((err = pthread_timedjoin_np(thread, NULL, &abstime)) != 0) {
+        if (err == ETIMEDOUT) {
+            fprintf(stderr, "Failed to initialize volume module: %s\n",
+                    strerror(err));
+            exit(EXIT_FAILURE);
+        }
         fprintf(stderr, "Call to pthread_join() failed: %s\n", strerror(err));
         exit(EXIT_FAILURE);
     }
