@@ -94,8 +94,6 @@ void                    *run_volume(void *data) {
                                           &sink_info_cb, module);
     if (op == NULL) {
         fprintf(stderr, "Call to pa_context_get_sink_info_by_name() failed\n");
-        pa_threaded_mainloop_unlock(pulse->mainloop);
-        free_pulse_resources(pulse);
         exit(EXIT_FAILURE);
     }
     while (pa_operation_get_state(op) == PA_OPERATION_RUNNING) {

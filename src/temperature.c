@@ -40,8 +40,6 @@ char        *resolve_temp_dir(const char *path) {
     files = read_dir(parent, NULL);
     if (!files[0][0]) {
         fprintf(stderr, "Cannot resolve temp directory %s\n", path);
-        free_files(files);
-        free(parent);
         exit(EXIT_FAILURE);
     }
     size = v_strlen(files[0]);
@@ -132,8 +130,6 @@ void            init_temperature(void *data) {
     if (!temp->inputs[0][0]) {
         fprintf(stderr, "Cannot resolve temp dir, no input files found in %s\n",
                 dir);
-        free_files(temp->inputs);
-        free(dir);
         exit(EXIT_FAILURE);
     }
     free(dir);

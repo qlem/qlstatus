@@ -32,7 +32,7 @@ long        compute_cpu_usage(t_cpu *cpu) {
     return usage;
 }
 
-int         parse_cpu_stats(t_cpu *cpu, char *line) {
+int         parse_cpu_values(t_cpu *cpu, char *line) {
     char    *token;
     int     i = 0;
 
@@ -59,7 +59,6 @@ char            *parse_cpu_file() {
         if (errno) {
             fprintf(stderr, "Error reading file %s: %s\n", PROC_STAT,
                     strerror(errno));
-            close_stream(stream, PROC_STAT);
             exit(EXIT_FAILURE);
         }
         free(line);
@@ -80,12 +79,11 @@ void            *run_cpu_usage(void *data) {
     long        value;
 
     if ((rstats = parse_cpu_file()) == NULL) {
-        fprintf(stderr, "Cannot compute cpu usage: missing statistics\n");
+        fprintf(stderr, "Cannot compute cpu usage: missing values\n");
         exit(EXIT_FAILURE);
     }
-    if (parse_cpu_stats(cpu, rstats) == -1) {
-        fprintf(stderr, "Cannot compute cpu usage: missing statistics\n");
-        free(rstats);
+    if (parse_cpu_values(cpu, rstats) == -1) {
+        fprintf(stderr, "Cannot compute cpu usage: missing values\n");
         exit(EXIT_FAILURE);
     }
     value = compute_cpu_usage(cpu);

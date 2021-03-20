@@ -10,22 +10,22 @@ void        free_memory(void *data) {
     (void)data;
 }
 
-void        parse_mem_stat(t_mem *mem, char *rstat) {
-    char    *stat;
+void        parse_mem_value(t_mem *mem, char *rvalue) {
+    char    *value;
 
-    if ((stat = substring(MEM_TOTAL_PATTERN, rstat))) {
-        mem->total = to_int(stat);
-    } else if ((stat = substring(MEM_FREE_PATTERN, rstat))) {
-        mem->free = to_int(stat);
-    } else if ((stat = substring(MEM_BUFFERS_PATTERN, rstat))) {
-        mem->buffers = to_int(stat);
-    } else if ((stat = substring(MEM_CACHED_PATTERN, rstat))) {
-        mem->cached = to_int(stat);
-    } else if ((stat = substring(MEM_SRECLAIM_PATTERN, rstat))) {
-        mem->sreclaim = to_int(stat);
+    if ((value = substring(MEM_TOTAL_PATTERN, rvalue))) {
+        mem->total = to_int(value);
+    } else if ((value = substring(MEM_FREE_PATTERN, rvalue))) {
+        mem->free = to_int(value);
+    } else if ((value = substring(MEM_BUFFERS_PATTERN, rvalue))) {
+        mem->buffers = to_int(value);
+    } else if ((value = substring(MEM_CACHED_PATTERN, rvalue))) {
+        mem->cached = to_int(value);
+    } else if ((value = substring(MEM_SRECLAIM_PATTERN, rvalue))) {
+        mem->sreclaim = to_int(value);
     }
-    free(rstat);
-    free(stat);
+    free(rvalue);
+    free(value);
 }
 
 int             parse_mem_file(t_mem *mem) {
@@ -37,7 +37,7 @@ int             parse_mem_file(t_mem *mem) {
     stream = open_stream(PROC_MEMINFO);
     while ((nb = getline(&line, &size, stream)) != -1) {
         line[nb - 1] == '\n' ? line[nb - 1] = 0 : 0;
-        parse_mem_stat(mem, line);
+        parse_mem_value(mem, line);
         line = NULL;
         size = 0;
         if (mem->total > -1 && mem->free > -1 && mem->buffers > -1 &&
@@ -49,7 +49,6 @@ int             parse_mem_file(t_mem *mem) {
     if (nb == -1 && errno) {
         fprintf(stderr, "Error reading file %s: %s\n", PROC_MEMINFO,
                 strerror(errno));
-        close_stream(stream, PROC_MEMINFO);
         exit(EXIT_FAILURE);
     }
     free(line);
@@ -68,7 +67,7 @@ void            *run_memory(void *data) {
     mem->cached = -1;
     mem->sreclaim = -1;
     if (parse_mem_file(mem) == -1) {
-        fprintf(stderr, "Cannot compute memory usage: missing statistics\n");
+        fprintf(stderr, "Cannot compute memory usage: missing values\n");
         exit(EXIT_FAILURE);
     }
     used = mem->total - mem->free - mem->buffers - mem->cached - mem->sreclaim;

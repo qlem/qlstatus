@@ -95,7 +95,6 @@ int         parse_power_file(t_power *power) {
     if (nb == -1 && errno) {
         fprintf(stderr, "Error reading file %s: %s\n", power->file,
                 strerror(errno));
-        close_stream(stream, power->file);
         exit(EXIT_FAILURE);
     }
     free(line);

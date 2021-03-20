@@ -251,19 +251,16 @@ void            init_wireless(void *data) {
     if ((err = genl_connect(wlan->socket)) < 0) {
         fprintf(stderr, "Call to genl_connect() failed: %s\n",
                 nl_geterror(err));
-        nl_socket_free(wlan->socket);
         exit(EXIT_FAILURE);
     }
     if ((wlan->nl80211_id = genl_ctrl_resolve(wlan->socket, NL80211)) < 0) {
         fprintf(stderr, "Call to genl_ctrl_resolve() failed: %s\n",
                 nl_geterror(wlan->nl80211_id));
-        nl_socket_free(wlan->socket);
         exit(EXIT_FAILURE);
     }
     if ((wlan->ifindex = if_nametoindex(wlan->ifname)) == 0) {
         fprintf(stderr, "Unable to resolve wireless interface %s: %s\n",
                 wlan->ifname, strerror(errno));
-        nl_socket_free(wlan->socket);
         exit(EXIT_FAILURE);
     }
 }

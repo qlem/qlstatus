@@ -33,7 +33,7 @@ int         check_global_opts(t_main *main, char **opt, int nline) {
             if (!match_pattern(main->opts[i].pattern, opt[1])) {
                 fprintf(stderr, "Invalid value at line %d: %s\n", nline,
                         opt[0]);
-                return -1;
+                exit(EXIT_FAILURE);
             }
             // set option value
             if (main->opts[i].type == NUMBER) {
@@ -79,7 +79,7 @@ int             check_module_opts(t_module *modules, char **opt, int nline) {
                 if (!match_pattern(opts[j].pattern, opt[1])) {
                     fprintf(stderr, "Invalid value at line %d: %s\n", nline,
                             opt[0]);
-                    return -1;
+                    exit(EXIT_FAILURE);
                 }
                 // set option value
                 if (opts[j].type == NUMBER) {
@@ -193,7 +193,7 @@ int         parse_config_line(t_main *main, char *line, int nline) {
     int     gcode;
     int     mcode;
 
-    // skip blank lines and comments
+    // skip blank and comment lines
     if (line[0] == 0) {
         free(line);
         return 0;
@@ -218,33 +218,19 @@ int         parse_config_line(t_main *main, char *line, int nline) {
     if (!opt[0] || !opt[1]) {
         fprintf(stderr, "Invalid option at line %d: %s\n", nline,
                 opt[0] ? opt[0] : opt[1]);
-        free(line);
-        free_opt(opt);
-        return -1;
+        exit(EXIT_FAILURE);
     }
 
     // check if the option is a global option
     gcode = check_global_opts(main, opt, nline);
-    if (gcode == -1) {
-        free(line);
-        free_opt(opt);
-        return -1;
-    }
 
     // check if the option is a module option
     mcode = check_module_opts(main->modules, opt, nline);
-    if (mcode == -1) {
-        free(line);
-        free_opt(opt);
-        return -1;
-    }
 
     // check if the option exist
     if (mcode == 1 && gcode == 1) {
         fprintf(stderr, "Invalid option at line %d: %s\n", nline, opt[0]);
-        free(line);
-        free_opt(opt);
-        return -1;
+        exit(EXIT_FAILURE);
     }
 
     // free
@@ -268,16 +254,12 @@ int         load_config_file(t_main *main, const char *file) {
     while ((nb = getline(&line, &size, stream)) != -1) {
         ++i;
         line[nb - 1] == '\n' ? line[nb - 1] = 0 : 0;
-        if (parse_config_line(main, line, i) < 0) {
-            close_stream(stream, file);
-            exit(EXIT_FAILURE);
-        }
+        parse_config_line(main, line, i);
         line = NULL;
         size = 0;
     }
     if (nb == -1 && errno) {
         fprintf(stderr, "Error reading file %s: %s\n", file, strerror(errno));
-        close_stream(stream, file);
         exit(EXIT_FAILURE);
     }
     free(line);
