@@ -9,18 +9,14 @@
 // Based from sources of pa_volume_snprint() function
 #define VOLUME(avg) (((uint64_t)avg * 100 + (uint64_t)PA_VOLUME_NORM / 2) / (uint64_t)PA_VOLUME_NORM)
 
-void        free_pulse_resources(t_pulse *pulse) {
-    pa_context_disconnect(pulse->context);
-    pa_context_unref(pulse->context);
-    pa_threaded_mainloop_stop(pulse->mainloop);
-    pa_threaded_mainloop_free(pulse->mainloop);
-}
-
 void            free_volume(void *data) {
     t_module    *module = data;
     t_pulse     *pulse = module->data;
 
-    free_pulse_resources(pulse);
+    pa_context_disconnect(pulse->context);
+    pa_context_unref(pulse->context);
+    pa_threaded_mainloop_stop(pulse->mainloop);
+    pa_threaded_mainloop_free(pulse->mainloop);
 }
 
 void        sink_info_cb(pa_context *context, const pa_sink_info *info,
