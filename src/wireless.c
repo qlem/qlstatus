@@ -258,6 +258,7 @@ void            init_wireless(void *data) {
                 nl_geterror(wlan->nl80211_id));
         exit(EXIT_FAILURE);
     }
+    errno = 0;
     if ((wlan->ifindex = if_nametoindex(wlan->ifname)) == 0) {
         fprintf(stderr, "Unable to resolve wireless interface %s: %s\n",
                 wlan->ifname, strerror(errno));

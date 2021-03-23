@@ -34,6 +34,7 @@ int             parse_mem_file(t_mem *mem) {
     FILE        *stream;
     ssize_t     nb;
 
+    errno = 0;
     stream = open_stream(PROC_MEMINFO);
     while ((nb = getline(&line, &size, stream)) != -1) {
         line[nb - 1] == '\n' ? line[nb - 1] = 0 : 0;

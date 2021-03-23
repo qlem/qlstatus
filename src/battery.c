@@ -80,6 +80,7 @@ int         parse_power_file(t_power *power) {
     char    *line = NULL;
     ssize_t nb;
 
+    errno = 0;
     stream = open_stream(power->file);
     while ((nb = getline(&line, &size, stream)) != -1) {
         line[nb - 1] == '\n' ? line[nb - 1] = 0 : 0;

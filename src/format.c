@@ -43,6 +43,7 @@ char        *append_module(t_main *main, t_module *module, char *buffer) {
 int         print_output_buffer(const char *buffer) {
     int     i = -1;
 
+    errno = 0;
     while (++i < BUFFER_MAX_SIZE && buffer[i]) {}
     if (write(1, buffer, i) == -1) {
         fprintf(stderr, "Call to write() failed: %s\n", strerror(errno));

@@ -7,6 +7,7 @@
 #include "qlstatus.h"
 
 void        close_stream(FILE *stream, const char *file) {
+    errno = 0;
     if (fclose(stream) != 0) {
         fprintf(stderr, "Cannot close file %s: %s\n", file, strerror(errno));
         exit(EXIT_FAILURE);
@@ -16,6 +17,7 @@ void        close_stream(FILE *stream, const char *file) {
 FILE        *open_stream(const char *file) {
     FILE    *stream;
 
+    errno = 0;
     if ((stream = fopen(file, "r")) == NULL) {
         fprintf(stderr, "Cannot open file %s: %s\n", file, strerror(errno));
         exit(EXIT_FAILURE);
@@ -26,6 +28,7 @@ FILE        *open_stream(const char *file) {
 off_t               file_len(const char *path) {
     struct stat     info;
 
+    errno = 0;
     if (stat(path, &info) == -1) {
         fprintf(stderr, "Cannot get file info %s: %s\n", path, strerror(errno));
         exit(EXIT_FAILURE);
@@ -38,6 +41,7 @@ char        *read_file(const char *file) {
     off_t   size;
     int     fd;
 
+    errno = 0;
     if ((fd = open(file, O_RDONLY)) == -1) {
         fprintf(stderr, "Cannot open file %s: %s\n", file, strerror(errno));
         exit(EXIT_FAILURE);

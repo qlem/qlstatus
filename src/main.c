@@ -250,6 +250,7 @@ int     main(int argc, char **argv, char **env) {
     t_main              main;
     int                 err;
 
+    errno = 0;
     // init signal handler
     v_memset(&act, 0, sizeof(struct sigaction));
     act.sa_handler = signal_handler;
@@ -303,6 +304,7 @@ int     main(int argc, char **argv, char **env) {
     // main loop
     while (true) {
 
+        errno = 0;
         // store reference time
         if (clock_gettime(CLOCK_REALTIME, &ref) == -1) {
             fprintf(stderr, "Call to clock_gettime() failed: %s\n",

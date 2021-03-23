@@ -120,6 +120,7 @@ void                    init_volume(void *data) {
         exit(EXIT_FAILURE);
     }
 
+    errno = 0;
     if (clock_gettime(CLOCK_REALTIME, &abstime) == -1) {
         fprintf(stderr, "Call to clock_gettime() failed: %s\n",
                 strerror(errno));

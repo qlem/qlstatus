@@ -247,6 +247,7 @@ int         load_config_file(t_main *main, const char *file) {
     int     i = 0;
     ssize_t nb;
 
+    errno = 0;
     if ((stream = fopen(file, "r")) == NULL) {
         fprintf(stderr, "Cannot load config file: %s\n", strerror(errno));
         return -1;

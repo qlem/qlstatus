@@ -16,6 +16,7 @@ void            *run_time(void *data) {
     struct tm   *timeinfo;
     time_t      rawtime;
 
+    errno = 0;
     if (time(&rawtime) == ((time_t) -1)) {
         fprintf(stderr, "Call to time() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);

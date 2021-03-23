@@ -53,6 +53,7 @@ char            *parse_cpu_file() {
     FILE        *stream;
     ssize_t     nb;
 
+    errno = 0;
     stream = open_stream(PROC_STAT);
     nb = getline(&line, &size, stream);
     if (nb == -1) {

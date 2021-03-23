@@ -26,6 +26,7 @@ char        **add_file(char **files, size_t *size, const char *file,
         return files;
     }
     free(files[*size - 1]);
+    errno = 0;
     if ((files = realloc(files, sizeof(char *) * ++(*size))) == NULL) {
         fprintf(stderr, "Call to realloc() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
@@ -50,6 +51,7 @@ char                **read_dir(const char *path, const char *regex) {
     struct dirent   *s_dir;
     DIR             *dir;
 
+    errno = 0;
     if ((dir = opendir(path)) == NULL) {
         fprintf(stderr, "Cannot open dir %s: %s\n", path, strerror(errno));
         exit(EXIT_FAILURE);
