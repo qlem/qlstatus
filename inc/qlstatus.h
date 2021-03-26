@@ -85,7 +85,7 @@ typedef struct      s_opt {
 #define BAT_NOPTS 12
 #define CPU_NOPTS 3
 #define TEMP_NOPTS 5
-#define MEM_NOPTS 3
+#define MEM_NOPTS 4
 #define BRG_NOPTS 3
 #define VOL_NOPTS 4
 #define WLAN_NOPTS 3
@@ -101,6 +101,7 @@ typedef struct      s_opt {
 #define BAT_NAME_PATTERN "^BAT[0-9]$"
 #define IN_TEMP_PATTERN "^([1-9])$|^([1-9]-[1-9])$"
 #define COLOR_IDX_PATTERN "^[0-9]$"
+#define MEM_UNIT_PATTERN "^(kB)$|^(mB)$|^(gB)$"
 
 // global options
 #define OPT_FORMAT "format"
@@ -140,6 +141,7 @@ typedef struct      s_opt {
 // memory options
 #define OPT_MEM_FORMAT "memory_format"
 #define OPT_MEM_LABEL "memory_label"
+#define OPT_MEM_UNIT "memory_unit"
 #define OPT_MEM_CRITICAL "memory_critical"
 
 // brightness options
@@ -315,7 +317,7 @@ typedef struct      s_wlan {
 
 // memory
 #define MEM_FORMAT "%L %V"
-#define MEM_TOKENS 2
+#define MEM_TOKENS 5
 #define PROC_MEMINFO "/proc/meminfo"
 #define MEM_TOTAL_PATTERN "^MemTotal:[ \t]+([0-9]+) kB$"
 #define MEM_FREE_PATTERN "^MemFree:[ \t]+([0-9]+) kB$"
@@ -323,6 +325,8 @@ typedef struct      s_wlan {
 #define MEM_CACHED_PATTERN "^Cached:[ \t]+([0-9]+) kB$"
 #define MEM_SRECLAIM_PATTERN "^SReclaimable:[ \t]+([0-9]+) kB$"
 #define MEM_LABEL "mem"
+#define MEM_UNIT "mB"
+#define MEGABYTE 1024
 
 typedef struct  s_mem {
     long        total;

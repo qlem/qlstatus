@@ -61,7 +61,9 @@ void            *run_memory(void *data) {
     t_module    *module = data;
     t_mem       *mem = module->data;
     long        used;
+    int         factor;
 
+    factor = 1;
     mem->total = -1;
     mem->free = -1;
     mem->buffers = -1;
@@ -72,6 +74,15 @@ void            *run_memory(void *data) {
         exit(EXIT_FAILURE);
     }
     used = mem->total - mem->free - mem->buffers - mem->cached - mem->sreclaim;
+
+    if (strcmp("mB", mem->tokens[4].buffer) == 0) {
+        factor = MEGABYTE;
+    } else if (strcmp("gB", mem->tokens[4].buffer) == 0) {
+        factor = MEGABYTE * MEGABYTE;
+    }
+    snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%.1ld", used / factor);
+    snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%.1ld", mem->total / factor);
+
     used = PERCENT(used, mem->total);
     module->critical = used >= mem->cthreshold ? 1 : 0;
     snprintf(mem->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%", used);
@@ -84,9 +95,13 @@ void            init_memory(void *data) {
     t_mem       *mem = module->data;
 
     mem->tokens[0].fmtid = 'L';
-    mem->tokens[1].fmtid = 'V';
+    mem->tokens[1].fmtid = 'P';
+    mem->tokens[2].fmtid = 'C';
+    mem->tokens[3].fmtid = 'T';
+    mem->tokens[4].fmtid = 'U';
     init_module_tokens(module, mem->tokens, MEM_TOKENS);
 
     set_token_buffer(mem->tokens[0].buffer, module->opts[1].value);
-    mem->cthreshold = ((int *)module->opts[2].value)[0];
+    set_token_buffer(mem->tokens[4].buffer, module->opts[2].value);
+    mem->cthreshold = ((int *)module->opts[3].value)[0];
 }

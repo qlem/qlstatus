@@ -171,6 +171,7 @@ int     main(int argc, char **argv, char **env) {
     t_opt       opts_mem[] = {
         {OPT_MEM_FORMAT,   MEM_FORMAT,     TEXT_PATTERN,      STRING, 0},
         {OPT_MEM_LABEL,    MEM_LABEL,      LABEL_PATTERN,     STRING, 0},
+        {OPT_MEM_UNIT,     MEM_UNIT,       MEM_UNIT_PATTERN,  STRING, 0},
         {OPT_MEM_CRITICAL, &mem_threshold, THRESHOLD_PATTERN, NUMBER, 0}
     };
 
@@ -210,7 +211,7 @@ int     main(int argc, char **argv, char **env) {
 
     // mem data
     t_mem   mem;
-    v_memset(&cpu, 0, sizeof(t_mem));
+    v_memset(&mem, 0, sizeof(t_mem));
 
     // temp data
     t_temp      temp;
