@@ -57,6 +57,16 @@ int             parse_mem_file(t_mem *mem) {
     return -1;
 }
 
+void        remove_leading_zero(char *buf) {
+    int     i = -1;
+
+    while (++i < TBUFFER_MAX_SIZE && buf[i]) {}
+    if (buf[i - 1] == '0') {
+        buf[i - 1] = 0;
+        buf[i - 2] = 0;
+    }
+}
+
 void            *run_memory(void *data) {
     t_module    *module = data;
     t_mem       *mem = module->data;
@@ -75,14 +85,20 @@ void            *run_memory(void *data) {
     }
     used = mem->total - mem->free - mem->buffers - mem->cached - mem->sreclaim;
 
-    if (strcmp("mB", mem->tokens[4].buffer) == 0) {
-        factor = MEGABYTE;
-    } else if (strcmp("gB", mem->tokens[4].buffer) == 0) {
-        factor = MEGABYTE * MEGABYTE;
+    // set detailed memory usage
+    if (mem->tokens[2].enabled || mem->tokens[3].enabled) {
+        if (strcmp("mB", mem->tokens[4].buffer) == 0) {
+            factor = MEGABYTE;
+        } else if (strcmp("gB", mem->tokens[4].buffer) == 0) {
+            factor = MEGABYTE * MEGABYTE;
+        }
+        snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%.1f", (float)used / factor);
+        snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%.1f", (float)mem->total / factor);
+        remove_leading_zero(mem->tokens[2].buffer);
+        remove_leading_zero(mem->tokens[3].buffer);
     }
-    snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%.1ld", used / factor);
-    snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%.1ld", mem->total / factor);
 
+    // set percent memory usage
     used = PERCENT(used, mem->total);
     module->critical = used >= mem->cthreshold ? 1 : 0;
     snprintf(mem->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%", used);
