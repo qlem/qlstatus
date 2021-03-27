@@ -126,7 +126,7 @@ int     main(int argc, char **argv, char **env) {
 
     // time options
     t_opt       opts_time[] = {
-        {OPT_TIME_FORMAT, TIME_DEFAULT_FORMAT, TEXT_PATTERN, STRING, 0}
+        {"time_format", TIME_FORMAT, TEXT_PATTERN, STRING, 0}
     };
 
     // battery options
@@ -134,76 +134,76 @@ int     main(int argc, char **argv, char **env) {
     int         bat_full_design = 1;
     int         bat_notify = 1;
     t_opt       opts_bat[] = {
-        {OPT_BAT_FORMAT,      BAT_FORMAT,       TEXT_PATTERN,      STRING, 0},
-        {OPT_BAT_LB_UNK,      BAT_LABEL_UNK,    LABEL_PATTERN,     STRING, 0},
-        {OPT_BAT_LB_FULL,     BAT_LABEL_FULL,   LABEL_PATTERN,     STRING, 0},
-        {OPT_BAT_LB_CHR,      BAT_LABEL_CHR,    LABEL_PATTERN,     STRING, 0},
-        {OPT_BAT_LB_DIS,      BAT_LABEL_DIS,    LABEL_PATTERN,     STRING, 0},
-        {OPT_BAT_NAME,        BATTERY_NAME,     BAT_NAME_PATTERN,  STRING, 0},
-        {OPT_BAT_CRITICAL,    &bat_threshold,   THRESHOLD_PATTERN, NUMBER, 0},
-        {OPT_BAT_FULL_DESIGN, &bat_full_design, BOOLEAN_PATTERN,   NUMBER, 0},
-        {OPT_BAT_NOTIFY,      &bat_notify,      BOOLEAN_PATTERN,   NUMBER, 0},
-        {OPT_BAT_NOTIFY_ICON_FULL,    NULL,     TEXT_PATTERN,      STRING, 0},
-        {OPT_BAT_NOTIFY_ICON_PLUGGED, NULL,     TEXT_PATTERN,      STRING, 0},
-        {OPT_BAT_NOTIFY_ICON_LOW,     NULL,     TEXT_PATTERN,      STRING, 0}
+        {"battery_format",              BAT_FORMAT,       TEXT_PATTERN,      STRING, 0},
+        {"battery_label_unknown",       "unk",            LABEL_PATTERN,     STRING, 0},
+        {"battery_label_full",          "full",           LABEL_PATTERN,     STRING, 0},
+        {"battery_label_charging",      "chr",            LABEL_PATTERN,     STRING, 0},
+        {"battery_label_discharging",   "bat",            LABEL_PATTERN,     STRING, 0},
+        {"battery_name",                "BAT0",           BAT_NAME_PATTERN,  STRING, 0},
+        {"battery_critical",            &bat_threshold,   THRESHOLD_PATTERN, NUMBER, 0},
+        {"battery_full_design",         &bat_full_design, BOOLEAN_PATTERN,   NUMBER, 0},
+        {"battery_notifications",       &bat_notify,      BOOLEAN_PATTERN,   NUMBER, 0},
+        {"battery_notify_icon_full",    NULL,             TEXT_PATTERN,      STRING, 0},
+        {"battery_notify_icon_plugged", NULL,             TEXT_PATTERN,      STRING, 0},
+        {"battery_notify_icon_low",     NULL,             TEXT_PATTERN,      STRING, 0}
     };
 
     // cpu usage options
     int         cpu_threshold = 80;
     t_opt       opts_cpu[] = {
-        {OPT_CPU_FORMAT,   CPU_FORMAT,     TEXT_PATTERN,      STRING, 0},
-        {OPT_CPU_LABEL,    CPU_LABEL,      LABEL_PATTERN,     STRING, 0},
-        {OPT_CPU_CRITICAL, &cpu_threshold, THRESHOLD_PATTERN, NUMBER, 0}
+        {"cpu_format",   CPU_FORMAT,     TEXT_PATTERN,      STRING, 0},
+        {"cpu_label",    "cpu",          LABEL_PATTERN,     STRING, 0},
+        {"cpu_critical", &cpu_threshold, THRESHOLD_PATTERN, NUMBER, 0}
     };
 
     // cpu freq options
     int         scaling = 1;
     t_opt       opts_freq[] = {
-        {OPT_FREQ_FORMAT,  FREQ_FORMAT, TEXT_PATTERN,      STRING, 0},
-        {OPT_FREQ_LABEL,   FREQ_LABEL,  LABEL_PATTERN,     STRING, 0},
-        {OPT_FREQ_UNIT,    FREQ_UNIT,   FREQ_UNIT_PATTERN, STRING, 0},
-        {OPT_FREQ_SCALING, &scaling,    BOOLEAN_PATTERN,   NUMBER, 0}
+        {"cpu_freq_format",  FREQ_FORMAT, TEXT_PATTERN,      STRING, 0},
+        {"cpu_freq_label",   "freq",      LABEL_PATTERN,     STRING, 0},
+        {"cpu_freq_unit",    "MHz",       FREQ_UNIT_PATTERN, STRING, 0},
+        {"cpu_freq_scaling", &scaling,    BOOLEAN_PATTERN,   NUMBER, 0}
     };
 
     // temperature options
     int         temp_threshold = 80;
     t_opt       opts_temp[] = {
-        {OPT_TEMP_FORMAT,   TEMP_FORMAT,     TEXT_PATTERN,      STRING, 0},
-        {OPT_TEMP_LABEL,    TEMP_LABEL,      LABEL_PATTERN,     STRING, 0},
-        {OPT_TEMP_DIR,      TEMP_DIR,        PATH_PATTERN,      STRING, 0},
-        {OPT_TEMP_INPUT,    "1",             IN_TEMP_PATTERN,   STRING, 0},
-        {OPT_TEMP_CRITICAL, &temp_threshold, THRESHOLD_PATTERN, NUMBER, 0}
+        {"temperature_format",   TEMP_FORMAT,     TEXT_PATTERN,      STRING, 0},
+        {"temperature_label",    "temp",          LABEL_PATTERN,     STRING, 0},
+        {"temperature_dir",      TEMP_DIR,        PATH_PATTERN,      STRING, 0},
+        {"temperature_input",    "1",             IN_TEMP_PATTERN,   STRING, 0},
+        {"temperature_critical", &temp_threshold, THRESHOLD_PATTERN, NUMBER, 0}
     };
 
     // memory options
     int         mem_threshold = 80;
     t_opt       opts_mem[] = {
-        {OPT_MEM_FORMAT,   MEM_FORMAT,     TEXT_PATTERN,      STRING, 0},
-        {OPT_MEM_LABEL,    MEM_LABEL,      LABEL_PATTERN,     STRING, 0},
-        {OPT_MEM_UNIT,     MEM_UNIT,       MEM_UNIT_PATTERN,  STRING, 0},
-        {OPT_MEM_CRITICAL, &mem_threshold, THRESHOLD_PATTERN, NUMBER, 0}
+        {"memory_format",   MEM_FORMAT,     TEXT_PATTERN,      STRING, 0},
+        {"memory_label",    "mem",          LABEL_PATTERN,     STRING, 0},
+        {"memory_unit",     "mB",           MEM_UNIT_PATTERN,  STRING, 0},
+        {"memory_critical", &mem_threshold, THRESHOLD_PATTERN, NUMBER, 0}
     };
 
     // brightness options
     t_opt       opts_brg[] = {
-        {OPT_BRG_FORMAT, BRG_FORMAT, TEXT_PATTERN,  STRING, 0},
-        {OPT_BRG_LABEL,  BRG_LABEL,  LABEL_PATTERN, STRING, 0},
-        {OPT_BRG_DIR,    BRG_DIR,    PATH_PATTERN,  STRING, 0}
+        {"brightness_format", BRG_FORMAT, TEXT_PATTERN,  STRING, 0},
+        {"brightness_label",  "brg",      LABEL_PATTERN, STRING, 0},
+        {"brightness_dir",    BRG_DIR,    PATH_PATTERN,  STRING, 0}
     };
 
     // volume options
     t_opt       opts_vol[] = {
-        {OPT_VOL_FORMAT,   VOLUME_FORMAT,      TEXT_PATTERN,  STRING, 0},
-        {OPT_VOL_LABEL,    VOLUME_LABEL,       LABEL_PATTERN, STRING, 0},
-        {OPT_VOL_LB_MUTED, VOLUME_MUTED_LABEL, LABEL_PATTERN, STRING, 0},
-        {OPT_VOL_SINK,     PULSE_SINK_NAME,    TEXT_PATTERN,  STRING, 0}
+        {"volume_format",      VOLUME_FORMAT,   TEXT_PATTERN,  STRING, 0},
+        {"volume_label",       "vol",           LABEL_PATTERN, STRING, 0},
+        {"volume_muted_label", "mut",           LABEL_PATTERN, STRING, 0},
+        {"volume_sink_name",   PULSE_SINK_NAME, TEXT_PATTERN,  STRING, 0}
     };
 
     // wireless options
     t_opt       opts_wlan[] = {
-        {OPT_WLAN_FORMAT, WLAN_FORMAT,    TEXT_PATTERN,     STRING, 0},
-        {OPT_WLAN_LB_UNK, WLAN_UNK_LABEL, WL_LABEL_PATTERN, STRING, 0},
-        {OPT_WLAN_IFACE,  WLAN_INTERFACE, TEXT_PATTERN,     STRING, 0}
+        {"wireless_format",        WLAN_FORMAT, TEXT_PATTERN,     STRING, 0},
+        {"wireless_unknown_label", "SSID unk",  WL_LABEL_PATTERN, STRING, 0},
+        {"wireless_interface",     "wlan0",     TEXT_PATTERN,     STRING, 0}
     };
 
     // time

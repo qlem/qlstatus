@@ -113,63 +113,6 @@ typedef struct      s_opt {
 #define OPT_SPWM_COLORS "enable_spectrwm_colors"
 #define OPT_C_COLOR_IDX "critical_color_index"
 
-// time options
-#define OPT_TIME_FORMAT "time_format"
-
-// battery options
-#define OPT_BAT_FORMAT "battery_format"
-#define OPT_BAT_NAME "battery_name"
-#define OPT_BAT_LB_FULL "battery_label_full"
-#define OPT_BAT_LB_CHR "battery_label_charging"
-#define OPT_BAT_LB_DIS "battery_label_discharging"
-#define OPT_BAT_LB_UNK "battery_label_unknown"
-#define OPT_BAT_CRITICAL "battery_critical"
-#define OPT_BAT_FULL_DESIGN "battery_full_design"
-#define OPT_BAT_NOTIFY "battery_notifications"
-#define OPT_BAT_NOTIFY_ICON_FULL "battery_notify_icon_full"
-#define OPT_BAT_NOTIFY_ICON_PLUGGED "battery_notify_icon_plugged"
-#define OPT_BAT_NOTIFY_ICON_LOW "battery_notify_icon_low"
-
-// cpu options
-#define OPT_CPU_FORMAT "cpu_format"
-#define OPT_CPU_LABEL "cpu_label"
-#define OPT_CPU_CRITICAL "cpu_critical"
-
-// cpu freq options
-#define OPT_FREQ_FORMAT "cpu_freq_format"
-#define OPT_FREQ_LABEL "cpu_freq_label"
-#define OPT_FREQ_UNIT "cpu_freq_unit"
-#define OPT_FREQ_SCALING "cpu_freq_scaling"
-
-// temperature options
-#define OPT_TEMP_FORMAT "temperature_format"
-#define OPT_TEMP_LABEL "temperature_label"
-#define OPT_TEMP_DIR "temperature_dir"
-#define OPT_TEMP_INPUT "temperature_input"
-#define OPT_TEMP_CRITICAL "temperature_critical"
-
-// memory options
-#define OPT_MEM_FORMAT "memory_format"
-#define OPT_MEM_LABEL "memory_label"
-#define OPT_MEM_UNIT "memory_unit"
-#define OPT_MEM_CRITICAL "memory_critical"
-
-// brightness options
-#define OPT_BRG_FORMAT "brightness_format"
-#define OPT_BRG_LABEL "brightness_label"
-#define OPT_BRG_DIR "brightness_dir"
-
-// volume options
-#define OPT_VOL_FORMAT "volume_format"
-#define OPT_VOL_LABEL "volume_label"
-#define OPT_VOL_LB_MUTED "volume_muted_label"
-#define OPT_VOL_SINK "volume_sink_name"
-
-// wireless options
-#define OPT_WLAN_FORMAT "wireless_format"
-#define OPT_WLAN_LB_UNK "wireless_unknown_label"
-#define OPT_WLAN_IFACE "wireless_interface"
-
 /* TOKENS */
 #define TBUFFER_MAX_SIZE 16
 
@@ -197,7 +140,7 @@ typedef struct      s_module {
 }                   t_module;
 
 // time
-#define TIME_DEFAULT_FORMAT "%a %d %b %Y, %R %Z"
+#define TIME_FORMAT "%a %d %b %Y, %R %Z"
 
 typedef struct      s_mtime {
     char            *format;
@@ -206,7 +149,6 @@ typedef struct      s_mtime {
 // battery
 #define BAT_FORMAT "%L %V"
 #define BAT_TOKENS 2
-#define BATTERY_NAME "BAT0"
 #define POWER_DIR "/sys/class/power_supply"
 #define POWER_FILE "uevent"
 #define PW_STATUS_PATTERN "^POWER_SUPPLY_STATUS=(Discharging|Charging|Full|Unknown)$"
@@ -216,10 +158,6 @@ typedef struct      s_mtime {
 #define BAT_STATUS_FULL "Full"
 #define BAT_STATUS_CHR "Charging"
 #define BAT_STATUS_DIS "Discharging"
-#define BAT_LABEL_FULL "full"
-#define BAT_LABEL_CHR "chr"
-#define BAT_LABEL_DIS "bat"
-#define BAT_LABEL_UNK "unk"
 #define BAT_NOTIFY_FULL "Battery fully charged"
 #define BAT_NOTIFY_PLUGGED "AC adapter plugged"
 #define BAT_NOTIFY_LOW "Battery is low"
@@ -263,7 +201,6 @@ typedef struct      s_power {
 #define BRG_DIR "/sys/class/backlight/intel_backlight"
 #define BRG_CURRENT "actual_brightness"
 #define BRG_MAX "max_brightness"
-#define BRG_LABEL "brg"
 
 typedef struct      s_brg {
     char            *current_file;
@@ -276,7 +213,6 @@ typedef struct      s_brg {
 #define CPU_TOKENS 2
 #define PROC_STAT "/proc/stat"
 #define CPU_STATS_PATTERN "^cpu[ \t]+(([0-9]+ ){9}[0-9]+)$"
-#define CPU_LABEL "cpu"
 #define CPU_STATS_SIZE 8
 
 typedef struct      s_cpu {
@@ -292,8 +228,6 @@ typedef struct      s_cpu {
 #define FREQ_TOKENS 3
 #define FREQ_IN_DIR "/sys/devices/system/cpu/cpufreq"
 #define FREQ_DIR_PATTERN "^policy[0-9]+$"
-#define FREQ_LABEL "freq"
-#define FREQ_UNIT "MHz"
 #define FREQ_CURRENT "cpuinfo_cur_freq"
 #define FREQ_SCALING "scaling_cur_freq"
 #define MEGAHERTZ 1000
@@ -315,7 +249,6 @@ typedef struct      s_freq {
 #define TEMP_FORMAT "%L %V"
 #define TEMP_TOKENS 2
 #define TEMP_DIR "/sys/devices/platform/coretemp.0/hwmon/*"
-#define TEMP_LABEL "temp"
 #define TEMP_ROUND_THRESHOLD 500
 
 typedef struct      s_temp {
@@ -329,10 +262,8 @@ typedef struct      s_temp {
 #define WLAN_TOKENS 2
 #define NL80211 "nl80211"
 #define WLAN_EID_SSID 0
-#define WLAN_INTERFACE "wlan0"
 #define WLAN_FLAG_HAS_ESSID (1 << 0)
 #define WLAN_FLAG_HAS_SIGNAL (1 << 1)
-#define WLAN_UNK_LABEL "SSID unk"
 #define NOISE_FLOOR_DBM (-90)
 #define SIGNAL_MAX_DBM (-20)
 
@@ -358,8 +289,6 @@ typedef struct      s_wlan {
 #define MEM_BUFFERS_PATTERN "^Buffers:[ \t]+([0-9]+) kB$"
 #define MEM_CACHED_PATTERN "^Cached:[ \t]+([0-9]+) kB$"
 #define MEM_SRECLAIM_PATTERN "^SReclaimable:[ \t]+([0-9]+) kB$"
-#define MEM_LABEL "mem"
-#define MEM_UNIT "mB"
 #define MEGABYTE 1024
 
 typedef enum    mem_unit {
@@ -384,8 +313,6 @@ typedef struct  s_mem {
 #define VOLUME_TOKENS 2
 #define PULSE_SINK_NAME "alsa_output.pci-0000_00_1f.3.analog-stereo"
 #define PULSE_APP_NAME "qlstatus"
-#define VOLUME_LABEL "vol"
-#define VOLUME_MUTED_LABEL "mut"
 #define PULSE_CONNECTION_TIMEOUT 400000000
 
 typedef struct              s_pulse {
