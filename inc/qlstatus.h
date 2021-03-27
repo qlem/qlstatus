@@ -42,11 +42,12 @@
 /* GLOBAL */
 #define BASE 10
 #define RATE "1s"
-#define NB_MODULES 8
+#define NB_MODULES 9
 #define NSEC 1000000000
 #define NSEC_TO_SEC(nsec) nsec / NSEC
 #define REM_NSEC(nsec) nsec % NSEC
 #define PERCENT(value, total) value * 100 / total
+#define MCLAMP(x, low, high) (x > high ? high : (x < low ? low : x))
 #define CONFIG_FILE ".config/qlstatus/qlstatus.conf"
 #define HOME_PATTERN "^HOME=(.+)$"
 #define SPWM_COLOR_START "+@fg="
@@ -56,6 +57,7 @@
 /* OUTPUT FORMAT
  * %D: time info
  * %U: cpu usage
+ * %F: cpu freq
  * %T: temp average
  * %M: memory usage
  * %L: brightness level
@@ -63,7 +65,7 @@
  * %B: remaining battery
  * %W: wireless info
  */
-#define DEFAULT_FORMAT "%U  %T  %M  %L  %V  %B  %W  %D"
+#define DEFAULT_FORMAT "%U  %F  %T  %M  %L  %V  %B  %W  %D"
 
 /* OPTIONS */
 typedef enum        opt_type {
@@ -84,6 +86,7 @@ typedef struct      s_opt {
 #define TIME_NOPTS 1
 #define BAT_NOPTS 12
 #define CPU_NOPTS 3
+#define FREQ_NOPTS 4
 #define TEMP_NOPTS 5
 #define MEM_NOPTS 4
 #define BRG_NOPTS 3
@@ -102,6 +105,7 @@ typedef struct      s_opt {
 #define IN_TEMP_PATTERN "^([1-9])$|^([1-9]-[1-9])$"
 #define COLOR_IDX_PATTERN "^[0-9]$"
 #define MEM_UNIT_PATTERN "^(kB)$|^(mB)$|^(gB)$"
+#define FREQ_UNIT_PATTERN "^(KHz)$|^(MHz)$|^(GHz)$"
 
 // global options
 #define OPT_FORMAT "format"
@@ -130,6 +134,12 @@ typedef struct      s_opt {
 #define OPT_CPU_FORMAT "cpu_format"
 #define OPT_CPU_LABEL "cpu_label"
 #define OPT_CPU_CRITICAL "cpu_critical"
+
+// cpu freq options
+#define OPT_FREQ_FORMAT "cpu_freq_format"
+#define OPT_FREQ_LABEL "cpu_freq_label"
+#define OPT_FREQ_UNIT "cpu_freq_unit"
+#define OPT_FREQ_SCALING "cpu_freq_scaling"
 
 // temperature options
 #define OPT_TEMP_FORMAT "temperature_format"
@@ -277,6 +287,30 @@ typedef struct      s_cpu {
     t_token         tokens[CPU_TOKENS];
 }                   t_cpu;
 
+// cpu freq
+#define FREQ_FORMAT "%L %V%U"
+#define FREQ_TOKENS 3
+#define FREQ_IN_DIR "/sys/devices/system/cpu/cpufreq"
+#define FREQ_DIR_PATTERN "^policy[0-9]+$"
+#define FREQ_LABEL "freq"
+#define FREQ_UNIT "MHz"
+#define FREQ_CURRENT "cpuinfo_cur_freq"
+#define FREQ_SCALING "scaling_cur_freq"
+#define MEGAHERTZ 1000
+
+typedef enum        fq_unit {
+    KHZ,
+    MHZ,
+    GHZ,
+}                   fq_unit;
+
+typedef struct      s_freq {
+    char            **inputs;
+    fq_unit         unit;
+    uint8_t         scaling;
+    t_token         tokens[FREQ_TOKENS];
+}                   t_freq;
+
 // temperature
 #define TEMP_FORMAT "%L %V"
 #define TEMP_TOKENS 2
@@ -316,7 +350,7 @@ typedef struct      s_wlan {
 }                   t_wlan;
 
 // memory
-#define MEM_FORMAT "%L %V"
+#define MEM_FORMAT "%L %C/%T%U (%P)"
 #define MEM_TOKENS 5
 #define PROC_MEMINFO "/proc/meminfo"
 #define MEM_TOTAL_PATTERN "^MemTotal:[ \t]+([0-9]+) kB$"
@@ -328,6 +362,12 @@ typedef struct      s_wlan {
 #define MEM_UNIT "mB"
 #define MEGABYTE 1024
 
+typedef enum    mem_unit {
+    KB,
+    MB,
+    GB,
+}               mem_unit;
+
 typedef struct  s_mem {
     long        total;
     long        free;
@@ -335,6 +375,7 @@ typedef struct  s_mem {
     long        cached;
     long        sreclaim;
     int         cthreshold;
+    mem_unit    unit;
     t_token     tokens[MEM_TOKENS];
 }               t_mem;
 
@@ -380,6 +421,7 @@ char	*to_str(long nb);
 int     putstr(const char *str);
 
 // output format
+void    remove_leading_zero(char *buf);
 int     print_output_buffer(const char *buffer);
 int     set_output_buffer(t_main *main);
 int     set_module_buffer(t_module *module, t_token *tokens, int size);
@@ -414,6 +456,7 @@ int     notify(NotifyNotification *notify, const char *summary, const char *body
 void    *run_time(void *data);
 void    *run_battery(void *data);
 void    *run_cpu_usage(void *data);
+void    *run_cpu_freq(void *data);
 void    *run_memory(void *data);
 void    *run_temperature(void *data);
 void    *run_brightness(void *data);
@@ -424,6 +467,7 @@ void    *run_volume(void *data);
 void    init_time(void *data);
 void    init_battery(void *data);
 void    init_cpu_usage(void *data);
+void    init_cpu_freq(void *data);
 void    init_memory(void *data);
 void    init_temperature(void *data);
 void    init_brightness(void *data);
@@ -434,6 +478,7 @@ void    init_volume(void *data);
 void    free_time(void *data);
 void    free_battery(void *data);
 void    free_cpu_usage(void *data);
+void    free_cpu_freq(void *data);
 void    free_memory(void *data);
 void    free_temperature(void *data);
 void    free_brightness(void *data);

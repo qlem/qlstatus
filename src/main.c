@@ -156,6 +156,15 @@ int     main(int argc, char **argv, char **env) {
         {OPT_CPU_CRITICAL, &cpu_threshold, THRESHOLD_PATTERN, NUMBER, 0}
     };
 
+    // cpu freq options
+    int         scaling = 1;
+    t_opt       opts_freq[] = {
+        {OPT_FREQ_FORMAT,  FREQ_FORMAT, TEXT_PATTERN,      STRING, 0},
+        {OPT_FREQ_LABEL,   FREQ_LABEL,  LABEL_PATTERN,     STRING, 0},
+        {OPT_FREQ_UNIT,    FREQ_UNIT,   FREQ_UNIT_PATTERN, STRING, 0},
+        {OPT_FREQ_SCALING, &scaling,    BOOLEAN_PATTERN,   NUMBER, 0}
+    };
+
     // temperature options
     int         temp_threshold = 80;
     t_opt       opts_temp[] = {
@@ -209,6 +218,10 @@ int     main(int argc, char **argv, char **env) {
     t_cpu   cpu;
     v_memset(&cpu, 0, sizeof(t_cpu));
 
+    // cpu freq data
+    t_freq  freq;
+    v_memset(&freq, 0, sizeof(t_freq));
+
     // mem data
     t_mem   mem;
     v_memset(&mem, 0, sizeof(t_mem));
@@ -238,6 +251,7 @@ int     main(int argc, char **argv, char **env) {
         {0, 'L', {}, 0, &brg,   opts_brg,  BRG_NOPTS,  0, run_brightness,  init_brightness,  free_brightness},
         {0, 'M', {}, 0, &mem,   opts_mem,  MEM_NOPTS,  0, run_memory,      init_memory,      free_memory},
         {0, 'U', {}, 0, &cpu,   opts_cpu,  CPU_NOPTS,  0, run_cpu_usage,   init_cpu_usage,   free_cpu_usage},
+        {0, 'F', {}, 0, &freq,  opts_freq, FREQ_NOPTS, 0, run_cpu_freq,    init_cpu_freq,    free_cpu_freq},
         {0, 'D', {}, 0, &time,  opts_time, TIME_NOPTS, 0, run_time,        init_time,        free_time}
     };
 

@@ -128,8 +128,7 @@ void            init_temperature(void *data) {
     temp->inputs = read_dir(dir, in_regex);
     free(in_regex);
     if (!temp->inputs[0][0]) {
-        fprintf(stderr, "Cannot resolve temp dir, no input files found in %s\n",
-                dir);
+        fprintf(stderr, "Cannot initialize temp module, no input file found in %s\n", dir);
         exit(EXIT_FAILURE);
     }
     free(dir);

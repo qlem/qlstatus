@@ -16,14 +16,10 @@ void            free_wireless(void *data) {
 // Based on NetworkManager/src/platform/wifi/wifi-utils-nl80211.c
 static uint32_t     nl80211_xbm_to_percent(int32_t xbm, int32_t divisor) {
     xbm /= divisor;
-    if (xbm < NOISE_FLOOR_DBM) {
-        xbm = NOISE_FLOOR_DBM;
-    }
-    if (xbm > SIGNAL_MAX_DBM) {
-        xbm = SIGNAL_MAX_DBM;
-    }
+    xbm = MCLAMP(xbm, NOISE_FLOOR_DBM, SIGNAL_MAX_DBM);
+
     return 100 - 70 * (((float)SIGNAL_MAX_DBM - (float)xbm) /
-            ((float)SIGNAL_MAX_DBM - (float)NOISE_FLOOR_DBM));
+                       ((float)SIGNAL_MAX_DBM - (float)NOISE_FLOOR_DBM));
 }
 
 // Based on NetworkManager/src/platform/wifi/wifi-utils-nl80211.c

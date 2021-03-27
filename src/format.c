@@ -40,6 +40,16 @@ char        *append_module(t_main *main, t_module *module, char *buffer) {
     return new;
 }
 
+void        remove_leading_zero(char *buf) {
+    int     i = -1;
+
+    while (++i < TBUFFER_MAX_SIZE && buf[i]) {}
+    if (i > 1 && buf[i - 1] == '0') {
+        buf[i - 1] = 0;
+        buf[i - 2] = 0;
+    }
+}
+
 int         print_output_buffer(const char *buffer) {
     int     i = -1;
 

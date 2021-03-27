@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(qlstatus C)
 
-set(RELEASE "v1.1.5")
+set(RELEASE "v1.1.6")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_FLAGS "-W -Wall -Wextra -Werror -O2")
@@ -18,6 +18,7 @@ add_executable(qlstatus
     src/brightness.c
     src/temperature.c
     src/cpu.c
+    src/freq.c
     src/wireless.c
     src/memory.c
     src/volume.c

@@ -57,16 +57,6 @@ int             parse_mem_file(t_mem *mem) {
     return -1;
 }
 
-void        remove_leading_zero(char *buf) {
-    int     i = -1;
-
-    while (++i < TBUFFER_MAX_SIZE && buf[i]) {}
-    if (buf[i - 1] == '0') {
-        buf[i - 1] = 0;
-        buf[i - 2] = 0;
-    }
-}
-
 void            *run_memory(void *data) {
     t_module    *module = data;
     t_mem       *mem = module->data;
@@ -87,9 +77,9 @@ void            *run_memory(void *data) {
 
     // set detailed memory usage
     if (mem->tokens[2].enabled || mem->tokens[3].enabled) {
-        if (strcmp("mB", mem->tokens[4].buffer) == 0) {
+        if (mem->unit == MB) {
             factor = MEGABYTE;
-        } else if (strcmp("gB", mem->tokens[4].buffer) == 0) {
+        } else if (mem->unit == GB) {
             factor = MEGABYTE * MEGABYTE;
         }
         snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%.1f", (float)used / factor);
@@ -116,6 +106,14 @@ void            init_memory(void *data) {
     mem->tokens[3].fmtid = 'T';
     mem->tokens[4].fmtid = 'U';
     init_module_tokens(module, mem->tokens, MEM_TOKENS);
+
+    if (strcmp("mB", module->opts[2].value) == 0) {
+        mem->unit = MB;
+    } else if (strcmp("gB", module->opts[2].value) == 0) {
+        mem->unit = GB;
+    } else {
+        mem->unit = KB;
+    }
 
     set_token_buffer(mem->tokens[0].buffer, module->opts[1].value);
     set_token_buffer(mem->tokens[4].buffer, module->opts[2].value);
