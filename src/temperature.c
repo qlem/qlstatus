@@ -105,7 +105,7 @@ void            *run_temperature(void *data) {
 
     value = compute_temp(temp->inputs);
     module->critical = value >= temp->cthreshold ? 1 : 0;
-    snprintf(temp->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld°", value);
+    snprintf(temp->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2ld°", value);
     set_module_buffer(module, temp->tokens, TEMP_TOKENS);
     return NULL;
 }

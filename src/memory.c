@@ -91,7 +91,7 @@ void            *run_memory(void *data) {
     // set percent memory usage
     used = PERCENT(used, mem->total);
     module->critical = used >= mem->cthreshold ? 1 : 0;
-    snprintf(mem->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%", used);
+    snprintf(mem->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2ld%%", used);
     set_module_buffer(module, mem->tokens, MEM_TOKENS);
     return NULL;
 }

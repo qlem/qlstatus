@@ -140,14 +140,11 @@ typedef struct      s_module {
 }                   t_module;
 
 // time
-#define TIME_FORMAT "%a %d %b %Y, %R %Z"
-
 typedef struct      s_mtime {
     char            *format;
 }                   t_mtime;
 
 // battery
-#define BAT_FORMAT "%L %V"
 #define BAT_TOKENS 2
 #define POWER_DIR "/sys/class/power_supply"
 #define POWER_FILE "uevent"
@@ -196,7 +193,6 @@ typedef struct      s_power {
 }                   t_power;
 
 // brightness
-#define BRG_FORMAT "%L %V"
 #define BRG_TOKENS 2
 #define BRG_DIR "/sys/class/backlight/intel_backlight"
 #define BRG_CURRENT "actual_brightness"
@@ -209,7 +205,6 @@ typedef struct      s_brg {
 }                   t_brg;
 
 // cpu
-#define CPU_FORMAT "%L %V"
 #define CPU_TOKENS 2
 #define PROC_STAT "/proc/stat"
 #define CPU_STATS_PATTERN "^cpu[ \t]+(([0-9]+ ){9}[0-9]+)$"
@@ -224,7 +219,6 @@ typedef struct      s_cpu {
 }                   t_cpu;
 
 // cpu freq
-#define FREQ_FORMAT "%L %V%U"
 #define FREQ_TOKENS 3
 #define FREQ_IN_DIR "/sys/devices/system/cpu/cpufreq"
 #define FREQ_DIR_PATTERN "^policy[0-9]+$"
@@ -246,7 +240,6 @@ typedef struct      s_freq {
 }                   t_freq;
 
 // temperature
-#define TEMP_FORMAT "%L %V"
 #define TEMP_TOKENS 2
 #define TEMP_DIR "/sys/devices/platform/coretemp.0/hwmon/*"
 #define TEMP_ROUND_THRESHOLD 500
@@ -258,7 +251,6 @@ typedef struct      s_temp {
 }                   t_temp;
 
 // wireless
-#define WLAN_FORMAT "%L: %V"
 #define WLAN_TOKENS 2
 #define NL80211 "nl80211"
 #define WLAN_EID_SSID 0
@@ -281,7 +273,6 @@ typedef struct      s_wlan {
 }                   t_wlan;
 
 // memory
-#define MEM_FORMAT "%L %C/%T%U (%P)"
 #define MEM_TOKENS 5
 #define PROC_MEMINFO "/proc/meminfo"
 #define MEM_TOTAL_PATTERN "^MemTotal:[ \t]+([0-9]+) kB$"
@@ -309,7 +300,6 @@ typedef struct  s_mem {
 }               t_mem;
 
 // volume audio
-#define VOLUME_FORMAT "%L %V"
 #define VOLUME_TOKENS 2
 #define PULSE_SINK_NAME "alsa_output.pci-0000_00_1f.3.analog-stereo"
 #define PULSE_APP_NAME "qlstatus"

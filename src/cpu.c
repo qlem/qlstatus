@@ -89,7 +89,7 @@ void            *run_cpu_usage(void *data) {
     }
     value = compute_cpu_usage(cpu);
     module->critical = value >= cpu->cthreshold ? 1 : 0;
-    snprintf(cpu->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%", value);
+    snprintf(cpu->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2ld%%", value);
     set_module_buffer(module, cpu->tokens, CPU_TOKENS);
     free(rstats);
     return NULL;

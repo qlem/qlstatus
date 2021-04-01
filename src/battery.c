@@ -36,7 +36,7 @@ static void         set_buffer(t_module *module, t_power *power) {
         return;
     }
     value = PERCENT(power->current, power->max);
-    snprintf(power->tokens[1].buffer, TBUFFER_MAX_SIZE, "%d%%", value);
+    snprintf(power->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2d%%", value);
     if (strcmp(power->raw_status, BAT_STATUS_DIS) == 0) {
         set_token_buffer(power->tokens[0].buffer, power->lb_dis);
         power->status = value <= power->cthreshold ? PW_CRITICAL

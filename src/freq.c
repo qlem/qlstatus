@@ -20,20 +20,20 @@ void            *run_cpu_freq(void *data) {
     long        sum = 0;
     int         factor = 1;
     int         i = -1;
-    float       clock;
+    float       value;
 
     while (freq->inputs[++i][0]) {
         buf = read_file(freq->inputs[i]);
         sum += to_int(buf);
         free(buf);
     }
-    clock = (float)sum / i;
+    value = (float)sum / i;
     if (freq->unit == MHZ) {
         factor = MEGAHERTZ;
     } else if (freq->unit == GHZ) {
         factor = MEGAHERTZ * MEGAHERTZ;
     }
-    snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%.1f", clock / factor);
+    snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%.1f", value / factor);
     remove_leading_zero(freq->tokens[1].buffer);
     set_module_buffer(module, freq->tokens, FREQ_TOKENS);
     return NULL;

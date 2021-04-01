@@ -28,6 +28,7 @@ void            *run_brightness(void *data) {
     char        *buffer = NULL;
     long        current;
     long        max;
+    long        value;
 
     buffer = read_file(brg->current_file);
     current = to_int(buffer);
@@ -35,8 +36,8 @@ void            *run_brightness(void *data) {
     buffer = read_file(brg->max_file);
     max = to_int(buffer);
     free(buffer);
-    snprintf(brg->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%",
-             PERCENT(current, max));
+    value = PERCENT(current, max);
+    snprintf(brg->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2ld%%", value);
     set_module_buffer(module, brg->tokens, BRG_TOKENS);
     return NULL;
 }

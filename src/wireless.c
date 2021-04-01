@@ -203,7 +203,7 @@ static void         set_buffer(t_module *module, t_wlan *wlan) {
         set_token_buffer(wlan->tokens[0].buffer, wlan->lb_unk);
     }
     if (wlan->flags & WLAN_FLAG_HAS_SIGNAL) {
-        snprintf(wlan->tokens[1].buffer, TBUFFER_MAX_SIZE, "%d%%",
+        snprintf(wlan->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2d%%",
                  wlan->signal);
     } else {
         set_token_buffer(wlan->tokens[1].buffer, "--%");

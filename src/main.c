@@ -126,7 +126,7 @@ int     main(int argc, char **argv, char **env) {
 
     // time options
     t_opt       opts_time[] = {
-        {"time_format", TIME_FORMAT, TEXT_PATTERN, STRING, 0}
+        {"time_format", "%a %d %b %Y, %R %Z", TEXT_PATTERN, STRING, 0}
     };
 
     // battery options
@@ -134,7 +134,7 @@ int     main(int argc, char **argv, char **env) {
     int         bat_full_design = 1;
     int         bat_notify = 1;
     t_opt       opts_bat[] = {
-        {"battery_format",              BAT_FORMAT,       TEXT_PATTERN,      STRING, 0},
+        {"battery_format",              "%L %V",          TEXT_PATTERN,      STRING, 0},
         {"battery_label_unknown",       "unk",            LABEL_PATTERN,     STRING, 0},
         {"battery_label_full",          "full",           LABEL_PATTERN,     STRING, 0},
         {"battery_label_charging",      "chr",            LABEL_PATTERN,     STRING, 0},
@@ -151,7 +151,7 @@ int     main(int argc, char **argv, char **env) {
     // cpu usage options
     int         cpu_threshold = 80;
     t_opt       opts_cpu[] = {
-        {"cpu_format",   CPU_FORMAT,     TEXT_PATTERN,      STRING, 0},
+        {"cpu_format",   "%L %V",        TEXT_PATTERN,      STRING, 0},
         {"cpu_label",    "cpu",          LABEL_PATTERN,     STRING, 0},
         {"cpu_critical", &cpu_threshold, THRESHOLD_PATTERN, NUMBER, 0}
     };
@@ -159,16 +159,16 @@ int     main(int argc, char **argv, char **env) {
     // cpu freq options
     int         scaling = 1;
     t_opt       opts_freq[] = {
-        {"cpu_freq_format",  FREQ_FORMAT, TEXT_PATTERN,      STRING, 0},
-        {"cpu_freq_label",   "freq",      LABEL_PATTERN,     STRING, 0},
-        {"cpu_freq_unit",    "MHz",       FREQ_UNIT_PATTERN, STRING, 0},
-        {"cpu_freq_scaling", &scaling,    BOOLEAN_PATTERN,   NUMBER, 0}
+        {"cpu_freq_format",  "%L %V%U", TEXT_PATTERN,      STRING, 0},
+        {"cpu_freq_label",   "freq",    LABEL_PATTERN,     STRING, 0},
+        {"cpu_freq_unit",    "MHz",     FREQ_UNIT_PATTERN, STRING, 0},
+        {"cpu_freq_scaling", &scaling,  BOOLEAN_PATTERN,   NUMBER, 0}
     };
 
     // temperature options
     int         temp_threshold = 80;
     t_opt       opts_temp[] = {
-        {"temperature_format",   TEMP_FORMAT,     TEXT_PATTERN,      STRING, 0},
+        {"temperature_format",   "%L %V",         TEXT_PATTERN,      STRING, 0},
         {"temperature_label",    "temp",          LABEL_PATTERN,     STRING, 0},
         {"temperature_dir",      TEMP_DIR,        PATH_PATTERN,      STRING, 0},
         {"temperature_input",    "1",             IN_TEMP_PATTERN,   STRING, 0},
@@ -178,22 +178,22 @@ int     main(int argc, char **argv, char **env) {
     // memory options
     int         mem_threshold = 80;
     t_opt       opts_mem[] = {
-        {"memory_format",   MEM_FORMAT,     TEXT_PATTERN,      STRING, 0},
-        {"memory_label",    "mem",          LABEL_PATTERN,     STRING, 0},
-        {"memory_unit",     "mB",           MEM_UNIT_PATTERN,  STRING, 0},
-        {"memory_critical", &mem_threshold, THRESHOLD_PATTERN, NUMBER, 0}
+        {"memory_format",   "%L %C/%T%U (%P)", TEXT_PATTERN,      STRING, 0},
+        {"memory_label",    "mem",             LABEL_PATTERN,     STRING, 0},
+        {"memory_unit",     "mB",              MEM_UNIT_PATTERN,  STRING, 0},
+        {"memory_critical", &mem_threshold,    THRESHOLD_PATTERN, NUMBER, 0}
     };
 
     // brightness options
     t_opt       opts_brg[] = {
-        {"brightness_format", BRG_FORMAT, TEXT_PATTERN,  STRING, 0},
-        {"brightness_label",  "brg",      LABEL_PATTERN, STRING, 0},
-        {"brightness_dir",    BRG_DIR,    PATH_PATTERN,  STRING, 0}
+        {"brightness_format", "%L %V", TEXT_PATTERN,  STRING, 0},
+        {"brightness_label",  "brg",   LABEL_PATTERN, STRING, 0},
+        {"brightness_dir",    BRG_DIR, PATH_PATTERN,  STRING, 0}
     };
 
     // volume options
     t_opt       opts_vol[] = {
-        {"volume_format",      VOLUME_FORMAT,   TEXT_PATTERN,  STRING, 0},
+        {"volume_format",      "%L %V",         TEXT_PATTERN,  STRING, 0},
         {"volume_label",       "vol",           LABEL_PATTERN, STRING, 0},
         {"volume_muted_label", "mut",           LABEL_PATTERN, STRING, 0},
         {"volume_sink_name",   PULSE_SINK_NAME, TEXT_PATTERN,  STRING, 0}
@@ -201,9 +201,9 @@ int     main(int argc, char **argv, char **env) {
 
     // wireless options
     t_opt       opts_wlan[] = {
-        {"wireless_format",        WLAN_FORMAT, TEXT_PATTERN,     STRING, 0},
-        {"wireless_unknown_label", "SSID unk",  WL_LABEL_PATTERN, STRING, 0},
-        {"wireless_interface",     "wlan0",     TEXT_PATTERN,     STRING, 0}
+        {"wireless_format",        "%L: %V",   TEXT_PATTERN,     STRING, 0},
+        {"wireless_unknown_label", "SSID unk", WL_LABEL_PATTERN, STRING, 0},
+        {"wireless_interface",     "wlan0",    TEXT_PATTERN,     STRING, 0}
     };
 
     // time

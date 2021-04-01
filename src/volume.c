@@ -30,7 +30,7 @@ void        sink_info_cb(pa_context *context, const pa_sink_info *info,
         avg = pa_cvolume_avg(&info->volume);
         info->mute ? set_token_buffer(pulse->tokens[0].buffer, pulse->lb_mute)
         : set_token_buffer(pulse->tokens[0].buffer, pulse->label);
-        snprintf(pulse->tokens[1].buffer, TBUFFER_MAX_SIZE, "%ld%%",
+        snprintf(pulse->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2ld%%",
                  VOLUME(avg));
         set_module_buffer(module, pulse->tokens, VOLUME_TOKENS);
     }
