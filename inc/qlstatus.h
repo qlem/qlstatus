@@ -104,8 +104,8 @@ typedef struct      s_opt {
 #define BAT_NAME_PATTERN "^BAT[0-9]$"
 #define IN_TEMP_PATTERN "^([1-9])$|^([1-9]-[1-9])$"
 #define COLOR_IDX_PATTERN "^[0-9]$"
-#define MEM_UNIT_PATTERN "^(kB)$|^(mB)$|^(gB)$"
-#define FREQ_UNIT_PATTERN "^(KHz)$|^(MHz)$|^(GHz)$"
+#define MEM_UNIT_PATTERN "^kB$|^mB$|^gB$|^smart$"
+#define FREQ_UNIT_PATTERN "^KHz$|^MHz$|^GHz$|^smart$"
 
 // global options
 #define OPT_FORMAT "format"
@@ -114,7 +114,7 @@ typedef struct      s_opt {
 #define OPT_C_COLOR_IDX "critical_color_index"
 
 /* TOKENS */
-#define TBUFFER_MAX_SIZE 16
+#define TBUFFER_MAX_SIZE 32
 
 typedef struct      s_token {
     uint8_t         enabled;
@@ -123,7 +123,7 @@ typedef struct      s_token {
 }                   t_token;
 
 /* MODULES */
-#define MBUFFER_MAX_SIZE 32
+#define MBUFFER_MAX_SIZE 64
 
 typedef struct      s_module {
     uint8_t         enabled;
@@ -230,6 +230,7 @@ typedef enum        fq_unit {
     KHZ,
     MHZ,
     GHZ,
+    FSMT,
 }                   fq_unit;
 
 typedef struct      s_freq {
@@ -286,6 +287,7 @@ typedef enum    mem_unit {
     KB,
     MB,
     GB,
+    MSMT,
 }               mem_unit;
 
 typedef struct  s_mem {
@@ -338,6 +340,7 @@ char	*to_str(long nb);
 int     putstr(const char *str);
 
 // output format
+void    clean_leading_zero(char *buf);
 void    remove_leading_zero(char *buf);
 int     print_output_buffer(const char *buffer);
 int     set_output_buffer(t_main *main);

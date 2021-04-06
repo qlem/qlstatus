@@ -10,6 +10,68 @@ void        free_memory(void *data) {
     (void)data;
 }
 
+void        kb_format_logic(t_mem *mem, long value) {
+    snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%8ld", value);
+    snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%8ld", mem->total);
+    set_token_buffer(mem->tokens[4].buffer, "kB");
+}
+
+void        mb_format_logic(t_mem *mem, long value) {
+    int     factor = MEGABYTE;
+
+    snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%5ld", value / factor);
+    snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%5ld",
+             mem->total / factor);
+    set_token_buffer(mem->tokens[4].buffer, "mB");
+}
+
+void        gb_format_logic(t_mem *mem, long value) {
+    int     factor = MEGABYTE * MEGABYTE;
+
+    snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4.1f",
+             (float)value / factor);
+    snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%4.1f",
+             (float)mem->total / factor);
+    clean_leading_zero(mem->tokens[2].buffer);
+    remove_leading_zero(mem->tokens[3].buffer);
+    set_token_buffer(mem->tokens[4].buffer, "gB");
+}
+
+void        value_smart_format_logic(t_mem *mem, long value) {
+    int     factor = MEGABYTE * MEGABYTE;
+
+    if (value > factor - 1) {
+        snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4.1fg",
+                 (float)value / factor);
+        clean_leading_zero(mem->tokens[2].buffer);
+    } else if (value > MEGABYTE - 1) {
+        factor = MEGABYTE;
+        snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4ldm",
+                 value / factor);
+    } else {
+        snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4ldk", value);
+    }
+}
+
+void        total_smart_format_logic(t_mem *mem) {
+    int     factor = MEGABYTE * MEGABYTE;
+
+    if (mem->total > factor - 1) {
+        snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%.1f",
+                 (float)mem->total / factor);
+        remove_leading_zero(mem->tokens[3].buffer);
+        set_token_buffer(mem->tokens[4].buffer, "gB");
+    } else if (mem->total > MEGABYTE - 1) {
+        factor = MEGABYTE;
+        snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%ld",
+                 mem->total / factor);
+        set_token_buffer(mem->tokens[4].buffer, "mB");
+    } else {
+        snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%ld", mem->total);
+        set_token_buffer(mem->tokens[4].buffer, "kB");
+    }
+}
+
 void        parse_mem_value(t_mem *mem, char *rvalue) {
     char    *value;
 
@@ -60,10 +122,8 @@ int             parse_mem_file(t_mem *mem) {
 void            *run_memory(void *data) {
     t_module    *module = data;
     t_mem       *mem = module->data;
-    long        used;
-    int         factor;
+    long        value;
 
-    factor = 1;
     mem->total = -1;
     mem->free = -1;
     mem->buffers = -1;
@@ -73,25 +133,30 @@ void            *run_memory(void *data) {
         fprintf(stderr, "Cannot compute memory usage: missing values\n");
         exit(EXIT_FAILURE);
     }
-    used = mem->total - mem->free - mem->buffers - mem->cached - mem->sreclaim;
+    value = mem->total - mem->free - mem->buffers - mem->cached - mem->sreclaim;
 
     // set detailed memory usage
     if (mem->tokens[2].enabled || mem->tokens[3].enabled) {
-        if (mem->unit == MB) {
-            factor = MEGABYTE;
-        } else if (mem->unit == GB) {
-            factor = MEGABYTE * MEGABYTE;
+        switch(mem->unit) {
+            case KB:
+                kb_format_logic(mem, value);
+                break;
+            case MB:
+                mb_format_logic(mem, value);
+                break;
+            case GB:
+                gb_format_logic(mem, value);
+                break;
+            case MSMT:
+                total_smart_format_logic(mem);
+                value_smart_format_logic(mem, value);
         }
-        snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%.1f", (float)used / factor);
-        snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%.1f", (float)mem->total / factor);
-        remove_leading_zero(mem->tokens[2].buffer);
-        remove_leading_zero(mem->tokens[3].buffer);
     }
 
     // set percent memory usage
-    used = PERCENT(used, mem->total);
-    module->critical = used >= mem->cthreshold ? 1 : 0;
-    snprintf(mem->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2ld%%", used);
+    value = PERCENT(value, mem->total);
+    module->critical = value >= mem->cthreshold ? 1 : 0;
+    snprintf(mem->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2ld%%", value);
     set_module_buffer(module, mem->tokens, MEM_TOKENS);
     return NULL;
 }
@@ -107,12 +172,14 @@ void            init_memory(void *data) {
     mem->tokens[4].fmtid = 'U';
     init_module_tokens(module, mem->tokens, MEM_TOKENS);
 
-    if (strcmp("mB", module->opts[2].value) == 0) {
+    if (strcmp("kB", module->opts[2].value) == 0) {
+        mem->unit = KB;
+    } else if (strcmp("mB", module->opts[2].value) == 0) {
         mem->unit = MB;
     } else if (strcmp("gB", module->opts[2].value) == 0) {
         mem->unit = GB;
     } else {
-        mem->unit = KB;
+        mem->unit = MSMT;
     }
 
     set_token_buffer(mem->tokens[0].buffer, module->opts[1].value);

@@ -50,6 +50,21 @@ void        remove_leading_zero(char *buf) {
     }
 }
 
+void        clean_leading_zero(char *buf) {
+    int     i = -1;
+
+    while (++i < TBUFFER_MAX_SIZE && buf[i]) {}
+    if (i > 1 && buf[i - 1] == '0') {
+        while (--i > 1) {
+            buf[i] = buf[i - 2];
+        }
+        i = -1;
+        while (buf[++i] == ' ') {}
+        buf[i] = ' ';
+        buf[i + 1] = ' ';
+    }
+}
+
 int         print_output_buffer(const char *buffer) {
     int     i = -1;
 
