@@ -17,54 +17,45 @@ void        kb_format_logic(t_mem *mem, long value) {
 }
 
 void        mb_format_logic(t_mem *mem, long value) {
-    int     factor = MEGABYTE;
-
-    snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%5ld", value / factor);
+    snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%5ld", value / MEGABYTE);
     snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%5ld",
-             mem->total / factor);
+             mem->total / MEGABYTE);
     set_token_buffer(mem->tokens[4].buffer, "mB");
 }
 
 void        gb_format_logic(t_mem *mem, long value) {
-    int     factor = MEGABYTE * MEGABYTE;
-
     snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4.1f",
-             (float)value / factor);
+             (float)value / (MEGABYTE * MEGABYTE));
     snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%4.1f",
-             (float)mem->total / factor);
+             (float)mem->total / (MEGABYTE * MEGABYTE));
     clean_leading_zero(mem->tokens[2].buffer);
     remove_leading_zero(mem->tokens[3].buffer);
     set_token_buffer(mem->tokens[4].buffer, "gB");
 }
 
 void        value_smart_format_logic(t_mem *mem, long value) {
-    int     factor = MEGABYTE * MEGABYTE;
-
-    if (value > factor - 1) {
-        snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4.1fg",
-                 (float)value / factor);
+    if (value > (MEGABYTE * MEGABYTE) - 1) {
+        snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4.1f",
+                 (float)value / (MEGABYTE * MEGABYTE));
         clean_leading_zero(mem->tokens[2].buffer);
+        mem->tokens[2].buffer[4] = 'g';
     } else if (value > MEGABYTE - 1) {
-        factor = MEGABYTE;
         snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4ldm",
-                 value / factor);
+                 value / MEGABYTE);
     } else {
         snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4ldk", value);
     }
 }
 
 void        total_smart_format_logic(t_mem *mem) {
-    int     factor = MEGABYTE * MEGABYTE;
-
-    if (mem->total > factor - 1) {
+    if (mem->total > (MEGABYTE * MEGABYTE) - 1) {
         snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%.1f",
-                 (float)mem->total / factor);
+                 (float)mem->total / (MEGABYTE * MEGABYTE));
         remove_leading_zero(mem->tokens[3].buffer);
         set_token_buffer(mem->tokens[4].buffer, "gB");
     } else if (mem->total > MEGABYTE - 1) {
-        factor = MEGABYTE;
         snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%ld",
-                 mem->total / factor);
+                 mem->total / MEGABYTE);
         set_token_buffer(mem->tokens[4].buffer, "mB");
     } else {
         snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%ld", mem->total);

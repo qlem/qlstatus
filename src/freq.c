@@ -19,33 +19,27 @@ void            khz_format_logic(t_freq *freq, long value) {
 }
 
 void            mhz_format_logic(t_freq *freq, long value) {
-    int         factor = MEGAHERTZ;
-
-    snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%4ld", value / factor);
+    snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%4ld",
+             value / MEGAHERTZ);
     set_token_buffer(freq->tokens[2].buffer, "MHz");
 }
 
 void            ghz_format_logic(t_freq *freq, long value) {
-    int         factor = MEGAHERTZ * MEGAHERTZ;
-
     snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%3.1f",
-             (float)value / factor);
+             (float)value / (MEGAHERTZ * MEGAHERTZ));
     clean_leading_zero(freq->tokens[1].buffer);
     set_token_buffer(freq->tokens[2].buffer, "GHz");
 }
 
 void            smart_format_logic(t_freq *freq, long value) {
-    int         factor = MEGAHERTZ * MEGAHERTZ;
-
-    if (value > factor - 1) {
+    if (value > (MEGAHERTZ * MEGAHERTZ) - 1) {
         snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%3.1f",
-                 (float)value / factor);
+                 (float)value / (MEGAHERTZ * MEGAHERTZ));
         clean_leading_zero(freq->tokens[1].buffer);
         set_token_buffer(freq->tokens[2].buffer, "GHz");
     } else if (value > MEGAHERTZ - 1) {
-        factor = MEGAHERTZ;
         snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%3ld",
-                 value / factor);
+                 value / MEGAHERTZ);
         set_token_buffer(freq->tokens[2].buffer, "MHz");
     } else {
         snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%3ld", value);
