@@ -305,7 +305,7 @@ typedef struct  s_mem {
 #define VOLUME_TOKENS 2
 #define PULSE_SINK_NAME "alsa_output.pci-0000_00_1f.3.analog-stereo"
 #define PULSE_APP_NAME "qlstatus"
-#define PULSE_CONNECTION_TIMEOUT 400000000
+#define PULSE_CONNECTION_TIMEOUT 1000000000
 
 typedef struct              s_pulse {
     char                    *sink;
