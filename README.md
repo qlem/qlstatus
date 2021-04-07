@@ -29,7 +29,7 @@ Light, modular, easy to use, easy to maintain.
 
 ## Install from Arch User Repository (AUR)
 👉🏼  [link](https://aur.archlinux.org/packages/qlstatus/)  
-Once installed, copy default configuration file into your config directory:
+Once installed, copy default configuration file into your config directory.
 ```
 mkdir -p ~/.config/qlstatus
 cp /etc/qlstatus.conf ~/.config/qlstatus/qlstatus.conf
