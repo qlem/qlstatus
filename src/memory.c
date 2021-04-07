@@ -34,12 +34,12 @@ void        gb_format_logic(t_mem *mem, long value) {
 }
 
 void        value_smart_format_logic(t_mem *mem, long value) {
-    if (value > (1000 * 1000) - 1) {
+    if (value > (MEGABYTE * MEGABYTE) - 1) {
         snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4.1f",
                  (float)value / (MEGABYTE * MEGABYTE));
         clean_leading_zero(mem->tokens[2].buffer);
         mem->tokens[2].buffer[4] = 'g';
-    } else if (value > 1000 - 1) {
+    } else if (value > MEGABYTE - 1) {
         snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4ldm",
                  value / MEGABYTE);
     } else {
@@ -48,12 +48,12 @@ void        value_smart_format_logic(t_mem *mem, long value) {
 }
 
 void        total_smart_format_logic(t_mem *mem) {
-    if (mem->total > (1000 * 1000) - 1) {
+    if (mem->total > (MEGABYTE * MEGABYTE) - 1) {
         snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%.1f",
                  (float)mem->total / (MEGABYTE * MEGABYTE));
         remove_leading_zero(mem->tokens[3].buffer);
         set_token_buffer(mem->tokens[4].buffer, "gB");
-    } else if (mem->total > 1000 - 1) {
+    } else if (mem->total > MEGABYTE - 1) {
         snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%ld",
                  mem->total / MEGABYTE);
         set_token_buffer(mem->tokens[4].buffer, "mB");
