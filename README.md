@@ -29,7 +29,7 @@ Light, modular, easy to use, easy to maintain.
 - [Netlink Protocol Library Suite](https://www.infradead.org/~tgr/libnl/) (libnl3)
 
 ## Install from Arch User Repository (AUR)
-Link: [qlstatus package](https://aur.archlinux.org/packages/qlstatus/)  
+👉🏼 [link](https://aur.archlinux.org/packages/qlstatus/)  
 Once installed, copy default configuration file into your config directory:
 ```
 mkdir -p ~/.config/qlstatus
@@ -55,7 +55,7 @@ To enable modules and change output order, override the value of `format` option
 format = %U  %M  %B < %D
 ```
 
-Use the following escape sequences to enable desired modules:
+Use following escape sequences to enable desired modules:
 - `%D` date and time
 - `%U` CPU usage
 - `%F` CPU freq
@@ -66,7 +66,7 @@ Use the following escape sequences to enable desired modules:
 - `%B` battery
 - `%W` wireless
 
-For each module you can change its output format, e.g.:
+For each module you can change its output format, e.g.
 ```
 # battery
 battery_format = %L %V      # gives the output: bat 42%
@@ -84,9 +84,9 @@ wireless_format = %L: %V    # gives: ESSID: 84%
 Any no-escaped character will be print.
 
 ### Critical thresholds
-For modules with critical threshold (battery, cpu usage, temperature and memory), you can enable support of
-spectrwm colors `enable_spectrwm_colors = 1` and set the index of desired spectrwm foreground color to use
-when the module value reach the critical threshold `critical_color_index = n`.
+For modules which support critical threshold, you can enable support of spectrwm colors `enable_spectrwm_colors = 1`
+and set the index of desired spectrwm foreground color to use when module value reach the critical threshold
+`critical_color_index = n`.
 
 *-- The support of spectrwm colors is stopped for now --*
 
