@@ -1,5 +1,6 @@
 # ql-status
-Light and modular status bar for tiling window managers like [dwm](https://dwm.suckless.org/) or [spectrwm](https://github.com/conformal/spectrwm). Only for Linux based distributions, written in C.
+Light and modular status bar for tiling window managers like [dwm](https://dwm.suckless.org/) or [spectrwm](https://github.com/conformal/spectrwm).
+Only for Linux based distributions, written in C.
 
 ---
 ![alt text](https://raw.githubusercontent.com/qlem/qlstatus/master/screenshot.png)
@@ -14,8 +15,9 @@ Light, modular, easy to use, easy to maintain.
 - power notifications
 - brightness level in percent
 - CPU usage in percent
+- CPU frequency
 - average temperature of inputs in degree Celsius
-- used memory in percent
+- detailed / percent used memory
 - current audio volume in percent
 - critical thresholds warning
 
@@ -44,20 +46,19 @@ cp build/qlstatus ~/bin
 ```
 
 ## Configuration
-You should override the default value of some options by editing `~/.config/qlstatus/qlstatus.conf`. You can find an example of this file at the root of this repository.
-Each option has `key = value` form.
-
-~~For the detailed list of available options, see the [wiki](https://github.com/qlem/qlstatus/wiki/Options).~~
+You should override the default value of some options by editing `~/.config/qlstatus/qlstatus.conf`.
+You can find an example of this file at the root of this repository. Each option has `key = value` form.
 
 ### Output format
-To enable and change the output order of some modules, override the value of the `format` option.
+To enable modules and change output order, override the value of `format` option.
 ```
 format = %U  %M  %B < %D
 ```
 
-Use the following escape sequences to enable the desired modules:
+Use the following escape sequences to enable desired modules:
 - `%D` date and time
-- `%U` CPU
+- `%U` CPU usage
+- `%F` CPU freq
 - `%T` temperature
 - `%M` memory
 - `%L` brightness
@@ -83,20 +84,22 @@ wireless_format = %L: %V    # gives: ESSID: 84%
 Any no-escaped character will be print.
 
 ### Critical thresholds
-For modules that have a critical threshold (battery, cpu usage, temperature and memory), you can enable the support of the spectrwm colors `enable_spectrwm_colors = 1`
-and set the index of the desired spectrwm foreground color to use when the module value reach the critical threshold `critical_color_index = n`.
+For modules with critical threshold (battery, cpu usage, temperature and memory), you can enable support of 
+spectrwm colors `enable_spectrwm_colors = 1` and set the index of desired spectrwm foreground color to use 
+when the module value reach the critical threshold `critical_color_index = n`.
 
 *-- The support of spectrwm colors is stopped for now --*
 
 ### Power notifications
-By default notifications related to the battery are enabled. Change the value of the option `battery_notifications` to enable or disable power notifications.
+By default notifications related to the battery are enabled. Change the value of `battery_notifications` option 
+to enable or disable power notifications.
 
 Three notifications are triggered:
-- when the battery is fully charged
-- when the AC adpater is plugged
-- when the battery reach the critical threshold
+- when battery is fully charged
+- when AC adpater is plugged
+- when battery reach critical threshold
 
-You can choose the desired icons by specifying their name through the options:
+You can choose desired icons by specifying their name through the options:
 - `battery_notify_icon_full`
 - `battery_notify_icon_plugged`
 - `battery_notify_icon_low`
