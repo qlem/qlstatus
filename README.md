@@ -1,5 +1,5 @@
 # ql-status
-Light and modular status bar for tiling window managers like [dwm](https://dwm.suckless.org/) or [spectrwm](https://github.com/conformal/spectrwm).
+Light and modular status bar for tiling window managers like [dwm](https://dwm.suckless.org/) or [spectrwm](https://github.com/conformal/spectrwm).  
 Only for Linux based distributions, written in C.
 
 ---
@@ -30,7 +30,7 @@ Light, modular, easy to use, easy to maintain.
 
 ## Install from Arch User Repository (AUR)
 Link: [qlstatus package](https://aur.archlinux.org/packages/qlstatus/)  
-Once installed, copy the default configuration file into your config directory:
+Once installed, copy default configuration file into your config directory:
 ```
 mkdir -p ~/.config/qlstatus
 cp /etc/qlstatus.conf ~/.config/qlstatus/qlstatus.conf
@@ -46,7 +46,7 @@ cp build/qlstatus ~/bin
 ```
 
 ## Configuration
-You should override the default value of some options by editing `~/.config/qlstatus/qlstatus.conf`.
+You should override default value of some options by editing `~/.config/qlstatus/qlstatus.conf`.  
 You can find an example of this file at the root of this repository. Each option has `key = value` form.
 
 ### Output format
@@ -84,8 +84,8 @@ wireless_format = %L: %V    # gives: ESSID: 84%
 Any no-escaped character will be print.
 
 ### Critical thresholds
-For modules with critical threshold (battery, cpu usage, temperature and memory), you can enable support of 
-spectrwm colors `enable_spectrwm_colors = 1` and set the index of desired spectrwm foreground color to use 
+For modules with critical threshold (battery, cpu usage, temperature and memory), you can enable support of
+spectrwm colors `enable_spectrwm_colors = 1` and set the index of desired spectrwm foreground color to use
 when the module value reach the critical threshold `critical_color_index = n`.
 
 *-- The support of spectrwm colors is stopped for now --*
