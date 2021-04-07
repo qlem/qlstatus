@@ -19,7 +19,6 @@ Light, modular, easy to use, easy to maintain.
 - average temperature of inputs in degree Celsius
 - detailed / percent used memory
 - current audio volume in percent
-- critical thresholds warning
 
 ## Dependencies
 - libc
@@ -29,7 +28,7 @@ Light, modular, easy to use, easy to maintain.
 - [Netlink Protocol Library Suite](https://www.infradead.org/~tgr/libnl/) (libnl3)
 
 ## Install from Arch User Repository (AUR)
-👉🏼 [link](https://aur.archlinux.org/packages/qlstatus/)  
+👉🏼  [link](https://aur.archlinux.org/packages/qlstatus/)  
 Once installed, copy default configuration file into your config directory:
 ```
 mkdir -p ~/.config/qlstatus
@@ -66,16 +65,15 @@ Use following escape sequences to enable desired modules:
 - `%B` battery
 - `%W` wireless
 
-For each module you can change its output format, e.g.
+For each module you can change its output format by editing related format option, e.g.
 ```
 # battery
 battery_format = %L %V      # gives the output: bat 42%
-...
 
-# temperature
-temperature = %V            # to only print the module value
 ...
+battery_format = %V         # to only print remaining percent
 
+...
 # wireless
 wireless_format = %L: %V    # gives: ESSID: 84%
 ...
@@ -84,14 +82,17 @@ wireless_format = %L: %V    # gives: ESSID: 84%
 Any no-escaped character will be print.
 
 ### Critical thresholds
-For modules which support critical threshold, you can enable support of spectrwm colors `enable_spectrwm_colors = 1`
-and set the index of desired spectrwm foreground color to use when module value reach the critical threshold
-`critical_color_index = n`.
+For modules which support critical threshold, you can enable support of spectrwm colors and set the index of
+desired spectrwm foreground color to use when module value reach the critical threshold, e.g.
+```
+enable_spectrwm_colors = 1
+critical_color_index = 2
+```
 
 *-- The support of spectrwm colors is stopped for now --*
 
 ### Power notifications
-By default notifications related to the battery are enabled. Change the value of `battery_notifications` option 
+By default notifications related to the battery are enabled. Change the value of `battery_notifications` option
 to enable or disable power notifications.
 
 Three notifications are triggered:
