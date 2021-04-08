@@ -26,6 +26,10 @@ void        sink_info_cb(pa_context *context, const pa_sink_info *info,
     pa_volume_t     avg;
 
     (void)context;
+    if (eol < 0) {
+        fprintf(stderr, "Cannot resolve sink info by name: %s\n", pulse->sink);
+        exit(EXIT_FAILURE);
+    }
     if (eol == 0) {
         avg = pa_cvolume_avg(&info->volume);
         info->mute ? set_token_buffer(pulse->tokens[0].buffer, pulse->lb_mute)

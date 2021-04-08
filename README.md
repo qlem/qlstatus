@@ -76,7 +76,6 @@ battery_format = %V         # to only print remaining percent
 ...
 # wireless
 wireless_format = %L: %V    # gives: ESSID: 84%
-...
 ```
 
 Any no-escaped character will be print.

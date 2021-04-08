@@ -21,7 +21,7 @@ add_executable(qlstatus
     src/freq.c
     src/wireless.c
     src/memory.c
-    src/volume.c
+    src/pulse.c
     src/format.c
     src/to_str.c
     src/read_file.c
