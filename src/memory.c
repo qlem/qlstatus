@@ -34,11 +34,11 @@ void        value_smart_format_logic(t_mem *mem, long value) {
         snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4.1f",
                  (float)value / (MEGABYTE * MEGABYTE));
         clean_leading_zero(mem->tokens[2].buffer);
-        mem->tokens[2].buffer[4] = 'g';
+        mem->tokens[2].buffer[4] = 'G';
     } else if (value > MEGABYTE - 1) {
-        snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4ldm", value / MEGABYTE);
+        snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4ldM", value / MEGABYTE);
     } else {
-        snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4ldk", value);
+        snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4ldK", value);
     }
 }
 
@@ -47,13 +47,13 @@ void        total_smart_format_logic(t_mem *mem) {
         snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%.1f",
                  (float)mem->total / (MEGABYTE * MEGABYTE));
         remove_leading_zero(mem->tokens[3].buffer);
-        set_token_buffer(mem->tokens[4].buffer, "gB");
+        set_token_buffer(mem->tokens[4].buffer, "GiB");
     } else if (mem->total > MEGABYTE - 1) {
         snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%ld", mem->total / MEGABYTE);
-        set_token_buffer(mem->tokens[4].buffer, "mB");
+        set_token_buffer(mem->tokens[4].buffer, "MiB");
     } else {
         snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%ld", mem->total);
-        set_token_buffer(mem->tokens[4].buffer, "kB");
+        set_token_buffer(mem->tokens[4].buffer, "KiB");
     }
 }
 
@@ -156,15 +156,15 @@ void            init_memory(void *data) {
     mem->tokens[4].fmtid = 'U';
     init_module_tokens(module, mem->tokens, MEM_TOKENS);
 
-    if (strcmp(module->opts[2].value, "kB") == 0) {
+    if (strcmp(module->opts[2].value, "KiB") == 0) {
         mem->unit = KB;
-        set_token_buffer(mem->tokens[4].buffer, "kB");
-    } else if (strcmp(module->opts[2].value, "mB") == 0) {
+        set_token_buffer(mem->tokens[4].buffer, "KiB");
+    } else if (strcmp(module->opts[2].value, "MiB") == 0) {
         mem->unit = MB;
-        set_token_buffer(mem->tokens[4].buffer, "mB");
-    } else if (strcmp(module->opts[2].value, "gB") == 0) {
+        set_token_buffer(mem->tokens[4].buffer, "MiB");
+    } else if (strcmp(module->opts[2].value, "GiB") == 0) {
         mem->unit = GB;
-        set_token_buffer(mem->tokens[4].buffer, "gB");
+        set_token_buffer(mem->tokens[4].buffer, "GiB");
     } else {
         mem->unit = MSMT;
     }

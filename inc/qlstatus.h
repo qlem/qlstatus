@@ -104,7 +104,7 @@ typedef struct      s_opt {
 #define BAT_NAME_PATTERN "^BAT[0-9]$"
 #define IN_TEMP_PATTERN "^([1-9])$|^([1-9]-[1-9])$"
 #define COLOR_IDX_PATTERN "^[0-9]$"
-#define MEM_UNIT_PATTERN "^kB$|^mB$|^gB$|^smart$"
+#define MEM_UNIT_PATTERN "^KiB$|^MiB$|^GiB$|^smart$"
 #define FREQ_UNIT_PATTERN "^KHz$|^MHz$|^GHz$|^smart$"
 
 // global options

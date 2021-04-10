@@ -179,7 +179,7 @@ int     main(int argc, char **argv, char **env) {
     t_opt       opts_mem[] = {
         {"memory_format",   "%L %C/%T%U (%P)", TEXT_PATTERN,      STRING, 0},
         {"memory_label",    "mem",             LABEL_PATTERN,     STRING, 0},
-        {"memory_unit",     "mB",              MEM_UNIT_PATTERN,  STRING, 0},
+        {"memory_unit",     "MiB",             MEM_UNIT_PATTERN,  STRING, 0},
         {"memory_critical", &mem_threshold,    THRESHOLD_PATTERN, NUMBER, 0}
     };
 
