@@ -18,8 +18,7 @@ void            khz_format_logic(t_freq *freq, long value) {
 }
 
 void            mhz_format_logic(t_freq *freq, long value) {
-    snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%4ld",
-             value / MEGAHERTZ);
+    snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%4ld", value / MEGAHERTZ);
 }
 
 void            ghz_format_logic(t_freq *freq, long value) {
@@ -35,8 +34,7 @@ void            smart_format_logic(t_freq *freq, long value) {
         clean_leading_zero(freq->tokens[1].buffer);
         set_token_buffer(freq->tokens[2].buffer, "GHz");
     } else if (value > MEGAHERTZ - 1) {
-        snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%3ld",
-                 value / MEGAHERTZ);
+        snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%3ld", value / MEGAHERTZ);
         set_token_buffer(freq->tokens[2].buffer, "MHz");
     } else {
         snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%3ld", value);
@@ -112,14 +110,12 @@ void            init_cpu_freq(void *data) {
     errno = 0;
     while (freq->inputs[++i][0]) {
         sdir = v_strlen(freq->inputs[i]);
-        if ((freq->inputs[i] = realloc(freq->inputs[i],
-                                       sizeof(char) * (sdir + 18))) == NULL) {
+        if ((freq->inputs[i] = realloc(freq->inputs[i], sizeof(char) * (sdir + 18))) == NULL) {
             fprintf(stderr, "Call to realloc() failed: %s\n", strerror(errno));
             exit(EXIT_FAILURE);
         }
         v_strsncpy(freq->inputs[i], "/", sdir, 1);
-        v_strsncpy(freq->inputs[i], freq->scaling ? FREQ_SCALING : FREQ_CURRENT,
-                   sdir + 1, 16);
+        v_strsncpy(freq->inputs[i], freq->scaling ? FREQ_SCALING : FREQ_CURRENT, sdir + 1, 16);
         freq->inputs[i][sdir + 18 - 1] = 0;
     }
 }

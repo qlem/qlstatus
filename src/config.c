@@ -31,8 +31,7 @@ int         check_global_opts(t_main *main, char **opt, int nline) {
         if (strcmp(opt[0], main->opts[i].key) == 0) {
             // check if value match pattern
             if (!match_pattern(main->opts[i].pattern, opt[1])) {
-                fprintf(stderr, "Invalid value at line %d: %s\n", nline,
-                        opt[0]);
+                fprintf(stderr, "Invalid value at line %d: %s\n", nline, opt[0]);
                 exit(EXIT_FAILURE);
             }
             // set option value
@@ -77,8 +76,7 @@ int             check_module_opts(t_module *modules, char **opt, int nline) {
             if (strcmp(opt[0], opts[j].key) == 0) {
                 // check if value match pattern
                 if (!match_pattern(opts[j].pattern, opt[1])) {
-                    fprintf(stderr, "Invalid value at line %d: %s\n", nline,
-                            opt[0]);
+                    fprintf(stderr, "Invalid value at line %d: %s\n", nline, opt[0]);
                     exit(EXIT_FAILURE);
                 }
                 // set option value
@@ -216,8 +214,7 @@ int         parse_config_line(t_main *main, char *line, int nline) {
 
     // check if key and value exist
     if (!opt[0] || !opt[1]) {
-        fprintf(stderr, "Invalid option at line %d: %s\n", nline,
-                opt[0] ? opt[0] : opt[1]);
+        fprintf(stderr, "Invalid option at line %d: %s\n", nline, opt[0] ? opt[0] : opt[1]);
         exit(EXIT_FAILURE);
     }
 

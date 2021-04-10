@@ -16,8 +16,7 @@ void            free_battery(void *data) {
     }
 }
 
-char        *resolve_power_file(const char *dir, const char *pw_name,
-                                const char *file) {
+char        *resolve_power_file(const char *dir, const char *pw_name, const char *file) {
     char    *path = NULL;
 
     path = alloc_buffer(v_strlen(dir) + v_strlen(pw_name) + v_strlen(file) + 3);
@@ -37,15 +36,14 @@ static void         set_buffer(t_module *module, t_power *power) {
     }
     value = PERCENT(power->current, power->max);
     snprintf(power->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2d%%", value);
-    if (strcmp(power->raw_status, BAT_STATUS_DIS) == 0) {
+    if (strcmp(power->raw_status, "Discharging") == 0) {
         set_token_buffer(power->tokens[0].buffer, power->lb_dis);
-        power->status = value <= power->cthreshold ? PW_CRITICAL
-                                                   : PW_DISCHARGING;
+        power->status = value <= power->cthreshold ? PW_CRITICAL : PW_DISCHARGING;
         module->critical = power->status == PW_CRITICAL ? 1 : 0;
-    } else if (strcmp(power->raw_status, BAT_STATUS_CHR) == 0) {
+    } else if (strcmp(power->raw_status, "Charging") == 0) {
         set_token_buffer(power->tokens[0].buffer, power->lb_chr);
         power->status = PW_CHARGING;
-    } else if (strcmp(power->raw_status, BAT_STATUS_FULL) == 0) {
+    } else if (strcmp(power->raw_status, "Full") == 0) {
         set_token_buffer(power->tokens[0].buffer, power->lb_full);
         power->status = PW_FULL;
     } else {
@@ -94,8 +92,7 @@ int         parse_power_file(t_power *power) {
         }
     }
     if (nb == -1 && errno) {
-        fprintf(stderr, "Error reading file %s: %s\n", power->file,
-                strerror(errno));
+        fprintf(stderr, "Error reading file %s: %s\n", power->file, strerror(errno));
         exit(EXIT_FAILURE);
     }
     free(line);
@@ -106,16 +103,16 @@ int         parse_power_file(t_power *power) {
 void            power_notify(t_power *power) {
     switch (power->status) {
         case PW_FULL:
-            notify(power->notify.notify, "Power", BAT_NOTIFY_FULL,
-                   power->notify.ic_full, NOTIFY_URGENCY_NORMAL);
+            notify(power->notify.notify, "Power", BAT_NOTIFY_FULL, power->notify.ic_full,
+                   NOTIFY_URGENCY_NORMAL);
             break;
         case PW_CHARGING:
-            notify(power->notify.notify, "Power", BAT_NOTIFY_PLUGGED,
-                   power->notify.ic_plugged, NOTIFY_URGENCY_NORMAL);
+            notify(power->notify.notify, "Power", BAT_NOTIFY_PLUGGED, power->notify.ic_plugged,
+                   NOTIFY_URGENCY_NORMAL);
             break;
         case PW_CRITICAL:
-            notify(power->notify.notify, "Power", BAT_NOTIFY_LOW,
-                   power->notify.ic_low, NOTIFY_URGENCY_CRITICAL);
+            notify(power->notify.notify, "Power", BAT_NOTIFY_LOW, power->notify.ic_low,
+                   NOTIFY_URGENCY_CRITICAL);
             break;
         default:
             break;
@@ -154,8 +151,7 @@ void            init_battery(void *data) {
     power->lb_full = module->opts[2].value;
     power->lb_chr = module->opts[3].value;
     power->lb_dis = module->opts[4].value;
-    power->file = resolve_power_file(POWER_DIR, module->opts[5].value,
-                                     POWER_FILE);
+    power->file = resolve_power_file(POWER_DIR, module->opts[5].value, POWER_FILE);
     power->cthreshold = ((int *)module->opts[6].value)[0];
     power->full_design = ((int *)module->opts[7].value)[0];
     power->notify.enabled = ((int *)module->opts[8].value)[0];

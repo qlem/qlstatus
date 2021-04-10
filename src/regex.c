@@ -21,7 +21,7 @@ int             compile_regex(const char *regex, regex_t *preg) {
     return 0;
 }
 
-char        **multiple_subs(const char *regex, const char *str, int nmatch) {
+char                **multiple_subs(const char *regex, const char *str, int nmatch) {
     regmatch_t      pmatch[nmatch + 1];
     char            **match = NULL;
     int             i = -1;

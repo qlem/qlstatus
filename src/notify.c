@@ -6,8 +6,8 @@
 
 #include "qlstatus.h"
 
-int     notify(NotifyNotification *notify, const char *summary,
-               const char *body, const char *icon, NotifyUrgency urgency) {
+int     notify(NotifyNotification *notify, const char *summary, const char *body,
+               const char *icon, NotifyUrgency urgency) {
     if (!notify_notification_update(notify, summary, body, icon)) {
         fprintf(stderr, "Call to notify_notification_update() failed\n");
         return -1;

@@ -23,8 +23,7 @@ static uint32_t     nl80211_xbm_to_percent(int32_t xbm, int32_t divisor) {
 }
 
 // Based on NetworkManager/src/platform/wifi/wifi-utils-nl80211.c
-static void     find_ssid(uint8_t *ies, uint32_t ies_len, uint8_t **ssid,
-                          uint32_t *ssid_len) {
+static void     find_ssid(uint8_t *ies, uint32_t ies_len, uint8_t **ssid, uint32_t *ssid_len) {
     while (ies_len > 2 && ies[0] != WLAN_EID_SSID) {
         ies_len -= ies[1] + 2;
         ies += ies[1] + 2;
@@ -52,8 +51,8 @@ static int              nl_station_cb(struct nl_msg *msg, void *data) {
     if (tb[NL80211_ATTR_STA_INFO] == NULL) {
         return NL_SKIP;
     }
-    if (nla_parse_nested(s_info, NL80211_STA_INFO_MAX,
-        tb[NL80211_ATTR_STA_INFO], stats_policy) < 0) {
+    if (nla_parse_nested(s_info, NL80211_STA_INFO_MAX, tb[NL80211_ATTR_STA_INFO],
+        stats_policy) < 0) {
         return NL_SKIP;
     }
     if (s_info[NL80211_STA_INFO_SIGNAL] != NULL) {
@@ -102,16 +101,14 @@ static int              nl_scan_cb(struct nl_msg *msg, void *data) {
     if (tb[NL80211_ATTR_BSS] == NULL) {
         return NL_SKIP;
     }
-    if (nla_parse_nested(bss, NL80211_BSS_MAX, tb[NL80211_ATTR_BSS],
-        bss_policy) < 0) {
+    if (nla_parse_nested(bss, NL80211_BSS_MAX, tb[NL80211_ATTR_BSS], bss_policy) < 0) {
         return NL_SKIP;
     }
     if (bss[NL80211_BSS_STATUS] == NULL) {
         return NL_SKIP;
     }
     status = nla_get_u32(bss[NL80211_BSS_STATUS]);
-    if (status != NL80211_BSS_STATUS_ASSOCIATED && status !=
-        NL80211_BSS_STATUS_IBSS_JOINED) {
+    if (status != NL80211_BSS_STATUS_ASSOCIATED && status != NL80211_BSS_STATUS_IBSS_JOINED) {
         return NL_SKIP;
     }
     if (bss[NL80211_BSS_BSSID] == NULL) {
@@ -129,18 +126,17 @@ static int          send_for_station(t_wlan *wlan) {
     struct nl_msg   *msg = NULL;
     int             err;
 
-    if ((err = nl_socket_modify_cb(wlan->socket, NL_CB_VALID, NL_CB_CUSTOM,
-        nl_station_cb, wlan)) < 0) {
-        fprintf(stderr, "Call to nl_socket_modify_cb() failed: %s\n",
-                nl_geterror(err));
+    if ((err = nl_socket_modify_cb(wlan->socket, NL_CB_VALID, NL_CB_CUSTOM, nl_station_cb,
+        wlan)) < 0) {
+        fprintf(stderr, "Call to nl_socket_modify_cb() failed: %s\n", nl_geterror(err));
         return -1;
     }
     if ((msg = nlmsg_alloc()) == NULL) {
         fprintf(stderr, "Call to nlmsg_alloc() failed\n");
         return -1;
     }
-    if (genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, wlan->nl80211_id, 0,
-        NLM_F_DUMP, NL80211_CMD_GET_STATION, 0) == NULL) {
+    if (genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, wlan->nl80211_id, 0, NLM_F_DUMP,
+        NL80211_CMD_GET_STATION, 0) == NULL) {
         fprintf(stderr, "Call to genlmsg_put() failed\n");
         nlmsg_free(msg);
         return -1;
@@ -156,8 +152,7 @@ static int          send_for_station(t_wlan *wlan) {
         return -1;
     }
     if ((err = nl_send_sync(wlan->socket, msg)) < 0) {
-        fprintf(stderr, "Call to nl_send_sync() failed: %s\n",
-                nl_geterror(err));
+        fprintf(stderr, "Call to nl_send_sync() failed: %s\n", nl_geterror(err));
         return -1;
     }
     return 0;
@@ -167,18 +162,17 @@ static int          send_for_scan(t_wlan *wlan) {
     struct nl_msg   *msg = NULL;
     int             err;
 
-    if ((err = nl_socket_modify_cb(wlan->socket, NL_CB_VALID, NL_CB_CUSTOM,
-        nl_scan_cb, wlan)) < 0) {
-        fprintf(stderr, "Call to nl_socket_modify_cb() failed: %s\n",
-                nl_geterror(err));
+    if ((err = nl_socket_modify_cb(wlan->socket, NL_CB_VALID, NL_CB_CUSTOM, nl_scan_cb,
+        wlan)) < 0) {
+        fprintf(stderr, "Call to nl_socket_modify_cb() failed: %s\n", nl_geterror(err));
         return -1;
     }
     if ((msg = nlmsg_alloc()) == NULL) {
         fprintf(stderr, "Call to nlmsg_alloc() failed\n");
         return -1;
     }
-    if (genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, wlan->nl80211_id, 0,
-        NLM_F_DUMP, NL80211_CMD_GET_SCAN, 0) == NULL) {
+    if (genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, wlan->nl80211_id, 0, NLM_F_DUMP,
+        NL80211_CMD_GET_SCAN, 0) == NULL) {
         fprintf(stderr, "Call to genlmsg_put() failed\n");
         nlmsg_free(msg);
         return -1;
@@ -189,22 +183,17 @@ static int          send_for_scan(t_wlan *wlan) {
         return -1;
     }
     if ((err = nl_send_sync(wlan->socket, msg)) < 0) {
-        fprintf(stderr, "Call to nl_send_sync() failed: %s\n",
-                nl_geterror(err));
+        fprintf(stderr, "Call to nl_send_sync() failed: %s\n", nl_geterror(err));
         return -1;
     }
     return 0;
 }
 
 static void         set_buffer(t_module *module, t_wlan *wlan) {
-    if (wlan->flags & WLAN_FLAG_HAS_ESSID) {
-        set_token_buffer(wlan->tokens[0].buffer, wlan->essid);
-    } else {
-        set_token_buffer(wlan->tokens[0].buffer, wlan->lb_unk);
-    }
+    set_token_buffer(wlan->tokens[0].buffer, wlan->flags & WLAN_FLAG_HAS_ESSID ?
+                     wlan->essid : wlan->lb_unk);
     if (wlan->flags & WLAN_FLAG_HAS_SIGNAL) {
-        snprintf(wlan->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2d%%",
-                 wlan->signal);
+        snprintf(wlan->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2d%%", wlan->signal);
     } else {
         set_token_buffer(wlan->tokens[1].buffer, "--%");
     }
@@ -245,8 +234,7 @@ void            init_wireless(void *data) {
         exit(EXIT_FAILURE);
     }
     if ((err = genl_connect(wlan->socket)) < 0) {
-        fprintf(stderr, "Call to genl_connect() failed: %s\n",
-                nl_geterror(err));
+        fprintf(stderr, "Call to genl_connect() failed: %s\n", nl_geterror(err));
         exit(EXIT_FAILURE);
     }
     if ((wlan->nl80211_id = genl_ctrl_resolve(wlan->socket, NL80211)) < 0) {
@@ -256,8 +244,8 @@ void            init_wireless(void *data) {
     }
     errno = 0;
     if ((wlan->ifindex = if_nametoindex(wlan->ifname)) == 0) {
-        fprintf(stderr, "Unable to resolve wireless interface %s: %s\n",
-                wlan->ifname, strerror(errno));
+        fprintf(stderr, "Unable to resolve wireless interface %s: %s\n", wlan->ifname,
+                strerror(errno));
         exit(EXIT_FAILURE);
     }
 }

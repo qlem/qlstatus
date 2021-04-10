@@ -152,9 +152,6 @@ typedef struct      s_mtime {
 #define PW_MAX_FD_PATTERN "^POWER_SUPPLY_ENERGY_FULL_DESIGN=([0-9]+)$"
 #define PW_MAX_PATTERN "^POWER_SUPPLY_ENERGY_FULL=([0-9]+)$"
 #define PW_CURRENT_PATTERN "^POWER_SUPPLY_ENERGY_NOW=([0-9]+)$"
-#define BAT_STATUS_FULL "Full"
-#define BAT_STATUS_CHR "Charging"
-#define BAT_STATUS_DIS "Discharging"
 #define BAT_NOTIFY_FULL "Battery fully charged"
 #define BAT_NOTIFY_PLUGGED "AC adapter plugged"
 #define BAT_NOTIFY_LOW "Battery is low"
@@ -370,7 +367,8 @@ int     load_config_file(t_main *main, const char *file);
 
 // notify
 NotifyNotification      *notify_new(const char *summary);
-int     notify(NotifyNotification *notify, const char *summary, const char *body, const char *icon, NotifyUrgency urgency);
+int     notify(NotifyNotification *notify, const char *summary, const char *body,
+               const char *icon, NotifyUrgency urgency);
 
 // routines
 void    *run_time(void *data);

@@ -19,8 +19,7 @@ void            free_volume(void *data) {
     pa_threaded_mainloop_free(pulse->mainloop);
 }
 
-void        sink_info_cb(pa_context *context, const pa_sink_info *info,
-                         int eol, void *data) {
+void        sink_info_cb(pa_context *context, const pa_sink_info *info, int eol, void *data) {
     t_module        *module = data;
     t_pulse         *pulse = module->data;
     pa_volume_t     avg;
@@ -32,10 +31,8 @@ void        sink_info_cb(pa_context *context, const pa_sink_info *info,
     }
     if (eol == 0) {
         avg = pa_cvolume_avg(&info->volume);
-        info->mute ? set_token_buffer(pulse->tokens[0].buffer, pulse->lb_mute)
-        : set_token_buffer(pulse->tokens[0].buffer, pulse->label);
-        snprintf(pulse->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2ld%%",
-                 VOLUME(avg));
+        set_token_buffer(pulse->tokens[0].buffer, info->mute ? pulse->lb_mute : pulse->label);
+        snprintf(pulse->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2ld%%", VOLUME(avg));
         set_module_buffer(module, pulse->tokens, VOLUME_TOKENS);
     }
     pa_threaded_mainloop_signal(pulse->mainloop, 0);
@@ -67,8 +64,8 @@ void                    *pulse_connect(void *data) {
         exit(EXIT_FAILURE);
     }
     pa_context_set_state_callback(pulse->context, context_state_cb, pulse);
-    if (pa_context_connect(pulse->context, NULL, PA_CONTEXT_NOFAIL |
-                           PA_CONTEXT_NOAUTOSPAWN, NULL) < 0) {
+    if (pa_context_connect(pulse->context, NULL, PA_CONTEXT_NOFAIL | PA_CONTEXT_NOAUTOSPAWN,
+        NULL) < 0) {
         fprintf(stderr, "Call to pa_context_connect() failed\n");
         exit(EXIT_FAILURE);
     }
@@ -90,8 +87,7 @@ void                    *run_volume(void *data) {
     pa_operation        *op = NULL;
 
     pa_threaded_mainloop_lock(pulse->mainloop);
-    op = pa_context_get_sink_info_by_name(pulse->context, pulse->sink,
-                                          &sink_info_cb, module);
+    op = pa_context_get_sink_info_by_name(pulse->context, pulse->sink, &sink_info_cb, module);
     if (op == NULL) {
         fprintf(stderr, "Call to pa_context_get_sink_info_by_name() failed\n");
         exit(EXIT_FAILURE);
@@ -126,8 +122,7 @@ void                    init_volume(void *data) {
 
     errno = 0;
     if (clock_gettime(CLOCK_REALTIME, &abstime) == -1) {
-        fprintf(stderr, "Call to clock_gettime() failed: %s\n",
-                strerror(errno));
+        fprintf(stderr, "Call to clock_gettime() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
@@ -140,8 +135,7 @@ void                    init_volume(void *data) {
 
     if ((err = pthread_timedjoin_np(thread, NULL, &abstime)) != 0) {
         if (err == ETIMEDOUT) {
-            fprintf(stderr, "Failed to initialize volume module: %s\n",
-                    strerror(err));
+            fprintf(stderr, "Failed to initialize volume module: %s\n", strerror(err));
             exit(EXIT_FAILURE);
         }
         fprintf(stderr, "Call to pthread_join() failed: %s\n", strerror(err));

@@ -104,8 +104,7 @@ void        compute_tick(struct timespec *ref, struct timespec *rate,
 int     main(int argc, char **argv, char **env) {
 
     // print version/usage and exit
-    if (argc == 2 && (strcmp(argv[1], "-v") == 0 ||
-                      strcmp(argv[1], "--version") == 0)) {
+    if (argc == 2 && (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)) {
         printf("%s\n", VERSION);
         return 0;
     }
@@ -322,8 +321,7 @@ int     main(int argc, char **argv, char **env) {
         errno = 0;
         // store reference time
         if (clock_gettime(CLOCK_REALTIME, &ref) == -1) {
-            fprintf(stderr, "Call to clock_gettime() failed: %s\n",
-                    strerror(errno));
+            fprintf(stderr, "Call to clock_gettime() failed: %s\n", strerror(errno));
             exit(EXIT_FAILURE);
         }
 
@@ -333,8 +331,7 @@ int     main(int argc, char **argv, char **env) {
             if (main.modules[i].enabled) {
                 if ((err = pthread_create(&main.modules[i].thread, NULL,
                     main.modules[i].routine, &main.modules[i])) != 0) {
-                    fprintf(stderr, "Call to pthread_create() failed: %s\n",
-                            strerror(err));
+                    fprintf(stderr, "Call to pthread_create() failed: %s\n", strerror(err));
                     exit(EXIT_FAILURE);
                 }
             }
@@ -345,8 +342,7 @@ int     main(int argc, char **argv, char **env) {
         while (++i < NB_MODULES) {
             if (main.modules[i].enabled) {
                 if ((err = pthread_join(main.modules[i].thread, NULL)) != 0) {
-                    fprintf(stderr, "Call to pthread_join() failed: %s\n",
-                            strerror(err));
+                    fprintf(stderr, "Call to pthread_join() failed: %s\n", strerror(err));
                     exit(EXIT_FAILURE);
                 }
             }
@@ -360,11 +356,9 @@ int     main(int argc, char **argv, char **env) {
         compute_tick(&ref, &rate, &tick);
 
         // waiting
-        if ((err = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tick,
-                                   NULL))) {
+        if ((err = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tick, NULL))) {
             if (err != EINTR) {
-                fprintf(stderr, "Call to clock_nanosleep() failed: %s\n",
-                        strerror(err));
+                fprintf(stderr, "Call to clock_nanosleep() failed: %s\n", strerror(err));
                 exit(EXIT_FAILURE);
             }
         }

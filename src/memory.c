@@ -17,8 +17,7 @@ void        kb_format_logic(t_mem *mem, long value) {
 
 void        mb_format_logic(t_mem *mem, long value) {
     snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%5ld", value / MEGABYTE);
-    snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%5ld",
-             mem->total / MEGABYTE);
+    snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%5ld", mem->total / MEGABYTE);
 }
 
 void        gb_format_logic(t_mem *mem, long value) {
@@ -37,8 +36,7 @@ void        value_smart_format_logic(t_mem *mem, long value) {
         clean_leading_zero(mem->tokens[2].buffer);
         mem->tokens[2].buffer[4] = 'g';
     } else if (value > MEGABYTE - 1) {
-        snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4ldm",
-                 value / MEGABYTE);
+        snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4ldm", value / MEGABYTE);
     } else {
         snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4ldk", value);
     }
@@ -51,8 +49,7 @@ void        total_smart_format_logic(t_mem *mem) {
         remove_leading_zero(mem->tokens[3].buffer);
         set_token_buffer(mem->tokens[4].buffer, "gB");
     } else if (mem->total > MEGABYTE - 1) {
-        snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%ld",
-                 mem->total / MEGABYTE);
+        snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%ld", mem->total / MEGABYTE);
         set_token_buffer(mem->tokens[4].buffer, "mB");
     } else {
         snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%ld", mem->total);
@@ -91,15 +88,14 @@ int             parse_mem_file(t_mem *mem) {
         parse_mem_value(mem, line);
         line = NULL;
         size = 0;
-        if (mem->total > -1 && mem->free > -1 && mem->buffers > -1 &&
-            mem->cached > -1 && mem->sreclaim > -1) {
+        if (mem->total > -1 && mem->free > -1 && mem->buffers > -1 && mem->cached > -1 &&
+            mem->sreclaim > -1) {
             close_stream(stream, PROC_MEMINFO);
             return 0;
         }
     }
     if (nb == -1 && errno) {
-        fprintf(stderr, "Error reading file %s: %s\n", PROC_MEMINFO,
-                strerror(errno));
+        fprintf(stderr, "Error reading file %s: %s\n", PROC_MEMINFO, strerror(errno));
         exit(EXIT_FAILURE);
     }
     free(line);

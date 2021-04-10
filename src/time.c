@@ -26,8 +26,7 @@ void            *run_time(void *data) {
         exit(EXIT_FAILURE);
     }
     v_memset(module->buffer, 0, MBUFFER_MAX_SIZE);
-    if (strftime(module->buffer, MBUFFER_MAX_SIZE, mtime->format,
-                 timeinfo) == 0) {
+    if (strftime(module->buffer, MBUFFER_MAX_SIZE, mtime->format, timeinfo) == 0) {
         fprintf(stderr, "Call to strftime() failed\n");
         exit(EXIT_FAILURE);
     }

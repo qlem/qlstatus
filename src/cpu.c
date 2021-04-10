@@ -58,8 +58,7 @@ char            *parse_cpu_file() {
     nb = getline(&line, &size, stream);
     if (nb == -1) {
         if (errno) {
-            fprintf(stderr, "Error reading file %s: %s\n", PROC_STAT,
-                    strerror(errno));
+            fprintf(stderr, "Error reading file %s: %s\n", PROC_STAT, strerror(errno));
             exit(EXIT_FAILURE);
         }
         free(line);

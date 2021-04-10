@@ -16,8 +16,8 @@ void        free_files(char **files) {
     free(files);
 }
 
-char        **add_file(char **files, size_t *size, const char *file,
-                       const char *regex, const char *dir) {
+char        **add_file(char **files, size_t *size, const char *file, const char *regex,
+                       const char *dir) {
     size_t  sfile;
     size_t  sdir;
 
