@@ -15,20 +15,17 @@ void            free_cpu_freq(void *data) {
 
 void            khz_format_logic(t_freq *freq, long value) {
     snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%7ld", value);
-    set_token_buffer(freq->tokens[2].buffer, "KHz");
 }
 
 void            mhz_format_logic(t_freq *freq, long value) {
     snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%4ld",
              value / MEGAHERTZ);
-    set_token_buffer(freq->tokens[2].buffer, "MHz");
 }
 
 void            ghz_format_logic(t_freq *freq, long value) {
     snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%3.1f",
              (float)value / (MEGAHERTZ * MEGAHERTZ));
     clean_leading_zero(freq->tokens[1].buffer);
-    set_token_buffer(freq->tokens[2].buffer, "GHz");
 }
 
 void            smart_format_logic(t_freq *freq, long value) {
@@ -95,10 +92,13 @@ void            init_cpu_freq(void *data) {
 
     if (strcmp(module->opts[2].value, "KHz") == 0) {
         freq->unit = KHZ;
+        set_token_buffer(freq->tokens[2].buffer, "KHz");
     } else if (strcmp(module->opts[2].value, "MHz") == 0) {
         freq->unit = MHZ;
+        set_token_buffer(freq->tokens[2].buffer, "MHz");
     } else if (strcmp(module->opts[2].value, "GHz") == 0) {
         freq->unit = GHZ;
+        set_token_buffer(freq->tokens[2].buffer, "GHz");
     } else {
         freq->unit = FSMT;
     }

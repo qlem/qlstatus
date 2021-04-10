@@ -6,6 +6,42 @@
 
 #include "qlstatus.h"
 
+void        free_resources(t_main *main) {
+    int     i = -1;
+    int     j;
+
+    // free global option values
+    while (++i < GLOBAL_NOPTS) {
+        if (main->opts[i].to_free) {
+            free(main->opts[i].value);
+        }
+    }
+
+    i = -1;
+    while (++i < NB_MODULES) {
+        j = -1;
+        // free module extra data
+        if (main->modules[i].enabled) {
+            main->modules[i].mfree(&main->modules[i]);
+        }
+        // free module option values
+        while (++j < main->modules[i].nopts) {
+            if (main->modules[i].opts[j].to_free) {
+                free(main->modules[i].opts[j].value);
+            }
+        }
+    }
+
+    // free libnotify
+    notify_uninit();
+}
+
+void    signal_handler(int signum) {
+    (void)signum;
+    putstr("\n(interrupt) Exiting ql-status.\n");
+    exit(EXIT_SUCCESS);
+}
+
 char        *resolve_config_file(char **env) {
     char    *config = NULL;
     char    *home = NULL;
@@ -49,42 +85,6 @@ int             resolve_rate(t_main *main, struct timespec *tp) {
     free(unit);
     free(buf);
     return 0;
-}
-
-void    signal_handler(int signum) {
-    (void)signum;
-    putstr("\n(interrupt) Exiting ql-status.\n");
-    exit(EXIT_SUCCESS);
-}
-
-void        free_resources(t_main *main) {
-    int     i = -1;
-    int     j;
-
-    // free global option values
-    while (++i < GLOBAL_NOPTS) {
-        if (main->opts[i].to_free) {
-            free(main->opts[i].value);
-        }
-    }
-
-    i = -1;
-    while (++i < NB_MODULES) {
-        j = -1;
-        // free module extra data
-        if (main->modules[i].enabled) {
-            main->modules[i].mfree(&main->modules[i]);
-        }
-        // free module option values
-        while (++j < main->modules[i].nopts) {
-            if (main->modules[i].opts[j].to_free) {
-                free(main->modules[i].opts[j].value);
-            }
-        }
-    }
-
-    // free libnotify
-    notify_uninit();
 }
 
 void        compute_tick(struct timespec *ref, struct timespec *rate,

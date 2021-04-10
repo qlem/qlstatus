@@ -13,14 +13,12 @@ void        free_memory(void *data) {
 void        kb_format_logic(t_mem *mem, long value) {
     snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%8ld", value);
     snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%8ld", mem->total);
-    set_token_buffer(mem->tokens[4].buffer, "kB");
 }
 
 void        mb_format_logic(t_mem *mem, long value) {
     snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%5ld", value / MEGABYTE);
     snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%5ld",
              mem->total / MEGABYTE);
-    set_token_buffer(mem->tokens[4].buffer, "mB");
 }
 
 void        gb_format_logic(t_mem *mem, long value) {
@@ -30,7 +28,6 @@ void        gb_format_logic(t_mem *mem, long value) {
              (float)mem->total / (MEGABYTE * MEGABYTE));
     clean_leading_zero(mem->tokens[2].buffer);
     remove_leading_zero(mem->tokens[3].buffer);
-    set_token_buffer(mem->tokens[4].buffer, "gB");
 }
 
 void        value_smart_format_logic(t_mem *mem, long value) {
@@ -163,17 +160,19 @@ void            init_memory(void *data) {
     mem->tokens[4].fmtid = 'U';
     init_module_tokens(module, mem->tokens, MEM_TOKENS);
 
-    if (strcmp("kB", module->opts[2].value) == 0) {
+    if (strcmp(module->opts[2].value, "kB") == 0) {
         mem->unit = KB;
-    } else if (strcmp("mB", module->opts[2].value) == 0) {
+        set_token_buffer(mem->tokens[4].buffer, "kB");
+    } else if (strcmp(module->opts[2].value, "mB") == 0) {
         mem->unit = MB;
-    } else if (strcmp("gB", module->opts[2].value) == 0) {
+        set_token_buffer(mem->tokens[4].buffer, "mB");
+    } else if (strcmp(module->opts[2].value, "gB") == 0) {
         mem->unit = GB;
+        set_token_buffer(mem->tokens[4].buffer, "gB");
     } else {
         mem->unit = MSMT;
     }
 
     set_token_buffer(mem->tokens[0].buffer, module->opts[1].value);
-    set_token_buffer(mem->tokens[4].buffer, module->opts[2].value);
     mem->cthreshold = ((int *)module->opts[3].value)[0];
 }
