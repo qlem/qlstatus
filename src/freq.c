@@ -13,20 +13,6 @@ void            free_cpu_freq(void *data) {
     free_files(freq->inputs);
 }
 
-void            khz_format_logic(t_freq *freq, long value) {
-    snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%7ld", value);
-}
-
-void            mhz_format_logic(t_freq *freq, long value) {
-    snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%4ld", value / MEGAHERTZ);
-}
-
-void            ghz_format_logic(t_freq *freq, long value) {
-    snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%3.1f",
-             (float)value / (MEGAHERTZ * MEGAHERTZ));
-    clean_leading_zero(freq->tokens[1].buffer);
-}
-
 void            smart_format_logic(t_freq *freq, long value) {
     if (value > (MEGAHERTZ * MEGAHERTZ) - 1) {
         snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%3.1f",
@@ -59,13 +45,15 @@ void            *run_cpu_freq(void *data) {
     value = sum / i;
     switch(freq->unit) {
         case KHZ:
-            khz_format_logic(freq, value);
+            snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%7ld", value);
             break;
         case MHZ:
-            mhz_format_logic(freq, value);
+            snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%4ld", value / MEGAHERTZ);
             break;
         case GHZ:
-            ghz_format_logic(freq, value);
+            snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%3.1f",
+                     (float)value / (MEGAHERTZ * MEGAHERTZ));
+            clean_leading_zero(freq->tokens[1].buffer);
             break;
         case FSMT:
             smart_format_logic(freq, value);
