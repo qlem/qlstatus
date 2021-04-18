@@ -1,4 +1,7 @@
-.TH QLSTATUS 1 qlstatus\-VERSION
+.\" Copyright (c) 2020 Clément Dommerc <clement.dommerc@gmail.com>
+.\" MIT License
+.\"
+.TH "QLSTATUS" "1" "2021\-04\-18" "qlstatus\-VERSION" "ql-status Manuel"
 .SH NAME
 \fBqlstatus\fP \- light and modular status bar
 .SH SYNOPSIS
@@ -119,7 +122,8 @@ Default: BAT0
 .sp
 .B battery_full_design
 .RS 4
-todo..
+Enable or disable battery full design. Gives the real battery level taking into account its wear when enabled.
+Must be 0 or 1.
 .PP
 Default: 1
 .RE
@@ -158,28 +162,28 @@ Specify battery critical threshold in percent.
 .PP
 Default: 20
 .SS power notifications
-.B battery_notifications
+.B power_notifications
 .RS 4
 Enable or disable power notifications related to battery events. Must be 0 or 1.
 .PP
 Default: 1
 .RE
 .sp
-.B battery_notify_icon_full
+.B power_notify_icon_full
 .RS 4
 Specify name or path of the icon to use in notification triggered when battery is fully charged.
 .PP
 Default: battery-full-charged
 .RE
 .sp
-.B battery_notify_icon_plugged
+.B power_notify_icon_plugged
 .RS 4
 Specify name or path of the icon to use in notification triggered when AC adapter is plugged.
 .PP
 Default: ac-adapter
 .RE
 .sp
-.B battery_notify_icon_low
+.B power_notify_icon_low
 .RS 4
 Specify name or path of the icon to use in notification triggered when battery reach the critical threshold.
 .PP
@@ -248,7 +252,9 @@ Default: MHz
 .sp
 .B cpu_freq_scaling
 .RS 4
-todo..
+If enabled, qlstatus looks for read scaling attributes to compute current CPU frequency. Some scaling drivers
+(e.g. intel_pstate) attempt to provide information more precisely reflecting the current CPU frequency through
+these attributes. Must be 0 or 1.
 .PP
 Default: 1
 .SS temperature
@@ -277,17 +283,17 @@ Default: temp
 .sp
 .B temperature_dir
 .RS 4
-Specify path for temperature input directory. May contain an asterisk to resolve last directory of the path.
-If an asterisk is present then first directory found is chosen.
+Specify path for temperature attributes directory. May contain an asterisk \(oq*\(cq to resolve last directory of
+the path. If an asterisk is present then first directory found is chosen.
 .PP
 Default: /sys/devices/platform/coretemp.0/hwmon/*
 .RE
 .sp
 .B temperature_input
 .RS 4
-Specify an input file number or a range to compute a temperature average. qlstatus looks for input files that match
-pattern temp[r]_input where r is the specified value. Value must match pattern [n] for specific input file or
-[n]-[n] for a range of input files.
+Specify an attribute number or a range to compute a temperature average. qlstatus looks for attribute filenames that
+match pattern temp[r]_input where r is the specified value. Value must match pattern [n] for specific attribute file
+or [n]-[n] for a range of attribute files.
 .PP
 Default: 2-5
 .RE
@@ -363,7 +369,7 @@ Default: brg
 .sp
 .B brightness_dir
 .RS 4
-Specify path for backlight input directory. Should not be changed.
+Specify path for backlight attributes directory. Should not be changed.
 .PP
 Default: /sys/class/backlight/intel_backlight
 .SS audio volume
@@ -433,11 +439,11 @@ Specify name of wireless interface.
 Default: wlan0
 .SH INTEGRATION WITH DWM
 .PP
-dwm reads the name of the root window and redirects it to the statusbar. The root window is the window within which all
-other windows are drawn and arranged by the window manager. Like any other window, the root window has a title/name,
-but it is usually undefined because the root window always runs in the background.
+dwm reads the name of the root window and redirects it to its statusbar area. The root window is the window within
+which all other windows are drawn and arranged by the window manager. Like any other window, the root window has a
+name, but it is usually undefined because the root window always runs in the background.
 .PP
-You can compile this C program to redirect qlstatus output as the name of the root window:
+You can compile following C program to redirect qlstatus output as the name of the root window:
 .RS 4
 .sp
 .EX

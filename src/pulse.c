@@ -4,6 +4,7 @@
  *
  */
 
+#define _GNU_SOURCE
 #include "qlstatus.h"
 
 // Based from sources of pa_volume_snprint() function

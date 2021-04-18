@@ -7,8 +7,6 @@
 #ifndef QLSTATUS_H_
 #define QLSTATUS_H_
 
-#define _GNU_SOURCE
-
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>

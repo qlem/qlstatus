@@ -157,11 +157,11 @@ int             main(int argc, char **argv, char **env) {
         {"battery_label_discharging",   "bat",            LABEL_PATTERN,     STRING, 0},
         {"battery_name",                "BAT0",           BAT_NAME_PATTERN,  STRING, 0},
         {"battery_critical",            &bat_threshold,   THRESHOLD_PATTERN, NUMBER, 0},
-        {"battery_full_design",         &bat_full_design, BOOLEAN_PATTERN,   NUMBER, 0},
-        {"battery_notifications",       &bat_notify,      BOOLEAN_PATTERN,   NUMBER, 0},
-        {"battery_notify_icon_full",    NULL,             TEXT_PATTERN,      STRING, 0},
-        {"battery_notify_icon_plugged", NULL,             TEXT_PATTERN,      STRING, 0},
-        {"battery_notify_icon_low",     NULL,             TEXT_PATTERN,      STRING, 0}
+        {"power_full_design",           &bat_full_design, BOOLEAN_PATTERN,   NUMBER, 0},
+        {"power_notifications",         &bat_notify,      BOOLEAN_PATTERN,   NUMBER, 0},
+        {"power_notify_icon_full",      NULL,             TEXT_PATTERN,      STRING, 0},
+        {"power_notify_icon_plugged",   NULL,             TEXT_PATTERN,      STRING, 0},
+        {"power_notify_icon_low",       NULL,             TEXT_PATTERN,      STRING, 0}
     };
 
     // cpu usage options

@@ -91,7 +91,7 @@ critical_color_index = 2
 *-- The support of spectrwm colors is stopped for now --*
 
 ### Power notifications
-By default notifications related to the battery are enabled. Change the value of `battery_notifications` option
+By default notifications related to the battery are enabled. Change the value of `power_notifications` option
 to enable or disable power notifications.
 
 Three notifications are triggered:
@@ -100,9 +100,9 @@ Three notifications are triggered:
 - when battery reach critical threshold
 
 You can choose desired icons by specifying their name through the options:
-- `battery_notify_icon_full`
-- `battery_notify_icon_plugged`
-- `battery_notify_icon_low`
+- `power_notify_icon_full`
+- `power_notify_icon_plugged`
+- `power_notify_icon_low`
 
 ## License
 MIT
