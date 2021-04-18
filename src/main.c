@@ -36,7 +36,15 @@ void        free_resources(t_main *main) {
     notify_uninit();
 }
 
-void    signal_handler(int signum) {
+void        print_usage() {
+    putstr("Usage: qlstatus [OPTIONS]\n\n");
+    putstr("Options:\n");
+    putstr("  -h, --help            Print usage statement\n");
+    putstr("  -v, --version         Print version and exit\n");
+    putstr("  -c, --config <file>   Load settings from specified configuration file\n");
+}
+
+void        signal_handler(int signum) {
     (void)signum;
     putstr("\n(interrupt) Exiting ql-status.\n");
     exit(EXIT_SUCCESS);
@@ -101,15 +109,24 @@ void        compute_tick(struct timespec *ref, struct timespec *rate,
     }
 }
 
-int     main(int argc, char **argv, char **env) {
+int             main(int argc, char **argv, char **env) {
+    char        *sconfig = NULL;
 
-    // print version/usage and exit
+    // handle arguments
     if (argc == 2 && (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)) {
         printf("%s\n", VERSION);
         return 0;
     }
-    if (argc > 1) {
-        printf("usage: qlstatus [-v][--version]\n");
+
+    if (argc == 2 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)) {
+        print_usage();
+        return 0;
+    }
+
+    if (argc == 3 && (strcmp(argv[1], "-c") == 0 || strcmp(argv[1], "--config") == 0)) {
+        sconfig = argv[2];
+    } else if (argc > 1) {
+        print_usage();
         return EXIT_FAILURE;
     }
 
@@ -297,7 +314,9 @@ int     main(int argc, char **argv, char **env) {
     }
 
     // resolve/load config file
-    if ((config = resolve_config_file(env))) {
+    if (sconfig && load_config_file(&main, sconfig) < 0) {
+        exit(EXIT_FAILURE);
+    } else if ((config = resolve_config_file(env))) {
         load_config_file(&main, config);
         free(config);
     }
