@@ -36,13 +36,21 @@ cp /etc/qlstatus.conf ~/.config/qlstatus/qlstatus.conf
 ```
 
 ## Install from sources
+Compile from sources and install binary, man page and default configuration file:
 ```
 cd /path/to/repo
 mkdir build
-cmake -B build/ .
+cmake -B build/
 cmake --build build/
-cp build/qlstatus ~/bin
+cmake --install build/
 ```
+
+Prefix install directory is set by default to `/usr/local`. To changes this use `--prefix` option:
+```
+cmake --install build/ --prefix /my/install/dir
+```
+
+Once installed, the list of installed files can be found in `build/install_manifest.txt`.
 
 ## Configuration
 You should override default value of some options by editing `~/.config/qlstatus/qlstatus.conf`.  

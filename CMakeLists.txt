@@ -33,3 +33,12 @@ add_executable(qlstatus
 target_compile_definitions(qlstatus PRIVATE VERSION="${RELEASE}")
 target_include_directories(qlstatus PRIVATE inc ${LIBNL_INCLUDE_DIRS} ${LIBNOTIFY_INCLUDE_DIRS})
 target_link_libraries(qlstatus -lpthread -lpulse ${LIBNL_LINK_LIBRARIES} ${LIBNOTIFY_LINK_LIBRARIES})
+
+install(CODE "
+        execute_process(COMMAND ${CMAKE_SOURCE_DIR}/manual.sh
+                        OUTPUT_FILE ${CMAKE_BINARY_DIR}/qlstatus.1
+                        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+        message(STATUS \"Generating manual page\")")
+install(FILES ${CMAKE_BINARY_DIR}/qlstatus.1 DESTINATION share/man/man1)
+install(FILES qlstatus.conf TYPE SYSCONF)
+install(TARGETS qlstatus RUNTIME DESTINATION bin)
