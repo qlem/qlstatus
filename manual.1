@@ -1,9 +1,9 @@
 .\" Copyright (c) 2020 Clément Dommerc <clement.dommerc@gmail.com>
 .\" MIT License
 .\"
-.TH "QLSTATUS" "1" "2021\-04\-18" "ql-status VERSION" "ql-status Manual"
+.TH "QLSTATUS" "1" "2021\-04\-18" "qlstatus VERSION" "ql-status Manual"
 .SH NAME
-\fBqlstatus\fP \- light and modular status bar
+\fBqlstatus\fP \- a light and modular status bar
 .SH SYNOPSIS
 .SY qlstatus
 .OP \-h
@@ -13,7 +13,10 @@
 .SH DESCRIPTION
 .PP
 qlstatus is a small program with minimalistic and modular approach for generating a status bar for tiling window
-managers like \fBdwm(1)\fP and \fBspectrwm(1)\fP.
+managers like \fBdwm(1)\fP or \fBspectrwm(1)\fP.
+.PP
+When \fBqlstatus\fP starts up, it reads settings from its configuration file, \fIqlstatus.conf\fP.
+See the CONFIGURATION section below.
 .SH OPTIONS
 .B \-h, \-\-help
 .RS 4
@@ -37,14 +40,16 @@ with default settings. A configuration file with default settings can be found i
 The format of configuration file is a list of settings of the form:
 .sp
 .RS 4
+.EX
 keyword = setting
+.EE
 .RE
 .PP
 Comment lines begin with a \(oq#\(cq. For inline comments, \(oq#\(cq must be preceded by a white space or a tab.
 .PP
-qlstatus allows you to enable and choose which \(lqmodules\(rq to display through global format option.
-Each module is composed of \(lqtokens\(rq which may be or not displayed through format option of corresponding module.
-Configure global and module outputs by specifying desired format strings. See options below.
+qlstatus allows you to enable and choose which \(lqmodules\(rq to display through the global format option.
+Each module is composed of \(lqtokens\(rq which may be or not displayed through the format option of the
+corresponding module. Configure global and module outputs by specifying desired format strings. See options below.
 .SS global options
 .B format
 .RS 4
@@ -87,13 +92,13 @@ Default: 0
 .sp
 .B critical_color_index
 .RS 4
-Specify index of desired spectrwm color to use for display modules in critical state. Must be a number in range 0 to 9.
+Specify index of spectrwm color to use for display modules in critical state. Must be a number in range 0 to 9.
 .PP
 Default: 1
 .SS date and time
 .B time_format
 .RS 4
-Specify format date and time. The format is passed through \fBstrftime(3)\fP.
+Specify format date and time. Must match \fBstrftime(3)\fP format specification.
 .PP
 Default: %a %d %b %Y, %R %Z
 .SS battery level
@@ -158,7 +163,7 @@ Default: unk
 .sp
 .B battery_critical
 .RS 4
-Specify battery critical threshold in percent.
+Specify critical battery level in percent.
 .PP
 Default: 20
 .SS power notifications
@@ -171,21 +176,21 @@ Default: 1
 .sp
 .B power_notify_icon_full
 .RS 4
-Specify name or path of the icon to use in notification triggered when battery is fully charged.
+Specify icon name or icon path to use in notification triggered when battery is fully charged.
 .PP
 Default: battery-full-charged
 .RE
 .sp
 .B power_notify_icon_plugged
 .RS 4
-Specify name or path of the icon to use in notification triggered when AC adapter is plugged.
+Specify icon name or icon path to use in notification triggered when AC adapter is plugged.
 .PP
 Default: ac-adapter
 .RE
 .sp
 .B power_notify_icon_low
 .RS 4
-Specify name or path of the icon to use in notification triggered when battery reach the critical threshold.
+Specify icon name or icon path to use in notification triggered when battery reach the critical level.
 .PP
 Default: battery-caution
 .SS CPU usage
@@ -207,7 +212,7 @@ Default: %L %V
 .sp
 .B cpu_label
 .RS 4
-Specify module label.
+Specify the module label.
 .PP
 Default: cpu
 .RE
@@ -237,15 +242,15 @@ Default: %L %V%U
 .sp
 .B cpu_freq_label
 .RS 4
-Specify module label.
+Specify the module label.
 .PP
 Default: freq
 .RE
 .sp
 .B cpu_freq_unit
 .RS 4
-Specify desired frequency unit. Must be KHz, MHz, GHz or smart. smart automatically scales frequency value
-to shortest three digit unit.
+Specify the frequency unit. Must be KHz, MHz, GHz or smart. smart automatically scales frequency value
+to the shortest three digit unit.
 .PP
 Default: MHz
 .RE
@@ -276,7 +281,7 @@ Default: %L %V
 .sp
 .B temperature_label
 .RS 4
-Specify module label.
+Specify the module label.
 .PP
 Default: temp
 .RE
@@ -300,7 +305,7 @@ Default: 2-5
 .sp
 .B temperature_critical
 .RS 4
-Specify critical temperature threshold in degree Celsius.
+Specify critical temperature in degree Celsius.
 .PP
 Default: 80
 .SS memory usage
@@ -325,15 +330,15 @@ Default: %L %C/%T%U (%P)
 .sp
 .B memory_label
 .RS 4
-Specify module label.
+Specify the module label.
 .PP
 Default: mem
 .RE
 .sp
 .B memory_unit
 .RS 4
-Specify desired memory unit. Must be KiB, MiB, GiB or smart. smart automatically scales used and total memory value
-to shortest three digit unit.
+Specify the memory unit. Must be KiB, MiB, GiB or smart. smart automatically scales used and total memory value
+to the shortest three digit unit.
 .PP
 Default: MiB
 .RE
@@ -362,7 +367,7 @@ Default: %L %V
 .sp
 .B brightness_label
 .RS 4
-Specify module label.
+Specify the module label.
 .PP
 Default: brg
 .RE
@@ -391,14 +396,14 @@ Default: %L %V
 .sp
 .B volume_label
 .RS 4
-Specify module label.
+Specify the module label.
 .PP
 Default: vol
 .RE
 .sp
 .B volume_muted_label
 .RS 4
-Specify module label when audio is muted.
+Specify the label when audio is muted.
 .PP
 Default: mut
 .RE
@@ -427,7 +432,7 @@ Default: %L: %V
 .sp
 .B wireless_unknown_label
 .RS 4
-Specify module label when SSID is unknown.
+Specify the label when SSID is unknown.
 .PP
 Default: SSID unk
 .RE
@@ -437,11 +442,11 @@ Default: SSID unk
 Specify name of wireless interface.
 .PP
 Default: wlan0
-.SH INTEGRATION WITH DWM
+.SH INTEGRATION IN DWM
 .PP
-dwm reads the name of the root window and redirects it to its statusbar area. The root window is the window within
-which all other windows are drawn and arranged by the window manager. Like any other window, the root window has a
-name, but it is usually undefined because the root window always runs in the background.
+dwm reads the name of the root window and redirects it to its statusbar area. The root window is the root of the
+window tree handled by the window manager. Like any other window, the root window has a name, but it is usually
+undefined because the root window always runs in the background.
 .PP
 You can compile following C program to redirect qlstatus output as the name of the root window:
 .RS 4
@@ -486,7 +491,7 @@ gcc dwm-setstatus.c -lX11 -o dwm-setstatus
 .EE
 .RE
 .PP
-Finally, move or add \fBdwm-setstatus\fP binary to your $PATH. To use qlstatus as dwm status bar, you can for example
+Finally, move or add \fBdwm-setstatus\fP binary to your $PATH. To use qlstatus as dwm statusbar, you can for example
 add into \fI~/.xinitrc\fP:
 .sp
 .RS 4
@@ -496,22 +501,26 @@ add into \fI~/.xinitrc\fP:
 (qlstatus | dwm-setstatus) &
 exec dwm
 .EE
-.SH INTEGRATION WITH SPECTRWM
+.SH INTEGRATION IN SPECTRWM
 Specify qlstatus as external script through the option \fBbar_action\fP in your spectrwm configuration file:
 .sp
 .RS 4
+.EX
 bar_action = qlstatus
+.EE
 .RE
 .PP
-That's all.
+That's it.
+.SH FILES
 .SH NOTES
 The support of spectrwm colors is stopped for now.
+.SH BUGS
+In case of bug, please open an issue on
+.UR https://\:github.com/\:qlem/\:qlstatus
+GitHub repository page
+.UE .
 .SH SEE ALSO
 .BR dwm (1),
 .BR spectrwm (1)
-.SH BUGS
-In case of bug, please open an issue at
-.UR https://\:github.com/\:qlem/\:qlstatus
-.UE .
 .SH AUTHORS
 qlstatus was written and currently maintained by Clément Dommerc.
