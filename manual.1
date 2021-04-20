@@ -51,12 +51,12 @@ qlstatus allows you to enable and choose which \(lqmodules\(rq to display throug
 Each module is composed of \(lqtokens\(rq which may be or not displayed through the format option of the
 corresponding module. Configure global and module outputs by specifying desired format strings. See options below.
 .SS global options
+.TP 4
 .B format
-.RS 4
 Specify global output format. It may contain the following character sequences to enable and display desired
 modules. Any other character will be print.
-.PP
-.RS 4
+.sp
+.in +4n
 .TS
 tab(;);
 l l.
@@ -70,164 +70,134 @@ l l.
 %B;battery level and status
 %W;wireless SSID and signal strength
 .TE
-.RE
-.PP
+.in -4n
+.sp
 All modules are enabled by default.
-.RE
-.sp
+.TP 4
 .B rate
-.RS 4
 Specify refresh rate of the output in seconds or milliseconds. Must match pattern [n]s or [n]ms.
-.PP
-Default: 1s
-.RE
 .sp
+Default: 1s
+.TP 4
 .B enable_spectrwm_colors
-.RS 4
 Enable or disable the support of spectrwm colors. Should be enable only with spectrwm as window manager.
 Must be 0 or 1.
-.PP
-Default: 0
-.RE
 .sp
+Default: 0
+.TP 4
 .B critical_color_index
-.RS 4
 Specify index of spectrwm color to use for display modules in critical state. Must be a number in range 0 to 9.
-.PP
+.sp
 Default: 1
 .SS date and time
+.TP 4
 .B time_format
-.RS 4
 Specify format date and time. Must match \fBstrftime(3)\fP format specification.
-.PP
+.sp
 Default: %a %d %b %Y, %R %Z
 .SS battery level
+.TP 4
 .B battery_format
-.RS 4
 Specify module format. It may contain the following character sequences:
 .sp
-.RS 4
+.in +4n
 .TS
 tab(;);
 l l.
 %L;current status
 %V;battery level in percent
 .TE
-.RE
-.PP
+.in -4n
+.sp
 Default: %L %V
-.RE
-.sp
+.TP 4
 .B battery_name
-.RS 4
 Specify battery name. Must match pattern BAT[n].
-.PP
-Default: BAT0
-.RE
 .sp
+Default: BAT0
+.TP 4
 .B battery_full_design
-.RS 4
 Enable or disable battery full design. Gives the real battery level taking into account its wear when enabled.
 Must be 0 or 1.
-.PP
+.sp
 Default: 1
-.RE
-.sp
+.TP 4
 .B battery_label_full
-.RS 4
 Specify label to display when battery is fully charged.
-.PP
+.sp
 Default: full
-.RE
-.sp
+.TP 4
 .B battery_label_charging
-.RS 4
 Specify label to display when battery is charging.
-.PP
+.sp
 Default: chr
-.RE
-.sp
+.TP 4
 .B battery_label_discharging
-.RS 4
 Specify label to display when battery is discharging.
-.PP
+.sp
 Default: bat
-.RE
-.sp
+.TP 4
 .B battery_label_unknown
-.RS 4
 Specify label to display when current battery status is unknown.
-.PP
-Default: unk
-.RE
 .sp
+Default: unk
+.TP 4
 .B battery_critical
-.RS 4
 Specify critical battery level in percent.
-.PP
+.sp
 Default: 20
 .SS power notifications
+.TP 4
 .B power_notifications
-.RS 4
 Enable or disable power notifications related to battery events. Must be 0 or 1.
-.PP
+.sp
 Default: 1
-.RE
-.sp
+.TP 4
 .B power_notify_icon_full
-.RS 4
 Specify icon name or icon path to use in notification triggered when battery is fully charged.
-.PP
+.sp
 Default: battery-full-charged
-.RE
-.sp
+.TP 4
 .B power_notify_icon_plugged
-.RS 4
 Specify icon name or icon path to use in notification triggered when AC adapter is plugged.
-.PP
-Default: ac-adapter
-.RE
 .sp
+Default: ac-adapter
+.TP 4
 .B power_notify_icon_low
-.RS 4
 Specify icon name or icon path to use in notification triggered when battery reach the critical level.
-.PP
+.sp
 Default: battery-caution
 .SS CPU usage
+.TP 4
 .B cpu_format
-.RS 4
 Specify module format. It may contain the following character sequences:
 .sp
-.RS 4
+.in +4n
 .TS
 tab(;);
 l l.
 %L;label
 %V;CPU usage in percent
 .TE
-.RE
-.PP
+.in -4n
+.sp
 Default: %L %V
-.RE
-.sp
+.TP 4
 .B cpu_label
-.RS 4
 Specify the module label.
-.PP
-Default: cpu
-.RE
 .sp
+Default: cpu
+.TP 4
 .B cpu_critical
-.RS 4
 Specify critical CPU usage threshold in percent.
-.PP
+.sp
 Default: 80
 .SS CPU frequency
+.TP 4
 .B cpu_freq_format
-.RS 4
 Specify module format. It may contain the following character sequences:
 .sp
-.RS 4
+.in +4n
 .TS
 tab(;);
 l l.
@@ -235,85 +205,71 @@ l l.
 %V;CPU frequency
 %U;unit
 .TE
-.RE
-.PP
+.in -4n
+.sp
 Default: %L %V%U
-.RE
-.sp
+.TP 4
 .B cpu_freq_label
-.RS 4
 Specify the module label.
-.PP
-Default: freq
-.RE
 .sp
+Default: freq
+.TP 4
 .B cpu_freq_unit
-.RS 4
 Specify the frequency unit. Must be KHz, MHz, GHz or smart. smart automatically scales frequency value
 to the shortest three digit unit.
-.PP
-Default: MHz
-.RE
 .sp
+Default: MHz
+.TP 4
 .B cpu_freq_scaling
-.RS 4
 If enabled, qlstatus looks for read scaling attributes to compute current CPU frequency. Some scaling drivers
 (e.g. intel_pstate) attempt to provide information more precisely reflecting the current CPU frequency through
 these attributes. Must be 0 or 1.
-.PP
+.sp
 Default: 1
 .SS temperature
+.TP 4
 .B temperature_format
-.RS 4
 Specify module format. It may contain the following character sequences:
 .sp
-.RS 4
+.in +4n
 .TS
 tab(;);
 l l.
 %L;label
 %V;temperature in degree Celsius
 .TE
-.RE
-.PP
+.in -4n
+.sp
 Default: %L %V
-.RE
-.sp
+.TP 4
 .B temperature_label
-.RS 4
 Specify the module label.
-.PP
-Default: temp
-.RE
 .sp
+Default: temp
+.TP 4
 .B temperature_dir
-.RS 4
 Specify path for temperature attributes directory. May contain an asterisk \(oq*\(cq to resolve last directory of
 the path. If an asterisk is present then first directory found is chosen.
-.PP
-Default: /sys/devices/platform/coretemp.0/hwmon/*
-.RE
 .sp
+Default: /sys/devices/platform/coretemp.0/hwmon/*
+.TP 4
 .B temperature_input
-.RS 4
 Specify an attribute number or a range to compute a temperature average. qlstatus looks for attribute filenames that
 match pattern temp[r]_input where r is the specified value. Value must match pattern [n] for specific attribute file
 or [n]-[n] for a range of attribute files.
-.PP
-Default: 2-5
-.RE
 .sp
+Default: 2-5
+.TP 4
 .B temperature_critical
-.RS 4
 Specify critical temperature in degree Celsius.
-.PP
+.sp
 Default: 80
 .SS memory usage
+.TP 4
 .B memory_format
-.RS 4
 Specify module format. It may contain the following character sequences:
 .sp
-.RS 4
+.in +4n
 .TS
 tab(;);
 l l.
@@ -323,124 +279,104 @@ l l.
 %U;unit
 %P;used memory in percent
 .TE
-.RE
-.PP
+.in -4n
+.sp
 Default: %L %C/%T%U (%P)
-.RE
-.sp
+.TP 4
 .B memory_label
-.RS 4
 Specify the module label.
-.PP
-Default: mem
-.RE
 .sp
+Default: mem
+.TP 4
 .B memory_unit
-.RS 4
 Specify the memory unit. Must be KiB, MiB, GiB or smart. smart automatically scales used and total memory value
 to the shortest three digit unit.
-.PP
-Default: MiB
-.RE
 .sp
+Default: MiB
+.TP 4
 .B memory_critical
-.RS 4
-Specify critical threshold for memory usage in percent.
-.PP
+Specify critical memory usage threshold in percent.
+.sp
 Default: 80
 .SS brightness level
+.TP 4
 .B brightness_format
-.RS 4
 Specify module format. It may contain the following character sequences:
 .sp
-.RS 4
+.in +4n
 .TS
 tab(;);
 l l.
 %L;label
 %V;brightness level in percent
 .TE
-.RE
-.PP
+.in -4n
+.sp
 Default: %L %V
-.RE
-.sp
+.TP 4
 .B brightness_label
-.RS 4
 Specify the module label.
-.PP
-Default: brg
-.RE
 .sp
+Default: brg
+.TP 4
 .B brightness_dir
-.RS 4
 Specify path for backlight attributes directory. Should not be changed.
-.PP
+.sp
 Default: /sys/class/backlight/intel_backlight
 .SS audio volume
+.TP 4
 .B volume_format
-.RS 4
 Specify module format. It may contain the following character sequences:
 .sp
-.RS 4
+.in +4n
 .TS
 tab(;);
 l l.
 %L;label
 %V;volume level in percent
 .TE
-.RE
-.PP
+.in -4n
+.sp
 Default: %L %V
-.RE
-.sp
+.TP 4
 .B volume_label
-.RS 4
 Specify the module label.
-.PP
+.sp
 Default: vol
-.RE
-.sp
+.TP 4
 .B volume_muted_label
-.RS 4
 Specify the label when audio is muted.
-.PP
-Default: mut
-.RE
 .sp
+Default: mut
+.TP 4
 .B volume_sink_name
-.RS 4
 Specify sink name. See \fBpactl(1)\fP for how to get infos about sinks.
-.PP
+.sp
 Default: alsa_output.pci-0000_00_1f.3.analog-stereo
 .SS wireless SSID and signal
+.TP 4
 .B wireless_format
-.RS 4
 Specify module format. It may contain the following character sequences:
 .sp
-.RS 4
+.in +4n
 .TS
 tab(;);
 l l.
 %L;current SSID
 %V;signal strength in percent
 .TE
-.RE
-.PP
+.in -4n
+.sp
 Default: %L: %V
-.RE
-.sp
+.TP 4
 .B wireless_unknown_label
-.RS 4
 Specify the label when SSID is unknown.
-.PP
-Default: SSID unk
-.RE
 .sp
+Default: SSID unk
+.TP 4
 .B wireless_interface
-.RS 4
 Specify name of wireless interface.
-.PP
+.sp
 Default: wlan0
 .SH INTEGRATION IN DWM
 .PP
@@ -512,6 +448,7 @@ bar_action = qlstatus
 .PP
 That's it.
 .SH FILES
+To do..
 .SH NOTES
 The support of spectrwm colors is stopped for now.
 .SH BUGS
