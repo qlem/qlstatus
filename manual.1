@@ -12,9 +12,9 @@
 .YS
 .SH DESCRIPTION
 .PP
-qlstatus is a small program with minimalistic and modular approach for
-generating a status bar for tiling window managers like \fBdwm(1)\fP or
-\fBspectrwm(1)\fP.
+\fBqlstatus\fP is a small program with minimalistic and modular approach
+for generating a status bar for tiling window managers like \fBdwm(1)\fP
+or \fBspectrwm(1)\fP.
 .PP
 When \fBqlstatus\fP starts up, it reads settings from its configuration
 file, \fIqlstatus.conf\fP. See the section \fBCONFIGURATION\fP below.
@@ -34,7 +34,7 @@ Print version and exit.
 Load settings from specified configuration file.
 .SH CONFIGURATION
 .PP
-qlstatus looks for user-configuration file in the following order:
+\fBqlstatus\fP looks for user-configuration file in the following order:
 .sp
 .RS 4
 (1)   file specified through \fB--config\fP option
@@ -44,7 +44,7 @@ qlstatus looks for user-configuration file in the following order:
 .sp
 If user-configuration file is not found, it looks for system-configuration
 file in \fI~/etc/qlstatus.conf\fP. If no configuration file is found,
-qlstatus then is configured with default settings.
+\fBqlstatus\fP then is configured with default settings.
 .PP
 Format of the configuration file is a list of settings of the form:
 .sp
@@ -57,11 +57,11 @@ keyword = setting
 Comment lines begin with a \(oq#\(cq. For inline comments, \(oq#\(cq must
 be preceded by a white space or a tab.
 .PP
-qlstatus allows you to enable and choose which \(lqmodules\(rq to display
-through the global format option. Each module is composed of \(lqtokens\(rq
-which may be or not displayed through the format option of the
-corresponding module. Configure global and module outputs by specifying
-desired format strings. See options below.
+\fBqlstatus\fP allows you to enable and choose which \(lqmodules\(rq to
+display through the global format option. Each module is composed of
+\(lqtokens\(rq which may be or not displayed through the format option
+of the corresponding module. Configure global and module outputs by
+specifying desired format strings. See options below.
 .SS global options
 .TP 4
 .B format
@@ -242,10 +242,10 @@ automatically scales frequency value to the shortest three digit unit.
 Default: MHz
 .TP 4
 .B cpu_freq_scaling
-If enabled, qlstatus looks for read scaling attributes to compute current
-CPU frequency. Some scaling drivers (e.g. intel_pstate) attempt to provide
-information more precisely reflecting the current CPU frequency through
-these attributes. Must be 0 or 1.
+If enabled, \fBqlstatus\fP looks for read scaling attributes to compute
+current CPU frequency. Some scaling drivers (e.g. intel_pstate) attempt
+to provide information more precisely reflecting the current CPU frequency
+through these attributes. Must be 0 or 1.
 .sp
 Default: 1
 .SS temperature
@@ -278,9 +278,9 @@ Default: /sys/devices/platform/coretemp.0/hwmon/*
 .TP 4
 .B temperature_input
 Specify an attribute number or a range to compute a temperature average.
-qlstatus looks for attribute filenames that match pattern temp[r]_input
-where r is the specified value. Value must match pattern [n] for specific
-attribute file or [n]-[n] for a range of attribute files.
+\fBqlstatus\fP looks for attribute filenames that match pattern
+temp[r]_input where r is the specified value. Value must match pattern
+[n] for specific attribute file or [n]-[n] for a range of attribute files.
 .sp
 Default: 2-5
 .TP 4
@@ -375,7 +375,8 @@ Specify the label when audio is muted.
 Default: mut
 .TP 4
 .B volume_sink_name
-Specify sink name. See \fBpactl(1)\fP for how to get information about sinks.
+Specify sink name. See \fBpactl(1)\fP for how to get information about
+sinks.
 .sp
 Default: alsa_output.pci-0000_00_1f.3.analog-stereo
 .SS wireless SSID and signal
@@ -410,8 +411,8 @@ area. The root window is the root of the window tree handled by the window
 manager. Like any other window, the root window has a name, but it is
 usually undefined because the root window always runs in the background.
 .PP
-You can compile following C program to redirect qlstatus output as the
-name of the root window:
+You can compile following C program to redirect \fBqlstatus\fP output as
+the name of the root window:
 .sp
 .RS 4
 .EX
@@ -454,7 +455,8 @@ gcc dwm-setstatus.c -lX11 -o dwm-setstatus
 .RE
 .PP
 Finally, move or add \fBdwm-setstatus\fP binary to your $PATH. To use
-qlstatus as dwm statusbar, you can for example add into \fI~/.xinitrc\fP:
+\fBqlstatus\fP as dwm statusbar, you can for example add into
+\fI~/.xinitrc\fP:
 .sp
 .RS 4
 .EX
@@ -465,8 +467,8 @@ exec dwm
 .EE
 .SH INTEGRATION IN SPECTRWM
 .PP
-Specify qlstatus as external script through the option \fBbar_action\fP
-in your spectrwm configuration file:
+Specify \fBqlstatus\fP as external script through the option
+\fBbar_action\fP in your spectrwm configuration file:
 .sp
 .RS 4
 .EX
@@ -492,4 +494,4 @@ GitHub repository page
 .BR dwm (1),
 .BR spectrwm (1)
 .SH AUTHORS
-qlstatus was written and currently maintained by Clément Dommerc.
+\fBqlstatus\fP was written and currently maintained by Clément Dommerc.

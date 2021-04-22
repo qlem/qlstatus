@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html>
+<!-- This is an automatically generated file.  Do not edit.
+   Copyright (c) 2020 Cl\[u00E9]ment Dommerc <clement.dommerc@gmail.com>
+   MIT License
+   -->
+<head>
+  <meta charset="utf-8"/>
+  <link rel="stylesheet" href="manual.css" type="text/css" media="all"/>
+  <title>QLSTATUS(1)</title>
+</head>
+<body>
+<table class="head">
+  <tr>
+    <td class="head-ltitle">QLSTATUS(1)</td>
+    <td class="head-vol">ql-status Manual</td>
+    <td class="head-rtitle">QLSTATUS(1)</td>
+  </tr>
+</table>
+<div class="manual-text">
+<section class="Sh">
+<h1 class="Sh" id="NAME"><a class="permalink" href="#NAME">NAME</a></h1>
+<b>qlstatus</b> - a light and modular status bar
+</section>
+<section class="Sh">
+<h1 class="Sh" id="SYNOPSIS"><a class="permalink" href="#SYNOPSIS">SYNOPSIS</a></h1>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">qlstatus</code></td>
+    <td>[<span class="Op"><b>-h</b>]</span> [<span class="Op"><b>-v</b>]</span>
+      [<span class="Op"><b>-c</b> <i>file</i>]</span></td>
+  </tr>
+</table>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="DESCRIPTION"><a class="permalink" href="#DESCRIPTION">DESCRIPTION</a></h1>
+<b>qlstatus</b> is a small program with minimalistic and modular approach for
+  generating a status bar for tiling window managers like <b>dwm(1)</b> or
+  <b>spectrwm(1)</b>.
+<p class="Pp">When <b>qlstatus</b> starts up, it reads settings from its
+    configuration file, <i>qlstatus.conf</i>. See the section
+    <b>CONFIGURATION</b> below.</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="OPTIONS"><a class="permalink" href="#OPTIONS">OPTIONS</a></h1>
+<b>-h, --help</b>
+<div class="Bd-indent">Print usage statement.</div>
+<p class="Pp"><b>-v, --version</b></p>
+<div class="Bd-indent">Print version and exit.</div>
+<p class="Pp"><b>-c, --config &lt;file&gt;</b></p>
+<div class="Bd-indent">Load settings from specified configuration file.</div>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="CONFIGURATION"><a class="permalink" href="#CONFIGURATION">CONFIGURATION</a></h1>
+<b>qlstatus</b> looks for user-configuration file in the following order:
+<p class="Pp"></p>
+<div class="Bd-indent">(1) file specified through <b>--config</b> option
+<br/>
+(2) <i>~/.config/qlstatus.conf</i></div>
+<p class="Pp">If user-configuration file is not found, it looks for
+    system-configuration file in <i>~/etc/qlstatus.conf</i>. If no configuration
+    file is found, <b>qlstatus</b> then is configured with default settings.</p>
+<p class="Pp">Format of the configuration file is a list of settings of the
+    form:</p>
+<p class="Pp"></p>
+<div class="Bd-indent">
+<pre>
+keyword = setting
+</pre>
+</div>
+<p class="Pp">Comment lines begin with a &#x2018;#&#x2019;. For inline comments,
+    &#x2018;#&#x2019; must be preceded by a white space or a tab.</p>
+<p class="Pp"><b>qlstatus</b> allows you to enable and choose which
+    &#x201C;modules&#x201D; to display through the global format option. Each
+    module is composed of &#x201C;tokens&#x201D; which may be or not displayed
+    through the format option of the corresponding module. Configure global and
+    module outputs by specifying desired format strings. See options below.</p>
+<section class="Ss">
+<h2 class="Ss" id="global_options"><a class="permalink" href="#global_options">global
+  options</a></h2>
+<dl class="Bl-tag">
+  <dt><b>format</b></dt>
+  <dd>Specify global output format. It may contain the following character
+      sequences to enable and display desired modules. Any other character will
+      be print.
+    <p class="Pp">
+      <br/>
+    </p>
+    <table class="tbl">
+      <tr>
+        <td>%D</td>
+        <td>date and time</td>
+      </tr>
+      <tr>
+        <td>%U</td>
+        <td>CPU usage</td>
+      </tr>
+      <tr>
+        <td>%F</td>
+        <td>CPU frequency</td>
+      </tr>
+      <tr>
+        <td>%T</td>
+        <td>temperature</td>
+      </tr>
+      <tr>
+        <td>%M</td>
+        <td>memory usage</td>
+      </tr>
+      <tr>
+        <td>%L</td>
+        <td>brightness level</td>
+      </tr>
+      <tr>
+        <td>%V</td>
+        <td>audio volume</td>
+      </tr>
+      <tr>
+        <td>%B</td>
+        <td>battery level and status</td>
+      </tr>
+      <tr>
+        <td>%W</td>
+        <td>wireless SSID and signal strength</td>
+      </tr>
+    </table>
+    <br/>
+    <p class="Pp">All modules are enabled by default.</p>
+  </dd>
+  <dt><b>rate</b></dt>
+  <dd>Specify refresh rate of the output in seconds or milliseconds. Must match
+      pattern [n]s or [n]ms.
+    <p class="Pp">Default: 1s</p>
+  </dd>
+  <dt><b>enable_spectrwm_colors</b></dt>
+  <dd>Enable or disable the support of spectrwm colors. Should be enable only
+      with spectrwm as window manager. Must be 0 or 1.
+    <p class="Pp">Default: 0</p>
+  </dd>
+  <dt><b>critical_color_index</b></dt>
+  <dd>Specify index of spectrwm color to use for display modules in critical
+      state. Must be a number in range 0 to 9.
+    <p class="Pp">Default: 1</p>
+  </dd>
+</dl>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="date_and_time"><a class="permalink" href="#date_and_time">date
+  and time</a></h2>
+<dl class="Bl-tag">
+  <dt><b>time_format</b></dt>
+  <dd>Specify date and time format. Must match <b>strftime(3)</b> format
+      specification.
+    <p class="Pp">Default: %a %d %b %Y, %R %Z</p>
+  </dd>
+</dl>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="battery_level"><a class="permalink" href="#battery_level">battery
+  level</a></h2>
+<dl class="Bl-tag">
+  <dt><b>battery_format</b></dt>
+  <dd>Specify module format. It may contain the following character sequences:
+    <p class="Pp">
+      <br/>
+    </p>
+    <table class="tbl">
+      <tr>
+        <td>%L</td>
+        <td>current status</td>
+      </tr>
+      <tr>
+        <td>%V</td>
+        <td>battery level in percent</td>
+      </tr>
+    </table>
+    <br/>
+    <p class="Pp">Default: %L %V</p>
+  </dd>
+  <dt><b>battery_name</b></dt>
+  <dd>Specify battery name. Must match pattern BAT[n].
+    <p class="Pp">Default: BAT0</p>
+  </dd>
+  <dt><b>battery_full_design</b></dt>
+  <dd>Enable or disable battery full design. When enabled, gives the real
+      battery level taking into account its wear. Must be 0 or 1.
+    <p class="Pp">Default: 1</p>
+  </dd>
+  <dt><b>battery_label_full</b></dt>
+  <dd>Specify label to display when battery is fully charged.
+    <p class="Pp">Default: full</p>
+  </dd>
+  <dt><b>battery_label_charging</b></dt>
+  <dd>Specify label to display when battery is charging.
+    <p class="Pp">Default: chr</p>
+  </dd>
+  <dt><b>battery_label_discharging</b></dt>
+  <dd>Specify label to display when battery is discharging.
+    <p class="Pp">Default: bat</p>
+  </dd>
+  <dt><b>battery_label_unknown</b></dt>
+  <dd>Specify label to display when current battery status is unknown.
+    <p class="Pp">Default: unk</p>
+  </dd>
+  <dt><b>battery_critical</b></dt>
+  <dd>Specify critical battery level in percent.
+    <p class="Pp">Default: 20</p>
+  </dd>
+</dl>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="power_notifications"><a class="permalink" href="#power_notifications">power
+  notifications</a></h2>
+<dl class="Bl-tag">
+  <dt><b>power_notifications</b></dt>
+  <dd>Enable or disable power notifications related to battery events. Must be 0
+      or 1.
+    <p class="Pp">Default: 1</p>
+  </dd>
+  <dt><b>power_notify_icon_full</b></dt>
+  <dd>Specify icon name or icon path to use in notification triggered when
+      battery is fully charged.
+    <p class="Pp">Default: battery-full-charged</p>
+  </dd>
+  <dt><b>power_notify_icon_plugged</b></dt>
+  <dd>Specify icon name or icon path to use in notification triggered when AC
+      adapter is plugged.
+    <p class="Pp">Default: ac-adapter</p>
+  </dd>
+  <dt><b>power_notify_icon_low</b></dt>
+  <dd>Specify icon name or icon path to use in notification triggered when
+      battery reach the critical level.
+    <p class="Pp">Default: battery-caution</p>
+  </dd>
+</dl>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="CPU_usage"><a class="permalink" href="#CPU_usage">CPU
+  usage</a></h2>
+<dl class="Bl-tag">
+  <dt><b>cpu_format</b></dt>
+  <dd>Specify module format. It may contain the following character sequences:
+    <p class="Pp">
+      <br/>
+    </p>
+    <table class="tbl">
+      <tr>
+        <td>%L</td>
+        <td>label</td>
+      </tr>
+      <tr>
+        <td>%V</td>
+        <td>CPU usage in percent</td>
+      </tr>
+    </table>
+    <br/>
+    <p class="Pp">Default: %L %V</p>
+  </dd>
+  <dt><b>cpu_label</b></dt>
+  <dd>Specify the module label.
+    <p class="Pp">Default: cpu</p>
+  </dd>
+  <dt><b>cpu_critical</b></dt>
+  <dd>Specify critical CPU usage threshold in percent.
+    <p class="Pp">Default: 80</p>
+  </dd>
+</dl>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="CPU_frequency"><a class="permalink" href="#CPU_frequency">CPU
+  frequency</a></h2>
+<dl class="Bl-tag">
+  <dt><b>cpu_freq_format</b></dt>
+  <dd>Specify module format. It may contain the following character sequences:
+    <p class="Pp">
+      <br/>
+    </p>
+    <table class="tbl">
+      <tr>
+        <td>%L</td>
+        <td>label</td>
+      </tr>
+      <tr>
+        <td>%V</td>
+        <td>CPU frequency</td>
+      </tr>
+      <tr>
+        <td>%U</td>
+        <td>unit</td>
+      </tr>
+    </table>
+    <br/>
+    <p class="Pp">Default: %L %V%U</p>
+  </dd>
+  <dt><b>cpu_freq_label</b></dt>
+  <dd>Specify the module label.
+    <p class="Pp">Default: freq</p>
+  </dd>
+  <dt><b>cpu_freq_unit</b></dt>
+  <dd>Specify the frequency unit. Must be KHz, MHz, GHz or smart. smart
+      automatically scales frequency value to the shortest three digit unit.
+    <p class="Pp">Default: MHz</p>
+  </dd>
+  <dt><b>cpu_freq_scaling</b></dt>
+  <dd>If enabled, <b>qlstatus</b> looks for read scaling attributes to compute
+      current CPU frequency. Some scaling drivers (e.g. intel_pstate) attempt to
+      provide information more precisely reflecting the current CPU frequency
+      through these attributes. Must be 0 or 1.
+    <p class="Pp">Default: 1</p>
+  </dd>
+</dl>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="temperature"><a class="permalink" href="#temperature">temperature</a></h2>
+<dl class="Bl-tag">
+  <dt><b>temperature_format</b></dt>
+  <dd>Specify module format. It may contain the following character sequences:
+    <p class="Pp">
+      <br/>
+    </p>
+    <table class="tbl">
+      <tr>
+        <td>%L</td>
+        <td>label</td>
+      </tr>
+      <tr>
+        <td>%V</td>
+        <td>temperature in degree Celsius</td>
+      </tr>
+    </table>
+    <br/>
+    <p class="Pp">Default: %L %V</p>
+  </dd>
+  <dt><b>temperature_label</b></dt>
+  <dd>Specify the module label.
+    <p class="Pp">Default: temp</p>
+  </dd>
+  <dt><b>temperature_dir</b></dt>
+  <dd>Specify path for temperature attributes directory. May contain an asterisk
+      &#x2018;*&#x2019; to resolve last directory of the path. If an asterisk is
+      present then first directory found is chosen.
+    <p class="Pp">Default: /sys/devices/platform/coretemp.0/hwmon/*</p>
+  </dd>
+  <dt><b>temperature_input</b></dt>
+  <dd>Specify an attribute number or a range to compute a temperature average.
+      <b>qlstatus</b> looks for attribute filenames that match pattern
+      temp[r]_input where r is the specified value. Value must match pattern [n]
+      for specific attribute file or [n]-[n] for a range of attribute files.
+    <p class="Pp">Default: 2-5</p>
+  </dd>
+  <dt><b>temperature_critical</b></dt>
+  <dd>Specify critical temperature in degree Celsius.
+    <p class="Pp">Default: 80</p>
+  </dd>
+</dl>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="memory_usage"><a class="permalink" href="#memory_usage">memory
+  usage</a></h2>
+<dl class="Bl-tag">
+  <dt><b>memory_format</b></dt>
+  <dd>Specify module format. It may contain the following character sequences:
+    <p class="Pp">
+      <br/>
+    </p>
+    <table class="tbl">
+      <tr>
+        <td>%L</td>
+        <td>label</td>
+      </tr>
+      <tr>
+        <td>%C</td>
+        <td>used memory</td>
+      </tr>
+      <tr>
+        <td>%T</td>
+        <td>total available memory</td>
+      </tr>
+      <tr>
+        <td>%U</td>
+        <td>unit</td>
+      </tr>
+      <tr>
+        <td>%P</td>
+        <td>used memory in percent</td>
+      </tr>
+    </table>
+    <br/>
+    <p class="Pp">Default: %L %C/%T%U (%P)</p>
+  </dd>
+  <dt><b>memory_label</b></dt>
+  <dd>Specify the module label.
+    <p class="Pp">Default: mem</p>
+  </dd>
+  <dt><b>memory_unit</b></dt>
+  <dd>Specify the memory unit. Must be KiB, MiB, GiB or smart. smart
+      automatically scales used and total memory value to the shortest three
+      digit unit.
+    <p class="Pp">Default: MiB</p>
+  </dd>
+  <dt><b>memory_critical</b></dt>
+  <dd>Specify critical memory usage threshold in percent.
+    <p class="Pp">Default: 80</p>
+  </dd>
+</dl>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="brightness_level"><a class="permalink" href="#brightness_level">brightness
+  level</a></h2>
+<dl class="Bl-tag">
+  <dt><b>brightness_format</b></dt>
+  <dd>Specify module format. It may contain the following character sequences:
+    <p class="Pp">
+      <br/>
+    </p>
+    <table class="tbl">
+      <tr>
+        <td>%L</td>
+        <td>label</td>
+      </tr>
+      <tr>
+        <td>%V</td>
+        <td>brightness level in percent</td>
+      </tr>
+    </table>
+    <br/>
+    <p class="Pp">Default: %L %V</p>
+  </dd>
+  <dt><b>brightness_label</b></dt>
+  <dd>Specify the module label.
+    <p class="Pp">Default: brg</p>
+  </dd>
+  <dt><b>brightness_dir</b></dt>
+  <dd>Specify path for backlight attributes directory. Should not be changed.
+    <p class="Pp">Default: /sys/class/backlight/intel_backlight</p>
+  </dd>
+</dl>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="audio_volume"><a class="permalink" href="#audio_volume">audio
+  volume</a></h2>
+<dl class="Bl-tag">
+  <dt><b>volume_format</b></dt>
+  <dd>Specify module format. It may contain the following character sequences:
+    <p class="Pp">
+      <br/>
+    </p>
+    <table class="tbl">
+      <tr>
+        <td>%L</td>
+        <td>label</td>
+      </tr>
+      <tr>
+        <td>%V</td>
+        <td>volume level in percent</td>
+      </tr>
+    </table>
+    <br/>
+    <p class="Pp">Default: %L %V</p>
+  </dd>
+  <dt><b>volume_label</b></dt>
+  <dd>Specify the module label.
+    <p class="Pp">Default: vol</p>
+  </dd>
+  <dt><b>volume_muted_label</b></dt>
+  <dd>Specify the label when audio is muted.
+    <p class="Pp">Default: mut</p>
+  </dd>
+  <dt><b>volume_sink_name</b></dt>
+  <dd>Specify sink name. See <b>pactl(1)</b> for how to get information about
+      sinks.
+    <p class="Pp">Default: alsa_output.pci-0000_00_1f.3.analog-stereo</p>
+  </dd>
+</dl>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="wireless_SSID_and_signal"><a class="permalink" href="#wireless_SSID_and_signal">wireless
+  SSID and signal</a></h2>
+<dl class="Bl-tag">
+  <dt><b>wireless_format</b></dt>
+  <dd>Specify module format. It may contain the following character sequences:
+    <p class="Pp">
+      <br/>
+    </p>
+    <table class="tbl">
+      <tr>
+        <td>%L</td>
+        <td>current SSID</td>
+      </tr>
+      <tr>
+        <td>%V</td>
+        <td>signal strength in percent</td>
+      </tr>
+    </table>
+    <br/>
+    <p class="Pp">Default: %L: %V</p>
+  </dd>
+  <dt><b>wireless_unknown_label</b></dt>
+  <dd>Specify the label when SSID is unknown.
+    <p class="Pp">Default: SSID unk</p>
+  </dd>
+  <dt><b>wireless_interface</b></dt>
+  <dd>Specify name of wireless interface.
+    <p class="Pp">Default: wlan0</p>
+  </dd>
+</dl>
+</section>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="INTEGRATION_IN_DWM"><a class="permalink" href="#INTEGRATION_IN_DWM">INTEGRATION
+  IN DWM</a></h1>
+dwm reads the name of the root window and redirects it to its statusbar area.
+  The root window is the root of the window tree handled by the window manager.
+  Like any other window, the root window has a name, but it is usually undefined
+  because the root window always runs in the background.
+<p class="Pp">You can compile following C program to redirect <b>qlstatus</b>
+    output as the name of the root window:</p>
+<p class="Pp"></p>
+<div class="Bd-indent">
+<pre>
+#include &lt;string.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;X11/Xlib.h&gt;
+int             main(int argc, char *argv[]) {
+    Display     *dpy = NULL;
+    Window      win = 0;
+    size_t      length = 0;
+    ssize_t     bytes_read = 0;
+    char        *input = NULL;
+    dpy = XOpenDisplay(getenv(&quot;DISPLAY&quot;));
+    if (dpy == NULL) {
+        fprintf(stderr, &quot;Can't open display, exiting.\n&quot;);
+        exit(EXIT_FAILURE);
+    }
+    win = DefaultRootWindow(dpy);
+    while ((bytes_read = getline(&amp;input, &amp;length, stdin)) != EOF) {
+        input[strlen(input) - 1] = 0;
+        XStoreName(dpy, win, input);
+        XFlush(dpy);
+    }
+    free(input);
+    return 0;
+}
+</pre>
+</div>
+<p class="Pp">Save this code in <i>dwm-setstatus.c</i> and compile it:</p>
+<p class="Pp"></p>
+<div class="Bd-indent">
+<pre>
+gcc dwm-setstatus.c -lX11 -o dwm-setstatus
+</pre>
+</div>
+<p class="Pp">Finally, move or add <b>dwm-setstatus</b> binary to your $PATH. To
+    use <b>qlstatus</b> as dwm statusbar, you can for example add into
+    <i>~/.xinitrc</i>:</p>
+<p class="Pp"></p>
+<div class="Bd-indent">
+<pre>
+...
+(qlstatus | dwm-setstatus) &amp;
+exec dwm
+</pre>
+</div>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="INTEGRATION_IN_SPECTRWM"><a class="permalink" href="#INTEGRATION_IN_SPECTRWM">INTEGRATION
+  IN SPECTRWM</a></h1>
+Specify <b>qlstatus</b> as external script through the option <b>bar_action</b>
+  in your spectrwm configuration file:
+<p class="Pp"></p>
+<div class="Bd-indent">
+<pre>
+bar_action = qlstatus
+</pre>
+</div>
+<p class="Pp">That's it.</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="FILES"><a class="permalink" href="#FILES">FILES</a></h1>
+<i>/etc/qlstatus.conf</i>
+<br/>
+<i>/usr/local/bin/qlstatus</i>
+<br/>
+<i>/usr/local/share/man/man1/qlstatus.1</i>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="NOTES"><a class="permalink" href="#NOTES">NOTES</a></h1>
+The support of spectrwm colors is stopped for now.
+</section>
+<section class="Sh">
+<h1 class="Sh" id="BUGS"><a class="permalink" href="#BUGS">BUGS</a></h1>
+In case of bug, please open an issue on
+  <a class="Lk" href="https://github.com/qlem/qlstatus">GitHub repository
+  page</a>.
+</section>
+<section class="Sh">
+<h1 class="Sh" id="SEE_ALSO"><a class="permalink" href="#SEE_ALSO">SEE
+  ALSO</a></h1>
+<b>dwm</b>(1), <b>spectrwm</b>(1)
+</section>
+<section class="Sh">
+<h1 class="Sh" id="AUTHORS"><a class="permalink" href="#AUTHORS">AUTHORS</a></h1>
+<b>qlstatus</b> was written and currently maintained by Cl&#x00E9;ment Dommerc.
+</section>
+</div>
+<table class="foot">
+  <tr>
+    <td class="foot-date">2021-04-18</td>
+    <td class="foot-os">qlstatus 1.1.8</td>
+  </tr>
+</table>
+</body>
+</html>
