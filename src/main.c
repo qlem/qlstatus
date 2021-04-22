@@ -50,7 +50,7 @@ void        signal_handler(int signum) {
     exit(EXIT_SUCCESS);
 }
 
-char        *resolve_config_file(char **env) {
+char        *resolve_user_config(char **env) {
     char    *config = NULL;
     char    *home = NULL;
     int     i = -1;
@@ -60,8 +60,8 @@ char        *resolve_config_file(char **env) {
         fprintf(stderr, "Cannot resolve config file: HOME dir not found\n");
         return NULL;
     }
-    config = alloc_buffer(v_strlen(home) + v_strlen(CONFIG_FILE) + 2);
-    sprintf(config, "%s/%s", home, CONFIG_FILE);
+    config = alloc_buffer(v_strlen(home) + v_strlen(USERCONF) + 2);
+    sprintf(config, "%s/%s", home, USERCONF);
     free(home);
     return config;
 }
@@ -316,9 +316,8 @@ int             main(int argc, char **argv, char **env) {
     // resolve/load config file
     if (sconfig && load_config_file(&main, sconfig) < 0) {
         exit(EXIT_FAILURE);
-    } else if ((config = resolve_config_file(env))) {
-        load_config_file(&main, config);
-        free(config);
+    } else if (!(config = resolve_user_config(env)) || load_config_file(&main, config) < 0) {
+        load_config_file(&main, SYSCONF);
     }
 
     // enable modules from output format option

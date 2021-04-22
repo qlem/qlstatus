@@ -12,11 +12,12 @@
 .YS
 .SH DESCRIPTION
 .PP
-qlstatus is a small program with minimalistic and modular approach for generating a status bar for tiling window
-managers like \fBdwm(1)\fP or \fBspectrwm(1)\fP.
+qlstatus is a small program with minimalistic and modular approach for
+generating a status bar for tiling window managers like \fBdwm(1)\fP or
+\fBspectrwm(1)\fP.
 .PP
-When \fBqlstatus\fP starts up, it reads settings from its configuration file, \fIqlstatus.conf\fP.
-See the CONFIGURATION section below.
+When \fBqlstatus\fP starts up, it reads settings from its configuration
+file, \fIqlstatus.conf\fP. See the section \fBCONFIGURATION\fP below.
 .SH OPTIONS
 .B \-h, \-\-help
 .RS 4
@@ -33,11 +34,19 @@ Print version and exit.
 Load settings from specified configuration file.
 .SH CONFIGURATION
 .PP
-qlstatus first looks for configuration file specified through \fB--config\fP option. If \fB--config\fP is omitted
-then it looks for \fI~/.config/qlstatus.conf\fP. If configuration file is not found, qlstatus then is configured
-with default settings. A configuration file with default settings can be found in \fI/etc/qlstatus.conf\fP.
+qlstatus looks for user-configuration file in the following order:
+.sp
+.RS 4
+(1)   file specified through \fB--config\fP option
+.br
+(2)   \fI~/.config/qlstatus.conf\fP
+.RE
+.sp
+If user-configuration file is not found, it looks for system-configuration
+file in \fI~/etc/qlstatus.conf\fP. If no configuration file is found,
+qlstatus then is configured with default settings.
 .PP
-The format of configuration file is a list of settings of the form:
+Format of the configuration file is a list of settings of the form:
 .sp
 .RS 4
 .EX
@@ -45,16 +54,20 @@ keyword = setting
 .EE
 .RE
 .PP
-Comment lines begin with a \(oq#\(cq. For inline comments, \(oq#\(cq must be preceded by a white space or a tab.
+Comment lines begin with a \(oq#\(cq. For inline comments, \(oq#\(cq must
+be preceded by a white space or a tab.
 .PP
-qlstatus allows you to enable and choose which \(lqmodules\(rq to display through the global format option.
-Each module is composed of \(lqtokens\(rq which may be or not displayed through the format option of the
-corresponding module. Configure global and module outputs by specifying desired format strings. See options below.
+qlstatus allows you to enable and choose which \(lqmodules\(rq to display
+through the global format option. Each module is composed of \(lqtokens\(rq
+which may be or not displayed through the format option of the
+corresponding module. Configure global and module outputs by specifying
+desired format strings. See options below.
 .SS global options
 .TP 4
 .B format
-Specify global output format. It may contain the following character sequences to enable and display desired
-modules. Any other character will be print.
+Specify global output format. It may contain the following character
+sequences to enable and display desired modules. Any other character will
+be print.
 .sp
 .in +4n
 .TS
@@ -75,24 +88,27 @@ l l.
 All modules are enabled by default.
 .TP 4
 .B rate
-Specify refresh rate of the output in seconds or milliseconds. Must match pattern [n]s or [n]ms.
+Specify refresh rate of the output in seconds or milliseconds.
+Must match pattern [n]s or [n]ms.
 .sp
 Default: 1s
 .TP 4
 .B enable_spectrwm_colors
-Enable or disable the support of spectrwm colors. Should be enable only with spectrwm as window manager.
-Must be 0 or 1.
+Enable or disable the support of spectrwm colors. Should be enable only
+with spectrwm as window manager. Must be 0 or 1.
 .sp
 Default: 0
 .TP 4
 .B critical_color_index
-Specify index of spectrwm color to use for display modules in critical state. Must be a number in range 0 to 9.
+Specify index of spectrwm color to use for display modules in critical
+state. Must be a number in range 0 to 9.
 .sp
 Default: 1
 .SS date and time
 .TP 4
 .B time_format
-Specify format date and time. Must match \fBstrftime(3)\fP format specification.
+Specify date and time format. Must match \fBstrftime(3)\fP format
+specification.
 .sp
 Default: %a %d %b %Y, %R %Z
 .SS battery level
@@ -117,7 +133,8 @@ Specify battery name. Must match pattern BAT[n].
 Default: BAT0
 .TP 4
 .B battery_full_design
-Enable or disable battery full design. Gives the real battery level taking into account its wear when enabled.
+Enable or disable battery full design. When enabled, gives the real battery
+level taking into account its wear.
 Must be 0 or 1.
 .sp
 Default: 1
@@ -149,22 +166,26 @@ Default: 20
 .SS power notifications
 .TP 4
 .B power_notifications
-Enable or disable power notifications related to battery events. Must be 0 or 1.
+Enable or disable power notifications related to battery events.
+Must be 0 or 1.
 .sp
 Default: 1
 .TP 4
 .B power_notify_icon_full
-Specify icon name or icon path to use in notification triggered when battery is fully charged.
+Specify icon name or icon path to use in notification triggered when
+battery is fully charged.
 .sp
 Default: battery-full-charged
 .TP 4
 .B power_notify_icon_plugged
-Specify icon name or icon path to use in notification triggered when AC adapter is plugged.
+Specify icon name or icon path to use in notification triggered when
+AC adapter is plugged.
 .sp
 Default: ac-adapter
 .TP 4
 .B power_notify_icon_low
-Specify icon name or icon path to use in notification triggered when battery reach the critical level.
+Specify icon name or icon path to use in notification triggered when
+battery reach the critical level.
 .sp
 Default: battery-caution
 .SS CPU usage
@@ -215,14 +236,15 @@ Specify the module label.
 Default: freq
 .TP 4
 .B cpu_freq_unit
-Specify the frequency unit. Must be KHz, MHz, GHz or smart. smart automatically scales frequency value
-to the shortest three digit unit.
+Specify the frequency unit. Must be KHz, MHz, GHz or smart. smart
+automatically scales frequency value to the shortest three digit unit.
 .sp
 Default: MHz
 .TP 4
 .B cpu_freq_scaling
-If enabled, qlstatus looks for read scaling attributes to compute current CPU frequency. Some scaling drivers
-(e.g. intel_pstate) attempt to provide information more precisely reflecting the current CPU frequency through
+If enabled, qlstatus looks for read scaling attributes to compute current
+CPU frequency. Some scaling drivers (e.g. intel_pstate) attempt to provide
+information more precisely reflecting the current CPU frequency through
 these attributes. Must be 0 or 1.
 .sp
 Default: 1
@@ -248,15 +270,17 @@ Specify the module label.
 Default: temp
 .TP 4
 .B temperature_dir
-Specify path for temperature attributes directory. May contain an asterisk \(oq*\(cq to resolve last directory of
-the path. If an asterisk is present then first directory found is chosen.
+Specify path for temperature attributes directory. May contain an asterisk
+\(oq*\(cq to resolve last directory of the path. If an asterisk is present
+then first directory found is chosen.
 .sp
 Default: /sys/devices/platform/coretemp.0/hwmon/*
 .TP 4
 .B temperature_input
-Specify an attribute number or a range to compute a temperature average. qlstatus looks for attribute filenames that
-match pattern temp[r]_input where r is the specified value. Value must match pattern [n] for specific attribute file
-or [n]-[n] for a range of attribute files.
+Specify an attribute number or a range to compute a temperature average.
+qlstatus looks for attribute filenames that match pattern temp[r]_input
+where r is the specified value. Value must match pattern [n] for specific
+attribute file or [n]-[n] for a range of attribute files.
 .sp
 Default: 2-5
 .TP 4
@@ -289,8 +313,9 @@ Specify the module label.
 Default: mem
 .TP 4
 .B memory_unit
-Specify the memory unit. Must be KiB, MiB, GiB or smart. smart automatically scales used and total memory value
-to the shortest three digit unit.
+Specify the memory unit. Must be KiB, MiB, GiB or smart. smart
+automatically scales used and total memory value to the shortest three
+digit unit.
 .sp
 Default: MiB
 .TP 4
@@ -350,7 +375,7 @@ Specify the label when audio is muted.
 Default: mut
 .TP 4
 .B volume_sink_name
-Specify sink name. See \fBpactl(1)\fP for how to get infos about sinks.
+Specify sink name. See \fBpactl(1)\fP for how to get information about sinks.
 .sp
 Default: alsa_output.pci-0000_00_1f.3.analog-stereo
 .SS wireless SSID and signal
@@ -380,13 +405,15 @@ Specify name of wireless interface.
 Default: wlan0
 .SH INTEGRATION IN DWM
 .PP
-dwm reads the name of the root window and redirects it to its statusbar area. The root window is the root of the
-window tree handled by the window manager. Like any other window, the root window has a name, but it is usually
-undefined because the root window always runs in the background.
+dwm reads the name of the root window and redirects it to its statusbar
+area. The root window is the root of the window tree handled by the window
+manager. Like any other window, the root window has a name, but it is
+usually undefined because the root window always runs in the background.
 .PP
-You can compile following C program to redirect qlstatus output as the name of the root window:
-.RS 4
+You can compile following C program to redirect qlstatus output as the
+name of the root window:
 .sp
+.RS 4
 .EX
 #include <string.h>
 #include <stdlib.h>
@@ -416,7 +443,6 @@ int             main(int argc, char *argv[]) {
     return 0;
 }
 .EE
-.PP
 .RE
 .PP
 Save this code in \fIdwm-setstatus.c\fP and compile it:
@@ -427,8 +453,8 @@ gcc dwm-setstatus.c -lX11 -o dwm-setstatus
 .EE
 .RE
 .PP
-Finally, move or add \fBdwm-setstatus\fP binary to your $PATH. To use qlstatus as dwm statusbar, you can for example
-add into \fI~/.xinitrc\fP:
+Finally, move or add \fBdwm-setstatus\fP binary to your $PATH. To use
+qlstatus as dwm statusbar, you can for example add into \fI~/.xinitrc\fP:
 .sp
 .RS 4
 .EX
@@ -438,7 +464,9 @@ add into \fI~/.xinitrc\fP:
 exec dwm
 .EE
 .SH INTEGRATION IN SPECTRWM
-Specify qlstatus as external script through the option \fBbar_action\fP in your spectrwm configuration file:
+.PP
+Specify qlstatus as external script through the option \fBbar_action\fP
+in your spectrwm configuration file:
 .sp
 .RS 4
 .EX
@@ -448,7 +476,11 @@ bar_action = qlstatus
 .PP
 That's it.
 .SH FILES
-To do..
+.I /etc/qlstatus.conf
+.br
+.I /usr/local/bin/qlstatus
+.br
+.I /usr/local/share/man/man1/qlstatus.1
 .SH NOTES
 The support of spectrwm colors is stopped for now.
 .SH BUGS

@@ -46,7 +46,8 @@
 #define REM_NSEC(nsec) nsec % NSEC
 #define PERCENT(value, total) value * 100 / total
 #define MCLAMP(x, low, high) (x > high ? high : (x < low ? low : x))
-#define CONFIG_FILE ".config/qlstatus/qlstatus.conf"
+#define USERCONF ".config/qlstatus/qlstatus.conf"
+#define SYSCONF "/etc/qlstatus.conf"
 #define HOME_PATTERN "^HOME=(.+)$"
 #define SPWM_COLOR_START "+@fg="
 #define SPWM_COLOR_STOP "+@fg=0;"

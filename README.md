@@ -36,7 +36,7 @@ cp /etc/qlstatus.conf ~/.config/qlstatus/qlstatus.conf
 ```
 
 ## Install from sources
-Compile from sources and install binary, man page and default configuration file:
+Compile from sources and install binary, man page and system-configuration file:
 ```
 cd /path/to/repo
 mkdir build

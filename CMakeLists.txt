@@ -40,5 +40,5 @@ install(CODE "
                         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
         message(STATUS \"Generating manual page\")")
 install(FILES ${CMAKE_BINARY_DIR}/qlstatus.1 DESTINATION share/man/man1)
-install(FILES qlstatus.conf TYPE SYSCONF)
+install(FILES qlstatus.conf DESTINATION /etc)
 install(TARGETS qlstatus RUNTIME DESTINATION bin)
