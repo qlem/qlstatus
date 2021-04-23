@@ -37,11 +37,11 @@ void        free_resources(t_main *main) {
 }
 
 void        print_usage() {
-    putstr("Usage: qlstatus [OPTIONS]\n\n");
-    putstr("Options:\n");
-    putstr("  -h, --help            Print usage statement\n");
-    putstr("  -v, --version         Print version and exit\n");
-    putstr("  -c, --config <file>   Load settings from specified configuration file\n");
+    putstr("Usage: qlstatus [OPTIONS]\n\n\
+Options:\n\
+  -h, --help            Print usage statement\n\
+  -v, --version         Print version and exit\n\
+  -c, --config <file>   Load settings from specified configuration file\n");
 }
 
 void        signal_handler(int signum) {
@@ -319,6 +319,7 @@ int             main(int argc, char **argv, char **env) {
     } else if (!(config = resolve_user_config(env)) || load_config_file(&main, config) < 0) {
         load_config_file(&main, SYSCONF);
     }
+    free(config);
 
     // enable modules from output format option
     enable_modules(&main);
