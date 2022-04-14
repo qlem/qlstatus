@@ -224,6 +224,7 @@ typedef struct      s_cpu {
 #define FREQ_CURRENT "cpuinfo_cur_freq"
 #define FREQ_SCALING "scaling_cur_freq"
 #define MEGAHERTZ 1000
+#define GIGAHERTZ (1000 * 1000)
 
 typedef enum        fq_unit {
     KHZ,
@@ -281,6 +282,7 @@ typedef struct      s_wlan {
 #define MEM_CACHED_PATTERN "^Cached:[ \t]+([0-9]+) kB$"
 #define MEM_SRECLAIM_PATTERN "^SReclaimable:[ \t]+([0-9]+) kB$"
 #define MEGABYTE 1024
+#define GIGABYTE (1024 * 1024)
 
 typedef enum    mem_unit {
     KB,

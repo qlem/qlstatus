@@ -14,12 +14,11 @@ void            free_cpu_freq(void *data) {
 }
 
 void            smart_format_logic(t_freq *freq, long value) {
-    if (value > (MEGAHERTZ * MEGAHERTZ) - 1) {
-        snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%3.1f",
-                 (float)value / (MEGAHERTZ * MEGAHERTZ));
+    if (value >= GIGAHERTZ) {
+        snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%3.1f", (float)value / GIGAHERTZ);
         clean_leading_zero(freq->tokens[1].buffer);
         set_token_buffer(freq->tokens[2].buffer, "GHz");
-    } else if (value > MEGAHERTZ - 1) {
+    } else if (value >= MEGAHERTZ) {
         snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%3ld", value / MEGAHERTZ);
         set_token_buffer(freq->tokens[2].buffer, "MHz");
     } else {
@@ -51,8 +50,7 @@ void            *run_cpu_freq(void *data) {
             snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%4ld", value / MEGAHERTZ);
             break;
         case GHZ:
-            snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%3.1f",
-                     (float)value / (MEGAHERTZ * MEGAHERTZ));
+            snprintf(freq->tokens[1].buffer, TBUFFER_MAX_SIZE, "%3.1f", (float)value / GIGAHERTZ);
             clean_leading_zero(freq->tokens[1].buffer);
             break;
         case FSMT:

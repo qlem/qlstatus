@@ -21,21 +21,18 @@ void        mb_format_logic(t_mem *mem, long value) {
 }
 
 void        gb_format_logic(t_mem *mem, long value) {
-    snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4.1f",
-             (float)value / (MEGABYTE * MEGABYTE));
-    snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%4.1f",
-             (float)mem->total / (MEGABYTE * MEGABYTE));
+    snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4.1f", (float)value / GIGABYTE);
+    snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%4.1f", (float)mem->total / GIGABYTE);
     clean_leading_zero(mem->tokens[2].buffer);
     remove_leading_zero(mem->tokens[3].buffer);
 }
 
 void        value_smart_format_logic(t_mem *mem, long value) {
-    if (value > (MEGABYTE * MEGABYTE) - 1) {
-        snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4.1f",
-                 (float)value / (MEGABYTE * MEGABYTE));
+    if (value >= GIGABYTE) {
+        snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4.1f", (float)value / GIGABYTE);
         clean_leading_zero(mem->tokens[2].buffer);
         mem->tokens[2].buffer[4] = 'G';
-    } else if (value > MEGABYTE - 1) {
+    } else if (value >= MEGABYTE) {
         snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4ldM", value / MEGABYTE);
     } else {
         snprintf(mem->tokens[2].buffer, TBUFFER_MAX_SIZE, "%4ldK", value);
@@ -43,12 +40,11 @@ void        value_smart_format_logic(t_mem *mem, long value) {
 }
 
 void        total_smart_format_logic(t_mem *mem) {
-    if (mem->total > (MEGABYTE * MEGABYTE) - 1) {
-        snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%.1f",
-                 (float)mem->total / (MEGABYTE * MEGABYTE));
+    if (mem->total >= GIGABYTE) {
+        snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%.1f", (float)mem->total / GIGABYTE);
         remove_leading_zero(mem->tokens[3].buffer);
         set_token_buffer(mem->tokens[4].buffer, "GiB");
-    } else if (mem->total > MEGABYTE - 1) {
+    } else if (mem->total >= MEGABYTE) {
         snprintf(mem->tokens[3].buffer, TBUFFER_MAX_SIZE, "%ld", mem->total / MEGABYTE);
         set_token_buffer(mem->tokens[4].buffer, "MiB");
     } else {
