@@ -28,7 +28,8 @@ add_executable(qlstatus
     src/read_dir.c
     src/common.c
     src/regex.c
-    src/notify.c)
+    src/notify.c
+    src/filesystem.c)
 
 target_compile_definitions(qlstatus PRIVATE VERSION="${RELEASE}")
 target_include_directories(qlstatus PRIVATE inc ${LIBNL_INCLUDE_DIRS} ${LIBNOTIFY_INCLUDE_DIRS})

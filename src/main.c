@@ -200,6 +200,17 @@ int             main(int argc, char **argv, char **env) {
         {"memory_critical", &mem_threshold,    THRESHOLD_PATTERN, NUMBER, 0}
     };
 
+    // mounted filesystem options
+    int         fsys_threshold = 90;
+    int         fsys_real_free = 0;
+    t_opt       opts_fsys[] = {
+        {"filesystem_format",    "%L %C/%T %F (%P)", TEXT_PATTERN,      STRING, 0},
+        {"filesystem_label",     "disk",             LABEL_PATTERN,     STRING, 0},
+        {"filesystem_path",      "/",                PATH_PATTERN,      STRING, 0},
+        {"filesystem_critical",  &fsys_threshold,    THRESHOLD_PATTERN, NUMBER, 0},
+        {"filesystem_real_free", &fsys_real_free,    BOOLEAN_PATTERN,   NUMBER, 0}
+    };
+
     // brightness options
     t_opt       opts_brg[] = {
         {"brightness_format", "%L %V", TEXT_PATTERN,  STRING, 0},
@@ -242,6 +253,10 @@ int             main(int argc, char **argv, char **env) {
     t_mem   mem;
     v_memset(&mem, 0, sizeof(t_mem));
 
+    // mounted filesystem options
+    t_fsys  fsys;
+    v_memset(&fsys, 0, sizeof(t_fsys));
+
     // temp data
     t_temp      temp;
     v_memset(&temp, 0, sizeof(t_temp));
@@ -268,7 +283,8 @@ int             main(int argc, char **argv, char **env) {
         {0, 'M', {}, 0, &mem,   opts_mem,  MEM_NOPTS,  0, run_memory,      init_memory,      free_memory},
         {0, 'U', {}, 0, &cpu,   opts_cpu,  CPU_NOPTS,  0, run_cpu_usage,   init_cpu_usage,   free_cpu_usage},
         {0, 'F', {}, 0, &freq,  opts_freq, FREQ_NOPTS, 0, run_cpu_freq,    init_cpu_freq,    free_cpu_freq},
-        {0, 'D', {}, 0, &time,  opts_time, TIME_NOPTS, 0, run_time,        init_time,        free_time}
+        {0, 'D', {}, 0, &time,  opts_time, TIME_NOPTS, 0, run_time,        init_time,        free_time},
+        {0, 'S', {}, 0, &fsys,  opts_fsys, FSYS_NOPTS, 0, run_filesystem,  init_filesystem,  free_filesystem}
     };
 
     // vars declaration

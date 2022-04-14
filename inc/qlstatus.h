@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/statvfs.h>
 #include <fcntl.h>
 #include <string.h>
 #include <time.h>
@@ -40,7 +41,7 @@
 /* GLOBAL */
 #define BASE 10
 #define RATE "1s"
-#define NB_MODULES 9
+#define NB_MODULES 10
 #define NSEC 1000000000
 #define NSEC_TO_SEC(nsec) nsec / NSEC
 #define REM_NSEC(nsec) nsec % NSEC
@@ -63,8 +64,9 @@
  * %V: current volume
  * %B: remaining battery
  * %W: wireless info
+ * %S: mounted filesystem usage
  */
-#define DEFAULT_FORMAT "%U  %F  %T  %M  %L  %V  %B  %W  %D"
+#define DEFAULT_FORMAT "%U  %F  %T  %M  %S  %L  %V  %B  %W  %D"
 
 /* OPTIONS */
 typedef enum        opt_type {
@@ -91,6 +93,7 @@ typedef struct      s_opt {
 #define BRG_NOPTS 3
 #define VOL_NOPTS 4
 #define WLAN_NOPTS 3
+#define FSYS_NOPTS 5
 
 // option patterns
 #define TEXT_PATTERN "^.{1,100}$"
@@ -297,6 +300,17 @@ typedef struct  s_mem {
     t_token     tokens[MEM_TOKENS];
 }               t_mem;
 
+// mounted filesystem usage
+#define FSYS_TOKENS 5
+#define KILOBYTE 1024
+
+typedef struct      s_fsys {
+    char            *path;
+    int             cthreshold;
+    uint8_t         real_free;
+    t_token         tokens[FSYS_TOKENS];
+}                   t_fsys;
+
 // volume audio
 #define VOLUME_TOKENS 2
 #define PULSE_SINK_NAME "alsa_output.pci-0000_00_1f.3.analog-stereo"
@@ -379,6 +393,7 @@ void    *run_temperature(void *data);
 void    *run_brightness(void *data);
 void    *run_wireless(void *data);
 void    *run_volume(void *data);
+void    *run_filesystem(void *data);
 
 // init modules
 void    init_time(void *data);
@@ -390,6 +405,7 @@ void    init_temperature(void *data);
 void    init_brightness(void *data);
 void    init_wireless(void *data);
 void    init_volume(void *data);
+void    init_filesystem(void *data);
 
 // free modules
 void    free_time(void *data);
@@ -401,5 +417,6 @@ void    free_temperature(void *data);
 void    free_brightness(void *data);
 void    free_wireless(void *data);
 void    free_volume(void *data);
+void    free_filesystem(void *data);
 
 #endif /* !QLSTATUS_H_ */
