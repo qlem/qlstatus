@@ -13,8 +13,8 @@
 .SH DESCRIPTION
 .PP
 \fBqlstatus\fP is a small program with minimalistic and modular approach
-for generating a status bar for tiling window managers like \fBdwm(1)\fP
-or \fBspectrwm(1)\fP.
+that generates system monitoring output for status bar of tiling window managers
+like \fBxmonad(1)\fP or \fBdwm(1)\fP.
 .PP
 When \fBqlstatus\fP starts up, it reads settings from its configuration
 file, \fIqlstatus.conf\fP. See the section \fBCONFIGURATION\fP below.
@@ -288,6 +288,44 @@ Default: 2-5
 Specify critical temperature in degree Celsius.
 .sp
 Default: 80
+.SS mounted filesystem usage
+.TP 4
+.B filesystem_format
+Specify module format. It may contain the following character sequences:
+.sp
+.in +4n
+.TS
+tab(;);
+l l.
+%L;label
+%C;used space
+%T;filesystem size
+%F;free space
+%P;used space in percent
+.TE
+.in -4n
+.sp
+Used space, free space and filesystem size are displayed in human readable way. Default: %L %C/%T %F (%P)
+.TP 4
+.B filesystem_label
+Specify the module label.
+.sp
+Default: disk
+.TP 4
+.B filesystem_path
+Specify the path of the mounted filesystem.
+.sp
+Default: /
+.TP 4
+.B filesystem_critical
+Specify the critical used space threshold in percent.
+.sp
+Default: 90
+.TP 4
+.B filesystem_real_free
+If enabled, display the real free space otherwise display the free space for unprivileged users.
+.sp
+Default: 0
 .SS memory usage
 .TP 4
 .B memory_format
@@ -404,6 +442,20 @@ Default: SSID unk
 Specify name of wireless interface.
 .sp
 Default: wlan0
+.SH INTEGRATION IN XMOBAR
+.PP
+In your \fBxmobar\fP configuration file, you must add the \fBCommandReader\fP plugin in the
+\fBcommands\fP option and specify \fBqlstatus\fP as the given program to display its standard output:
+.sp
+.RS 4
+.EX
+Config { ...
+       , commands = [ Run CommandReader "qlstatus" "status"
+                    , Run XMonadLog
+                    ]
+       , template = "%XMonadLog% }{ %status% "
+}
+.EE
 .SH INTEGRATION IN DWM
 .PP
 dwm reads the name of the root window and redirects it to its statusbar
