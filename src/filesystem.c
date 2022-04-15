@@ -6,7 +6,7 @@
 
 #include "qlstatus.h"
 
-const char  units[5] = "BKMGT";
+static const char   units[5] = {'B', 'K', 'M', 'G', 'T'};
 
 void        free_filesystem(void *data) {
     (void)data;
@@ -63,7 +63,7 @@ void                *run_filesystem(void *data) {
     unsigned long   free;
     unsigned long   rfree;
     unsigned long   total;
-    long            value;
+    int             value;
 
     errno = 0;
     if (statvfs(fsys->path, &stats) == -1) {
@@ -84,7 +84,7 @@ void                *run_filesystem(void *data) {
     // set percent memory usage
     value = PERCENT(used, total);
     module->critical = value >= fsys->cthreshold ? 1 : 0;
-    snprintf(fsys->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2ld%%", value);
+    snprintf(fsys->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2d%%", value);
     set_module_buffer(module, fsys->tokens, MEM_TOKENS);
     return NULL;
 }
