@@ -73,6 +73,7 @@ Use following escape sequences to enable the desired modules:
 - `%V` volume
 - `%B` battery
 - `%W` wireless
+- `%S` mounted filesystem usage
 
 For each module you can change its output format by editing the related format option, e.g.
 ```
