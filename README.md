@@ -1,5 +1,5 @@
 # ql-status
-Light and modular system monitoring software for status bar from tiling window managers like [xmonad](https://xmonad.org/) or [dwm](https://dwm.suckless.org/).  
+Light and modular system monitoring software for status bar of tiling window managers like [xmonad](https://xmonad.org/) or [dwm](https://dwm.suckless.org/).  
 Only for Linux based distributions, written in C.
 
 ---
