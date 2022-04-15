@@ -95,8 +95,7 @@ int             resolve_rate(t_main *main, struct timespec *tp) {
     return 0;
 }
 
-void        compute_tick(struct timespec *ref, struct timespec *rate,
-                         struct timespec *tick) {
+void        compute_tick(struct timespec *ref, struct timespec *rate, struct timespec *tick) {
     long    sec = ref->tv_sec + rate->tv_sec;
     long    nsec = ref->tv_nsec + rate->tv_nsec;
 
