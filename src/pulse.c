@@ -27,15 +27,15 @@ void        sink_info_cb(pa_context *context, const pa_sink_info *info, int eol,
 
     (void)context;
     if (eol < 0) {
-        fprintf(stderr, "Cannot resolve sink info by name: %s\n", pulse->sink);
-        exit(EXIT_FAILURE);
+        set_token_buffer(pulse->tokens[0].buffer, pulse->label);
+        set_token_buffer(pulse->tokens[1].buffer, "--%");
     }
     if (eol == 0) {
         avg = pa_cvolume_avg(&info->volume);
         set_token_buffer(pulse->tokens[0].buffer, info->mute ? pulse->lb_mute : pulse->label);
         snprintf(pulse->tokens[1].buffer, TBUFFER_MAX_SIZE, "%2ld%%", VOLUME(avg));
-        set_module_buffer(module, pulse->tokens, VOLUME_TOKENS);
     }
+    set_module_buffer(module, pulse->tokens, VOLUME_TOKENS);
     pa_threaded_mainloop_signal(pulse->mainloop, 0);
 }
 
