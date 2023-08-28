@@ -43,6 +43,9 @@ static void         set_buffer(t_module *module, t_power *power) {
     } else if (strcmp(power->raw_status, "Charging") == 0) {
         set_token_buffer(power->tokens[0].buffer, power->lb_chr);
         power->status = PW_CHARGING;
+    } else if (strcmp(power->raw_status, "Not charging") == 0) {
+        set_token_buffer(power->tokens[0].buffer, power->lb_xchr);
+        power->status = PW_NOT_CHARGING;
     } else if (strcmp(power->raw_status, "Full") == 0) {
         set_token_buffer(power->tokens[0].buffer, power->lb_full);
         power->status = PW_FULL;
@@ -150,14 +153,15 @@ void            init_battery(void *data) {
     power->lb_unk = module->opts[1].value;
     power->lb_full = module->opts[2].value;
     power->lb_chr = module->opts[3].value;
-    power->lb_dis = module->opts[4].value;
-    power->file = resolve_power_file(POWER_DIR, module->opts[5].value, POWER_FILE);
-    power->cthreshold = ((int *)module->opts[6].value)[0];
-    power->full_design = ((int *)module->opts[7].value)[0];
-    power->notify.enabled = ((int *)module->opts[8].value)[0];
-    power->notify.ic_full = module->opts[9].value;
-    power->notify.ic_plugged = module->opts[10].value;
-    power->notify.ic_low = module->opts[11].value;
+    power->lb_xchr = module->opts[4].value;
+    power->lb_dis = module->opts[5].value;
+    power->file = resolve_power_file(POWER_DIR, module->opts[6].value, POWER_FILE);
+    power->cthreshold = ((int *)module->opts[7].value)[0];
+    power->full_design = ((int *)module->opts[8].value)[0];
+    power->notify.enabled = ((int *)module->opts[9].value)[0];
+    power->notify.ic_full = module->opts[10].value;
+    power->notify.ic_plugged = module->opts[11].value;
+    power->notify.ic_low = module->opts[12].value;
 
     if (power->notify.enabled) {
         power->notify.notify = notify_new("Power");

@@ -153,6 +153,7 @@ int             main(int argc, char **argv, char **env) {
         {"battery_label_unknown",       "unk",            LABEL_PATTERN,     STRING, 0},
         {"battery_label_full",          "full",           LABEL_PATTERN,     STRING, 0},
         {"battery_label_charging",      "chr",            LABEL_PATTERN,     STRING, 0},
+        {"battery_label_not_charging",  "xchr",           LABEL_PATTERN,     STRING, 0},
         {"battery_label_discharging",   "bat",            LABEL_PATTERN,     STRING, 0},
         {"battery_name",                "BAT0",           BAT_NAME_PATTERN,  STRING, 0},
         {"battery_critical",            &bat_threshold,   THRESHOLD_PATTERN, NUMBER, 0},

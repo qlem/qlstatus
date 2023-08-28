@@ -85,7 +85,7 @@ typedef struct      s_opt {
 // number of options per module
 #define GLOBAL_NOPTS 4
 #define TIME_NOPTS 1
-#define BAT_NOPTS 12
+#define BAT_NOPTS 13
 #define CPU_NOPTS 3
 #define FREQ_NOPTS 4
 #define TEMP_NOPTS 5
@@ -150,7 +150,7 @@ typedef struct      s_mtime {
 #define BAT_TOKENS 2
 #define POWER_DIR "/sys/class/power_supply"
 #define POWER_FILE "uevent"
-#define PW_STATUS_PATTERN "^POWER_SUPPLY_STATUS=(Discharging|Charging|Full|Unknown)$"
+#define PW_STATUS_PATTERN "^POWER_SUPPLY_STATUS=(.+)$"
 #define PW_MAX_FD_PATTERN "^POWER_SUPPLY_ENERGY_FULL_DESIGN=([0-9]+)$"
 #define PW_MAX_PATTERN "^POWER_SUPPLY_ENERGY_FULL=([0-9]+)$"
 #define PW_CURRENT_PATTERN "^POWER_SUPPLY_ENERGY_NOW=([0-9]+)$"
@@ -161,6 +161,7 @@ typedef struct      s_mtime {
 typedef enum        pw_status {
     PW_FULL,
     PW_CHARGING,
+    PW_NOT_CHARGING,
     PW_DISCHARGING,
     PW_CRITICAL,
     PW_UNKNOWN
@@ -177,6 +178,7 @@ typedef struct          s_notify {
 typedef struct      s_power {
     char            *file;
     char            *lb_chr;
+    char            *lb_xchr;
     char            *lb_dis;
     char            *lb_unk;
     char            *lb_full;
