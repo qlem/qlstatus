@@ -77,6 +77,7 @@ l l.
 %U;CPU usage
 %F;CPU frequency
 %T;temperature
+%S;mounted filesystem usage
 %M;memory usage
 %L;brightness level
 %V;audio volume
@@ -148,6 +149,11 @@ Default: full
 Specify label to display when battery is charging.
 .sp
 Default: chr
+.TP 4
+.B battery_label_not_charging
+Specify label to display when AC is plugged but battery is not charging.
+.sp
+Default: chr!
 .TP 4
 .B battery_label_discharging
 Specify label to display when battery is discharging.
